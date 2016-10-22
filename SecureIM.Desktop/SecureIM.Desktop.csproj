@@ -76,8 +76,8 @@
     <Compile Include="MainForm.eto.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="model\Client.cs" />
-    <Compile Include="model\Server.cs" />
+    <Compile Include="model\abstractions\AbstractClient.cs" />
+    <Compile Include="model\abstractions\AbstractServer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
