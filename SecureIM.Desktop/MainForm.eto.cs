@@ -4,9 +4,9 @@ using Eto.Drawing;
 
 namespace SecureIM
 {
-    public partial class MainForm : Form
+	public partial class MainForm : Form
 	{
-	    private void InitializeComponent()
+		private void InitializeComponent()
 		{
 			Title = "My Eto Form";
 			ClientSize = new Size(400, 350);
@@ -52,6 +52,8 @@ namespace SecureIM
 
 			// create toolbar			
 			ToolBar = new ToolBar { Items = { clickMe } };
+
+			SecureIM.Desktop.model.AsynchronousClient.StartClient();
 		}
 	}
 }

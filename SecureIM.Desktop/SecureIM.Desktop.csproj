@@ -82,6 +82,7 @@
     <Compile Include="controller\abstractions\AbstractComms.cs" />
     <Compile Include="controller\abstractions\AbstractCrypto.cs" />
     <Compile Include="model\abstractions\AbstractSmartcard.cs" />
+    <Compile Include="model\AsynchronusClient.cs" />
     <Compile Include="model\IMUser.cs" />
     <Compile Include="model\IMBroker.cs" />
     <Compile Include="model\Smartcard.cs" />
