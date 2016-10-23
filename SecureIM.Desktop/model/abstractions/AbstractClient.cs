@@ -6,22 +6,19 @@ namespace SecureIM.Desktop.model.abstractions
 {
     internal interface IClient
     {
-
         #region Public Methods
 
         string RandomString(int length);
 
-        bool RecieveMessage();
+        bool RecieveMessage(string message);
 
-        bool SendMessage();
+        bool SendMessage(string message);
 
         #endregion Public Methods
-
     }
 
     internal abstract class AbstractClient : IClient
     {
-
         #region Private Fields
 
         private List<string> _messageQueue;
@@ -49,12 +46,10 @@ namespace SecureIM.Desktop.model.abstractions
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        public abstract bool RecieveMessage();
-        
+        public abstract bool RecieveMessage(string message);
 
-        public abstract bool SendMessage();
+        public abstract bool SendMessage(string message);
 
         #endregion Public Methods
-
     }
 }

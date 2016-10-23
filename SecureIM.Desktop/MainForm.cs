@@ -1,8 +1,4 @@
-﻿using System;
-using Eto.Forms;
-using Eto.Drawing;
-
-namespace SecureIM
+﻿namespace SecureIM
 {
     public partial class MainForm
     {

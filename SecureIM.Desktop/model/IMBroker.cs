@@ -3,14 +3,14 @@ using System;
 
 namespace SecureIM.Desktop.model
 {
-    internal class Client : AbstractClient
+    internal class IMBroker : AbstractClient
     {
-        public override bool RecieveMessage()
+        public override bool RecieveMessage(string message)
         {
             throw new NotImplementedException();
         }
 
-        public override bool SendMessage()
+        public override bool SendMessage(string message)
         {
             throw new NotImplementedException();
         }

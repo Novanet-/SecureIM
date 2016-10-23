@@ -72,12 +72,19 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="controller\Comms.cs" />
+    <Compile Include="controller\Crypto.cs" />
     <Compile Include="MainForm.cs" />
     <Compile Include="MainForm.eto.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="model\abstractions\AbstractClient.cs" />
-    <Compile Include="model\abstractions\AbstractServer.cs" />
+    <Compile Include="controller\abstractions\AbstractComms.cs" />
+    <Compile Include="controller\abstractions\AbstractCrypto.cs" />
+    <Compile Include="model\abstractions\AbstractSmartcard.cs" />
+    <Compile Include="model\IMUser.cs" />
+    <Compile Include="model\IMBroker.cs" />
+    <Compile Include="model\Smartcard.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -96,7 +103,6 @@
     <Content Include="Mac\README.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="controller\" />
     <Folder Include="view\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

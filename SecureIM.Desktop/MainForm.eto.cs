@@ -4,9 +4,9 @@ using Eto.Drawing;
 
 namespace SecureIM
 {
-	partial class MainForm : Form
+    public partial class MainForm : Form
 	{
-		void InitializeComponent()
+	    private void InitializeComponent()
 		{
 			Title = "My Eto Form";
 			ClientSize = new Size(400, 350);

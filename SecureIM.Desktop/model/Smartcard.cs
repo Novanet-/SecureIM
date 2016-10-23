@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SecureIM.Desktop.model.abstractions;
+﻿using SecureIM.Desktop.model.abstractions;
+using System;
 
 namespace SecureIM.Desktop.model
 {
