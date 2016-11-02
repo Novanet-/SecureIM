@@ -72,8 +72,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="controller\APDUFactory.cs" />
     <Compile Include="controller\Comms.cs" />
     <Compile Include="controller\Crypto.cs" />
+    <Compile Include="controller\SmartcardController.cs" />
     <Compile Include="MainForm.cs" />
     <Compile Include="MainForm.eto.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -82,9 +84,10 @@
     <Compile Include="controller\abstractions\AbstractComms.cs" />
     <Compile Include="controller\abstractions\AbstractCrypto.cs" />
     <Compile Include="model\abstractions\AbstractSmartcard.cs" />
-    <Compile Include="model\AsynchronusClient.cs" />
+    <Compile Include="model\AsynchronousClient.cs" />
     <Compile Include="model\IMUser.cs" />
     <Compile Include="model\IMBroker.cs" />
+    <Compile Include="model\SCIMInstructions.cs" />
     <Compile Include="model\Smartcard.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

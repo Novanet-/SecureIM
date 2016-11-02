@@ -11,13 +11,14 @@ namespace SecureIM.Desktop
         [STAThread]
         public static void Main(string[] args)
         {
-            if (args[0].Equals("server"))
-            {
-            }
-            else
-            {
+//            if ((args.Length > 0) && args[0].Equals("server"))
+//            {
+//                new Application(Platform.Detect).Run(new MainForm());
+//            }
+//            else
+//            {
                 new Application(Platform.Detect).Run(new MainForm());
-            }
+//            }
         }
 
         #endregion Public Methods

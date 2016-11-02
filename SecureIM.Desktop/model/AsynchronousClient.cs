@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace SecureIM.Desktop.model
 {
-    public class AsynchronousClient
+    public abstract class AsynchronousClient
     {
         #region Private Fields
 
@@ -46,7 +46,7 @@ namespace SecureIM.Desktop.model
             }
         }
 
-        private static void Receive(Socket client)
+        protected static void ReceiveMessage(Socket client)
         {
             try
             {
@@ -68,7 +68,7 @@ namespace SecureIM.Desktop.model
             {
                 // Retrieve the state object and the client socket 
                 // from the asynchronous state object.
-                StateObject state = (StateObject)ar.AsyncState;
+                var state = (StateObject)ar.AsyncState;
                 Socket client = state.WorkSocket;
 
                 // Read data from the remote device.
@@ -100,7 +100,7 @@ namespace SecureIM.Desktop.model
             }
         }
 
-        private static void Send(Socket client, string data)
+        protected static void SendMessage(Socket client, string data)
         {
             // Convert the string data to byte data using ASCII encoding.
             byte[] byteData = Encoding.ASCII.GetBytes(data);
@@ -129,7 +129,7 @@ namespace SecureIM.Desktop.model
             }
         }
 
-        private static void StartClient()
+        public static void StartClient()
         {
             // Connect to a remote device.
             try
@@ -149,11 +149,11 @@ namespace SecureIM.Desktop.model
                 ConnectDone.WaitOne();
 
                 // Send test data to the remote device.
-                Send(client, "This is a test<EOF>");
+                SendMessage(client, "This is a test<EOF>");
                 SendDone.WaitOne();
 
                 // Receive the response from the remote device.
-                Receive(client);
+                ReceiveMessage(client);
                 ReceiveDone.WaitOne();
 
                 // Write the response to the console.

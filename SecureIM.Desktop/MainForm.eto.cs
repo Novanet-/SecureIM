@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Eto.Drawing;
 using Eto.Forms;
-using Eto.Drawing;
 
-namespace SecureIM
+namespace SecureIM.Desktop
 {
 	public partial class MainForm : Form
 	{
@@ -52,8 +51,6 @@ namespace SecureIM
 
 			// create toolbar			
 			ToolBar = new ToolBar { Items = { clickMe } };
-
-			SecureIM.Desktop.model.AsynchronousClient.StartClient();
 		}
 	}
 }
