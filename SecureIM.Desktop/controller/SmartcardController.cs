@@ -9,7 +9,6 @@ namespace SecureIM.Desktop.controller
 {
     class SmartcardController
     {
-
         #region Private Fields
 
         // ReSharper disable once InconsistentNaming
@@ -52,13 +51,17 @@ namespace SecureIM.Desktop.controller
                     }
 
                     byte[] response = SelectApplet();
+                    if (response.Length > 0)
+                    {
+                        Debug.WriteLine("SCIM applet loaded\n");
+                    }
 
-                    Debug.WriteLine("response: ");
+//                    Debug.WriteLine("response: ");
 
-                    foreach (byte t in response)
-                        Debug.Write($"{t:X2} ");
+//                    foreach (byte t in response)
+//                        Debug.Write($"{t:X2} ");
 
-                    Debug.WriteLine("");
+//                    Debug.WriteLine("");
                 }
             }
         }
@@ -67,40 +70,84 @@ namespace SecureIM.Desktop.controller
 
         #region Public Methods
 
-        public byte[] SendCommand(SecureIMCardInstructions command, byte[] data = null)
+        public byte[] SendCommand(SecureIMCardInstructions command, byte? p1 = 0x00, byte? p2 = 0x00, byte[] data = null,
+            byte? le = 0x00)
         {
-            byte[] response = new byte[] {};
+            var response = new byte[] {};
             switch (command)
             {
-                case SecureIMCardInstructions.IssueCard:
-                    IssueCard();
+                case SecureIMCardInstructions.RSA_GENERATE_KEY_PAIR:
+                    GenerateKeyPair();
                     break;
-                case SecureIMCardInstructions.GetPublicKey:
+                case SecureIMCardInstructions.RSA_GET_PUBLIC_KEY:
                     GetPublicKey();
                     break;
-                case SecureIMCardInstructions.SetPublicExponent:
-                    SetPublicExponent();
+                case SecureIMCardInstructions.RSA_GET_PRIVATE_KEY:
+                    GetPrivateKey();
                     break;
-                case SecureIMCardInstructions.SetPublicModulus:
-                    SetPublicModulus();
+                case SecureIMCardInstructions.RSA_SET_PUBLIC_KEY:
+                    SetPublicKey();
                     break;
-                case SecureIMCardInstructions.SetPrivateExponent:
-                    SetPrivateExponent();
+                case SecureIMCardInstructions.RSA_SET_PRIVATE_KEY:
+                    SetPrivateKey();
                     break;
-                case SecureIMCardInstructions.SetPrivateModulus:
-                    SetPrivateModulus();
+                case SecureIMCardInstructions.RSA_SIGN:
+                    SignCertificate();
                     break;
-                case SecureIMCardInstructions.EncryptMessage:
-                    EncryptMessage();
+                case SecureIMCardInstructions.RSA_VERIFY:
+                    VerifyCertificate();
                     break;
-                case SecureIMCardInstructions.DecryptMessage:
-                    DecryptMessage();
+                case SecureIMCardInstructions.RSA_DO_CIPHER:
+                    DoCipher();
+                    break;
+                case SecureIMCardInstructions.CARD_RESET:
+                    GenerateKeyPair();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(command), command, null);
             }
 
             return response;
+        }
+
+        private void DoCipher()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void VerifyCertificate()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void SignCertificate()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void SetPrivateKey()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void SetPublicKey()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void GetPrivateKey()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void GetPublicKey()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void GenerateKeyPair()
+        {
+            throw new NotImplementedException();
         }
 
         #endregion Public Methods
@@ -134,11 +181,11 @@ namespace SecureIM.Desktop.controller
         private static string ChooseReader(IReadOnlyList<string> readerNames)
         {
             // Show available readers.
-            Debug.WriteLine("Available readers: ");
-            for (var i = 0; i < readerNames.Count; i++)
-            {
-                Debug.WriteLine("[" + i + "] " + readerNames[i]);
-            }
+//            Debug.WriteLine("Available readers: ");
+//            for (var i = 0; i < readerNames.Count; i++)
+//            {
+//                Debug.WriteLine("[" + i + "] " + readerNames[i]);
+//            }
 
             return readerNames[0];
         }
@@ -171,25 +218,8 @@ namespace SecureIM.Desktop.controller
             throw new NotImplementedException();
         }
 
-        private void GetPublicKey()
+        private byte[] EstablishConnectionAndTransmitAPDU(CommandApdu apdu)
         {
-            throw new NotImplementedException();
-        }
-
-        private void IssueCard()
-        {
-            throw new NotImplementedException();
-        }
-
-        private byte[] SelectApplet(byte[] aid = null)
-        {
-            if (aid == null)
-            {
-                aid = SECUREIMCARD_AID;
-            }
-
-            CommandApdu apdu = APDUFactory.SELECT(aid, _activeProtocol);
-
             using (var context = new SCardContext())
             {
                 using (SCardReader reader = EstablishCardConnection(context))
@@ -200,24 +230,26 @@ namespace SecureIM.Desktop.controller
             }
         }
 
-        private void SetPrivateExponent()
+
+        private byte[] IssueCard()
         {
-            throw new NotImplementedException();
+            Debug.WriteLine("Creating ISSUE APDU \n");
+            CommandApdu apdu = APDUFactory.RSA_GENERATE_KEY_PAIR(_activeProtocol);
+            Debug.WriteLine("Sending ISSUE APDU \n");
+
+            return EstablishConnectionAndTransmitAPDU(apdu);
         }
 
-        private void SetPrivateModulus()
+        private byte[] SelectApplet(byte[] aid = null)
         {
-            throw new NotImplementedException();
-        }
-        private void SetPublicExponent()
-        {
-            throw new NotImplementedException();
+            aid = aid ?? SECUREIMCARD_AID;
+            Debug.WriteLine("Creating ISSUE APDU \n");
+            CommandApdu apdu = APDUFactory.SELECT(aid, _activeProtocol);
+            Debug.WriteLine("Sending SELECT APDU \n");
+
+            return EstablishConnectionAndTransmitAPDU(apdu);
         }
 
-        private void SetPublicModulus()
-        {
-            throw new NotImplementedException();
-        }
         private byte[] TransmitAPDU(CommandApdu apdu, SCardReader reader)
         {
             var pbRecvBuffer = new byte[256];
@@ -231,6 +263,5 @@ namespace SecureIM.Desktop.controller
         }
 
         #endregion Private Methods
-
     }
 }

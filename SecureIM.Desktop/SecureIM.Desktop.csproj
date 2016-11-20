@@ -87,7 +87,8 @@
     <Compile Include="model\AsynchronousClient.cs" />
     <Compile Include="model\IMUser.cs" />
     <Compile Include="model\IMBroker.cs" />
-    <Compile Include="model\SCIMInstructions.cs" />
+    <Compile Include="model\SCIM_INS_CODES.cs" />
+    <Compile Include="model\SecureIMCardInstructions.cs" />
     <Compile Include="model\Smartcard.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

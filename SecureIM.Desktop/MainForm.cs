@@ -12,7 +12,6 @@ namespace SecureIM.Desktop
 {
     public partial class MainForm
     {
-
         #region Private Fields
 
         private static byte INS_DECRYPT = (byte) 0xD0;
@@ -46,10 +45,24 @@ namespace SecureIM.Desktop
 
         public void SmartcardTest()
         {
+            Debug.WriteLine("\n");
             var controller = new SmartcardController();
+            byte[] response = controller.SendCommand(SecureIMCardInstructions.IssueCard);
+            if (response.Length > 0)
+            {
+                Debug.WriteLine("response: \n");
+
+                foreach (byte t in response)
+                    Debug.Write($"{t:X2} ");
+
+                Debug.WriteLine("\n");
+            }
+            else
+            {
+                Debug.WriteLine("ISSUE command failed\n");
+            }
         }
 
         #endregion Public Methods
-
     }
 }
