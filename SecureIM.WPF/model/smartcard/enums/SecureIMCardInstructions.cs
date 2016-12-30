@@ -1,6 +1,6 @@
 ﻿// ReSharper disable InconsistentNaming
 
-namespace SecureIM.Desktop.model
+namespace SecureIM.WPF.model.smartcard.enums
 {
     internal enum SecureIMCardInstructions
     {

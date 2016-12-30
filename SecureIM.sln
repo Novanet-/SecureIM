@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureIM", "SecureIM\SecureIM.csproj", "{93CA1C78-BB8B-4F0C-9C38-63704B73081D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureIM.WPF", "SecureIM.WPF\SecureIM.WPF.csproj", "{BB3115E5-11DD-4997-94E1-4DC4331527F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureIM.Desktop", "SecureIM.Desktop\SecureIM.Desktop.csproj", "{A8B96BA3-517F-4572-BE94-B8DF22B71208}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureIM.ChatGUI", "SecureIM.ChatGUI\SecureIM.ChatGUI.csproj", "{FC394E08-4DED-48D9-90A8-65EBFA774680}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureIM.ChatBackend", "SecureIM.ChatBackend\SecureIM.ChatBackend.csproj", "{C278CDC6-398B-44F6-87B9-78920FA361A5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,13 +15,17 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{93CA1C78-BB8B-4F0C-9C38-63704B73081D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{93CA1C78-BB8B-4F0C-9C38-63704B73081D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{93CA1C78-BB8B-4F0C-9C38-63704B73081D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A8B96BA3-517F-4572-BE94-B8DF22B71208}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A8B96BA3-517F-4572-BE94-B8DF22B71208}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A8B96BA3-517F-4572-BE94-B8DF22B71208}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A8B96BA3-517F-4572-BE94-B8DF22B71208}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB3115E5-11DD-4997-94E1-4DC4331527F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB3115E5-11DD-4997-94E1-4DC4331527F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB3115E5-11DD-4997-94E1-4DC4331527F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC394E08-4DED-48D9-90A8-65EBFA774680}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC394E08-4DED-48D9-90A8-65EBFA774680}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC394E08-4DED-48D9-90A8-65EBFA774680}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC394E08-4DED-48D9-90A8-65EBFA774680}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C278CDC6-398B-44F6-87B9-78920FA361A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C278CDC6-398B-44F6-87B9-78920FA361A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C278CDC6-398B-44F6-87B9-78920FA361A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C278CDC6-398B-44F6-87B9-78920FA361A5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SecureIM.Desktop.controller.abstractions;
-using SecureIM.Desktop.model.abstractions;
+using SecureIM.WPF.controller.abstractions;
 
-namespace SecureIM.Desktop.controller
+namespace SecureIM.WPF.controller.comms
 {
-    class Comms : AbstractComms
+    internal class Comms : AbstractComms
     {
         public override bool RecieveMessage(string message)
         {

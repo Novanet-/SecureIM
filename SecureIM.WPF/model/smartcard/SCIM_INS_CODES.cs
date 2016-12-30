@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace SecureIM.Desktop.model
+namespace SecureIM.WPF.model.smartcard
 {
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public static class SCIM_INS_CODES

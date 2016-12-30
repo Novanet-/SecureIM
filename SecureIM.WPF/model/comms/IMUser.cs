@@ -1,9 +1,7 @@
-﻿using SecureIM.Desktop.model.abstractions;
-using System;
+﻿using System;
 
-namespace SecureIM.Desktop.model
+namespace SecureIM.WPF.model.comms
 {
-    // ReSharper disable once InconsistentNaming
     internal class IMUser : AsynchronousClient
     {
         public bool RecieveMessage(string message)

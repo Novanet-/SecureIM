@@ -1,4 +1,4 @@
-﻿namespace SecureIM.Desktop.controller.abstractions
+﻿namespace SecureIM.WPF.controller.abstractions
 {
     internal interface IComms
     {

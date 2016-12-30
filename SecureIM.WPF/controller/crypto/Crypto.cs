@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using SecureIM.Desktop.controller.abstractions;
-using SecureIM.Desktop.model.abstractions;
+using SecureIM.WPF.controller.abstractions;
 
-namespace SecureIM.Desktop.controller
+namespace SecureIM.WPF.controller.crypto
 {
-    class Crypto : AbstractCrypto
+    internal class Crypto : AbstractCrypto
     {
         public override string DecryptAes()
         {
@@ -44,12 +40,12 @@ namespace SecureIM.Desktop.controller
         {
             padToLength = 16;
             int inputLength = inputString.Length;
-            int padLength = (padToLength - (inputLength%padToLength)%padToLength);
+            int padLength = (padToLength - (inputLength % padToLength) % padToLength);
             byte bytePadLength = Convert.ToByte(padLength);
             StringBuilder sb = new StringBuilder(inputString);
             for (byte i = 0; i < bytePadLength; i++)
             {
-                sb.Append(System.Text.Encoding.ASCII.GetString(new[] {bytePadLength}));
+                sb.Append(System.Text.Encoding.ASCII.GetString(new[] { bytePadLength }));
             }
             return sb.ToString();
         }

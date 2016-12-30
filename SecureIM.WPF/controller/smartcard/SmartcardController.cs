@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using PCSC;
 using PCSC.Iso7816;
-using SecureIM.Desktop.model;
+using SecureIM.WPF.model.smartcard;
+using SecureIM.WPF.model.smartcard.enums;
 
-namespace SecureIM.Desktop.controller
+namespace SecureIM.WPF.controller.smartcard
 {
     internal class SmartcardController
     {
@@ -219,35 +220,16 @@ namespace SecureIM.Desktop.controller
             return reader;
         }
 
-        private void DecryptMessage(byte[] encryptedMessage)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void EncryptMessage(byte[] plaintextMessage)
-        {
-            throw new NotImplementedException();
-        }
-
-        private byte[] EstablishConnectionAndTransmitApdu(CommandApdu apdu)
+        private byte[] EstablishConnectionAndTransmitAPDU(Apdu apdu)
         {
             using (var context = new SCardContext())
             {
                 using (SCardReader reader = EstablishCardConnection(context))
                 {
-                    byte[] response = TransmitApdu(apdu, reader);
+                    byte[] response = TransmitAPDU(apdu, reader);
                     return response;
                 }
             }
-        }
-
-        private byte[] IssueCard()
-        {
-            Debug.WriteLine("Creating ISSUE APDU \n");
-            CommandApdu apdu = APDUFactory.ECC_GEN_KEYPAIR(_activeProtocol);
-            Debug.WriteLine("Sending ISSUE APDU \n");
-
-            return EstablishConnectionAndTransmitApdu(apdu);
         }
 
         private byte[] SelectApplet(byte[] aid = null)
@@ -257,10 +239,10 @@ namespace SecureIM.Desktop.controller
             CommandApdu apdu = APDUFactory.SELECT(_activeProtocol, aid);
             Debug.WriteLine("Sending SELECT APDU \n");
 
-            return EstablishConnectionAndTransmitApdu(apdu);
+            return EstablishConnectionAndTransmitAPDU(apdu);
         }
 
-        private byte[] TransmitApdu(CommandApdu apdu, SCardReader reader)
+        private byte[] TransmitAPDU(Apdu apdu, ISCardReader reader)
         {
             var pbRecvBuffer = new byte[256];
 

@@ -1,15 +1,10 @@
-﻿using PCSC.Iso7816;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using PCSC;
+using PCSC.Iso7816;
 
 // ReSharper disable InconsistentNaming
 
-namespace SecureIM.Desktop.controller
+namespace SecureIM.WPF.controller.smartcard
 {
     internal static class APDUFactory
     {
@@ -52,8 +47,6 @@ namespace SecureIM.Desktop.controller
 
             return issueAPDU;
         }
-
-        
 
         public static CommandApdu GET_PRI_KEY(SCardProtocol scardProtocol)
         {
@@ -171,7 +164,7 @@ namespace SecureIM.Desktop.controller
             {
                 CLA = 0x80,
                 INS = 0x70,
-                P1 = (byte) (decrypt ? 0x01 : 0x00),
+                P1 = (byte)(decrypt ? 0x01 : 0x00),
                 P2 = 0x0
             };
 
