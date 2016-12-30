@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Windows.Input;
+using SecureIM.ChatBackend;
 
 namespace SecureIM.ChatGUI
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    ///     Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow
     {
@@ -16,11 +17,11 @@ namespace SecureIM.ChatGUI
             _backend = new ChatBackend.ChatBackend(DisplayMessage);
         }
 
-        public void DisplayMessage(ChatBackend.CompositeType composite)
+        public void DisplayMessage(CompositeType composite)
         {
             string username = composite.Username ?? "";
             string message = composite.Message ?? "";
-            textBoxChatPane.Text += (username + ": " + message + Environment.NewLine);
+            textBoxChatPane.Text += username + ": " + message + Environment.NewLine;
         }
 
         private void TextBoxEntryField_OnKeyDown(object sender, KeyEventArgs e)

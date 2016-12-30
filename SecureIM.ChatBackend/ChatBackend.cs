@@ -6,6 +6,19 @@ namespace SecureIM.ChatBackend
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class ChatBackend : IChatBackend
     {
+        #region Public Properties
+
+        public Comms Comms { get; private set; }
+
+        public DisplayMessageDelegate DisplayMessageDelegate { get; }
+
+        public User User { get; }
+
+        #endregion Public Properties
+
+
+
+
         #region Public Constructors
 
         /// <summary>
@@ -14,36 +27,27 @@ namespace SecureIM.ChatBackend
         /// <param name="dmd">DisplayMessageDelegate</param>
         public ChatBackend(DisplayMessageDelegate dmd)
         {
-            _displayMessageDelegate = dmd;
+            User = new User();
+            DisplayMessageDelegate = dmd;
             StartService();
         }
 
         #endregion Public Constructors
+
+
+
 
         #region Private Constructors
 
         /// <summary>
         ///     The default constructor is only here for testing purposes.
         /// </summary>
-        private ChatBackend()
-        {
-        }
+        private ChatBackend() { }
 
         #endregion Private Constructors
 
-        #region Private Fields
 
-        private readonly DisplayMessageDelegate _displayMessageDelegate;
 
-        private IChatBackend _channel;
-
-        private string _myUserName = "Anonymous";
-
-        private ChannelFactory<IChatBackend> _channelFactory;
-
-        private ServiceHost _host;
-
-        #endregion Private Fields
 
         #region Public Methods
 
@@ -56,10 +60,9 @@ namespace SecureIM.ChatBackend
         /// <exception cref="ArgumentNullException"></exception>
         public void DisplayMessage(CompositeType composite)
         {
-            if (composite == null)
-                throw new ArgumentNullException(nameof(composite));
+            if (composite == null) throw new ArgumentNullException(nameof(composite));
 
-            _displayMessageDelegate?.Invoke(composite);
+            DisplayMessageDelegate?.Invoke(composite);
         }
 
         /// <summary>
@@ -70,44 +73,56 @@ namespace SecureIM.ChatBackend
         {
             if (text.StartsWith("setname:", StringComparison.OrdinalIgnoreCase))
             {
-                _myUserName = text.Substring("setname:".Length).Trim();
-                _displayMessageDelegate(new CompositeType("Event", "Setting your name to " + _myUserName));
+                User.Name = text.Substring("setname:".Length).Trim();
+                DisplayMessageDelegate(new CompositeType("Event", "Setting your name to " + User.Name));
             }
             else
             {
                 // In order to send a message, we call our friends' DisplayMessage method
-                _channel.DisplayMessage(new CompositeType(_myUserName, text));
+                new ChannelFactory<IChatBackend>("ChatEndpoint").CreateChannel()
+                                                                .DisplayMessage(new CompositeType(User.Name, text));
             }
         }
 
         #endregion Public Methods
 
+
+
+
         #region Private Methods
 
+        /// <summary>
+        /// </summary>
         private void StartService()
         {
-            _host = new ServiceHost(this);
-            _host.Open();
-            _channelFactory = new ChannelFactory<IChatBackend>("ChatEndpoint");
-            _channel = _channelFactory.CreateChannel();
+            var channelFactory = new ChannelFactory<IChatBackend>("ChatEndpoint");
+            IChatBackend channel = channelFactory.CreateChannel();
+            var serviceHost = new ServiceHost(this);
+
+            Comms = new Comms(channelFactory, channel, serviceHost);
+            Comms.Host.Open();
 
             // Information to send to the channel
-            _channel.DisplayMessage(new CompositeType("Event", _myUserName + " has entered the conversation."));
+            channel.DisplayMessage(new CompositeType("Event", User.Name + " has entered the conversation."));
 
             // Information to display locally
-            _displayMessageDelegate(new CompositeType("Info", "To change your name, type setname: NEW_NAME"));
+            DisplayMessageDelegate(new CompositeType("Info", "To change your name, type setname: NEW_NAME"));
         }
 
+        /// <summary>
+        /// </summary>
         private void StopService()
         {
-            if (_host == null) return;
+            if (Comms.Host == null) return;
 
-            _channel.DisplayMessage(new CompositeType("Event", _myUserName + " is leaving the conversation."));
+            var channelFactory = new ChannelFactory<IChatBackend>("ChatEndpoint");
+            channelFactory.CreateChannel()
+                          .DisplayMessage(new CompositeType("Event", User.Name + " is leaving the conversation."));
 
-            if (_host.State == CommunicationState.Closed) return;
+            if (Comms.Host.State == CommunicationState.Closed) return;
 
-            _channelFactory.Close();
-            _host.Close();
+            channelFactory.Close();
+            Comms.Host.Close();
         }
 
         #endregion Private Methods
