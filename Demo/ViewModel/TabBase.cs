@@ -12,7 +12,7 @@ namespace Demo.ViewModel
             get { return _tabNumber; }
             set
             {
-                if (_tabNumber != value) Set(() => TabNumber, ref _tabNumber, value);
+                if (_tabNumber != value) Set(propertyExpression: () => TabNumber, field: ref _tabNumber, newValue: value);
             }
         }
 
@@ -23,7 +23,7 @@ namespace Demo.ViewModel
             get { return _tabName; }
             set
             {
-                if (_tabName != value) Set(() => TabName, ref _tabName, value);
+                if (_tabName != value) Set(propertyExpression: () => TabName, field: ref _tabName, newValue: value);
             }
         }
 
@@ -35,7 +35,7 @@ namespace Demo.ViewModel
             get { return _isPinned; }
             set
             {
-                if (_isPinned != value) Set(() => IsPinned, ref _isPinned, value);
+                if (_isPinned != value) Set(propertyExpression: () => IsPinned, field: ref _isPinned, newValue: value);
             }
         }
 
@@ -47,7 +47,7 @@ namespace Demo.ViewModel
             get { return _tabIcon; }
             set
             {
-                if (_tabIcon != value) Set(() => TabIcon, ref _tabIcon, value);
+                if (!Equals(_tabIcon, value)) Set(propertyExpression: () => TabIcon, field: ref _tabIcon, newValue: value);
             }
         }
     }
