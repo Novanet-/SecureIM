@@ -1,13 +1,13 @@
 ﻿<Window x:Class="Demo.DockingWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="clr-namespace:Demo"
-        xmlns:vm="clr-namespace:Demo.ViewModel"
-        xmlns:usercontrols="clr-namespace:Demo.UserControls"
         xmlns:ct="clr-namespace:ChromeTabs;assembly=ChromeTabs"
+        xmlns:local="clr-namespace:Demo"
+        xmlns:usercontrols="clr-namespace:Demo.UserControls"
+        xmlns:vm="clr-namespace:Demo.ViewModel"
         Title="DockingWindow"
-        Height="400"
         Width="400"
+        Height="400"
         Loaded="Window_Loaded">
     <Window.Resources>
         <DataTemplate DataType="{x:Type vm:TabClass1}">
@@ -19,17 +19,18 @@
         <DataTemplate DataType="{x:Type vm:TabClass3}">
             <usercontrols:UserControl3 />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:TabChatWindow}">
+            <usercontrols:ChatWindowControl />
+        </DataTemplate>
         <Storyboard x:Key="FadeInContentAnim">
-            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility"
-                                           Storyboard.TargetName="ContentControl">
-                <DiscreteObjectKeyFrame Value="{x:Static Visibility.Visible}"
-                                        KeyTime="0:0:0.1" />
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentControl" Storyboard.TargetProperty="Visibility">
+                <DiscreteObjectKeyFrame KeyTime="0:0:0.1" Value="{x:Static Visibility.Visible}" />
             </ObjectAnimationUsingKeyFrames>
         </Storyboard>
     </Window.Resources>
     <Grid>
         <ContentControl x:Name="ContentControl"
-                        Visibility="Collapsed"
-                        Content="{Binding}" />
+                        Content="{Binding}"
+                        Visibility="Collapsed" />
     </Grid>
 </Window>

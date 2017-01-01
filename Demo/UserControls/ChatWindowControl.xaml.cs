@@ -1,50 +1,45 @@
 ﻿using System;
+using System.Windows.Controls;
 using System.Windows.Input;
 using SecureIM.ChatBackend;
 
-namespace SecureIM.ChatGUI
+namespace Demo.UserControls
 {
     /// <summary>
-    ///     Interaction logic for MainWindow.xaml
+    ///     Interaction logic for ChatWindowControl.xaml
     /// </summary>
-    public partial class MainWindow
+    public partial class ChatWindowControl
     {
         #region Private Fields
 
-
-        private readonly ChatBackend.ChatBackend _backend;
-
+        public ChatBackend Backend { get; }
 
         #endregion Private Fields
 
 
-
-
         #region Public Constructors
 
-
         /// <summary>
-        /// Initializes a new instance of the <see cref="MainWindow"/> class.
+        ///     Initializes a new instance of the <see cref="ChatWindowControl" /> class.
         /// </summary>
-        public MainWindow()
+        public ChatWindowControl()
         {
             InitializeComponent();
-            _backend = new ChatBackend.ChatBackend(DisplayMessage);
+            Backend = new ChatBackend(DisplayMessage);
         }
-
 
         #endregion Public Constructors
 
 
-
-
         #region Public Methods
 
-
         /// <summary>
-        /// Displays the message.
+        ///     Displays the given message in the user's gui
         /// </summary>
-        /// <param name="messageComposite">The messageComposite.</param>
+        /// <param name="messageComposite">
+        ///     The delegate method that tells the backend how to display messages recieved from other
+        ///     users
+        /// </param>
         public void DisplayMessage(MessageComposite messageComposite)
         {
             string username = messageComposite.Username ?? "";
@@ -52,28 +47,18 @@ namespace SecureIM.ChatGUI
             textBoxChatPane.Text += username + ": " + message + Environment.NewLine;
         }
 
-
         #endregion Public Methods
-
-
 
 
         #region Private Methods
 
-
-        /// <summary>
-        /// Handles the OnKeyDown event of the TextBoxEntryField control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="KeyEventArgs"/> instance containing the event data.</param>
         private void TextBoxEntryField_OnKeyDown(object sender, KeyEventArgs e)
         {
             if (!(e.Key == Key.Return || e.Key == Key.Enter)) return;
 
-            _backend.SendMessage(textBoxEntryField.Text);
+            Backend.SendMessage(textBoxEntryField.Text);
             textBoxEntryField.Clear();
         }
-
 
         #endregion Private Methods
     }

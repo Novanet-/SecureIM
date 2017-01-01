@@ -63,7 +63,7 @@ namespace Demo.ViewModel
         protected TabClass1 CreateTab1()
         {
             var i = 0;
-            var tab = new TabClass1
+            var tab = new TabClass1()
             {
                 TabName = "Tab class 1",
                 MyStringContent = "Try drag the tab from left to right",
@@ -108,6 +108,15 @@ namespace Demo.ViewModel
                 TabName = "Tab class 4",
                 MyStringContent = "This tab demonstrates a custom tab header implementation",
                 IsBlinking = true
+            };
+            return tab;
+        }
+        protected TabChatWindow CreateTabChatWindow()
+        {
+            var tab = new TabChatWindow()
+            {
+                TabName = "TAB CHAT WINDOW",
+                MyStringContent = "TAB CHAT WINDOW YAY",
             };
             return tab;
         }

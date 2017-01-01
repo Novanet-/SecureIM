@@ -100,6 +100,12 @@
     <Compile Include="SampleData\SampleViewModelCustomStyleExampleWindow.cs" />
     <Compile Include="SampleData\SampleViewModelMainWindow.cs" />
     <Compile Include="SampleData\SampleViewModelPinnedTabExampleWindow.cs" />
+    <Compile Include="UserControls\ChatWindowControl.xaml.cs">
+      <DependentUpon>ChatWindowControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\UserControl1.xaml.cs">
+      <DependentUpon>UserControl1.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\UserControl4.xaml.cs">
       <DependentUpon>UserControl4.xaml</DependentUpon>
     </Compile>
@@ -108,12 +114,10 @@
     <Compile Include="ViewModel\IViewModelPinnedTabExampleWindow.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\TabBase.cs" />
+    <Compile Include="ViewModel\TabChatWindow.cs" />
     <Compile Include="ViewModel\TabClass1.cs" />
     <Compile Include="ViewModel\TabClass2.cs" />
     <Compile Include="ViewModel\TabClass3.cs" />
-    <Compile Include="UserControls\UserControl1.xaml.cs">
-      <DependentUpon>UserControl1.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UserControls\UserControl2.xaml.cs">
       <DependentUpon>UserControl2.xaml</DependentUpon>
     </Compile>
@@ -151,9 +155,13 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\UserControl1.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="UserControls\ChatWindowControl.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\UserControl1.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UserControls\UserControl2.xaml">
       <SubType>Designer</SubType>
@@ -186,7 +194,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -201,6 +211,12 @@
     <Resource Include="Resources\1.png" />
     <Resource Include="Resources\2.png" />
     <Resource Include="Resources\3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SecureIM.ChatBackend\SecureIM.ChatBackend.csproj">
+      <Project>{c278cdc6-398b-44f6-87b9-78920fa361a5}</Project>
+      <Name>SecureIM.ChatBackend</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

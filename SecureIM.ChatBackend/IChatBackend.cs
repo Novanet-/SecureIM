@@ -3,7 +3,7 @@ using System.ServiceModel;
 
 namespace SecureIM.ChatBackend
 {
-    public delegate void DisplayMessageDelegate(CompositeType data);
+    public delegate void DisplayMessageDelegate(MessageComposite data);
 
     [ServiceContract]
     public interface IChatBackend
@@ -14,9 +14,9 @@ namespace SecureIM.ChatBackend
         /// <summary>
         /// Displays the message.
         /// </summary>
-        /// <param name="composite">The composite.</param>
+        /// <param name="messageComposite">The messageComposite.</param>
         [OperationContract(IsOneWay = true)]
-        void DisplayMessage(CompositeType composite);
+        void DisplayMessage(MessageComposite messageComposite);
 
         /// <summary>
         /// Sends the message.
@@ -29,7 +29,7 @@ namespace SecureIM.ChatBackend
     }
 
     [DataContract]
-    public class CompositeType
+    public class MessageComposite
     {
         #region Public Properties
 
@@ -46,14 +46,14 @@ namespace SecureIM.ChatBackend
         #region Public Constructors
 
 
-        public CompositeType() { }
+        public MessageComposite() { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CompositeType"/> class.
+        /// Initializes a new instance of the <see cref="MessageComposite"/> class.
         /// </summary>
         /// <param name="u">The u.</param>
         /// <param name="m">The m.</param>
-        public CompositeType(string u, string m)
+        public MessageComposite(string u, string m)
         {
             Username = u;
             Message = m;

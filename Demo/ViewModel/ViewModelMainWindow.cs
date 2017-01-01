@@ -38,6 +38,7 @@ namespace Demo.ViewModel
             ItemCollection.Add(CreateTab2());
             ItemCollection.Add(CreateTab3());
             ItemCollection.Add(CreateTabLoremIpsum());
+            ItemCollection.Add(CreateTabChatWindow());
 
             SelectedTab = ItemCollection.FirstOrDefault();
             var view = CollectionViewSource.GetDefaultView(ItemCollection) as ICollectionView;

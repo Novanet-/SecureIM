@@ -62,13 +62,13 @@ namespace SecureIM.ChatBackend
         /// We're really only returning a string for demonstration purposes … it might be cleaner
         /// to return void and also make this a one-way communication channel.
         /// </summary>
-        /// <param name="composite">The composite.</param>
-        /// <exception cref="System.ArgumentNullException">composite</exception>
-        public void DisplayMessage(CompositeType composite)
+        /// <param name="messageComposite">The messageComposite.</param>
+        /// <exception cref="System.ArgumentNullException">messageComposite</exception>
+        public void DisplayMessage(MessageComposite messageComposite)
         {
-            if (composite == null) throw new ArgumentNullException(nameof(composite));
+            if (messageComposite == null) throw new ArgumentNullException(nameof(messageComposite));
 
-            DisplayMessageDelegate?.Invoke(composite);
+            DisplayMessageDelegate?.Invoke(messageComposite);
         }
 
         /// <summary>
@@ -80,13 +80,13 @@ namespace SecureIM.ChatBackend
             if (text.StartsWith("setname:", StringComparison.OrdinalIgnoreCase))
             {
                 User.Name = text.Substring("setname:".Length).Trim();
-                DisplayMessageDelegate(new CompositeType("Event", "Setting your name to " + User.Name));
+                DisplayMessageDelegate(new MessageComposite("Event", "Setting your name to " + User.Name));
             }
             else
             {
                 // In order to send a message, we call our friends' DisplayMessage method
                 new ChannelFactory<IChatBackend>("ChatEndpoint").CreateChannel()
-                                                                .DisplayMessage(new CompositeType(User.Name, text));
+                                                                .DisplayMessage(new MessageComposite(User.Name, text));
             }
         }
 
@@ -112,10 +112,10 @@ namespace SecureIM.ChatBackend
             Comms.Host.Open();
 
             // Information to send to the channel
-            channel.DisplayMessage(new CompositeType("Event", User.Name + " has entered the conversation."));
+            channel.DisplayMessage(new MessageComposite("Event", User.Name + " has entered the conversation."));
 
             // Information to display locally
-            DisplayMessageDelegate(new CompositeType("Info", "To change your name, type setname: NEW_NAME"));
+            DisplayMessageDelegate(new MessageComposite("Info", "To change your name, type setname: NEW_NAME"));
         }
 
         /// <summary>
@@ -127,7 +127,7 @@ namespace SecureIM.ChatBackend
 
             var channelFactory = new ChannelFactory<IChatBackend>("ChatEndpoint");
             channelFactory.CreateChannel()
-                          .DisplayMessage(new CompositeType("Event", User.Name + " is leaving the conversation."));
+                          .DisplayMessage(new MessageComposite("Event", User.Name + " is leaving the conversation."));
 
             if (Comms.Host.State == CommunicationState.Closed) return;
 

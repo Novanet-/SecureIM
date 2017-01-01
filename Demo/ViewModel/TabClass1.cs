@@ -1,6 +1,4 @@
-﻿using System.Windows.Controls;
-
-namespace Demo.ViewModel
+﻿namespace Demo.ViewModel
 {
     public class TabClass1 : TabBase
     {
