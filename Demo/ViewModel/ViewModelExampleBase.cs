@@ -63,7 +63,7 @@ namespace Demo.ViewModel
         protected TabClass1 CreateTab1()
         {
             var i = 0;
-            var tab = new TabClass1()
+            var tab = new TabClass1
             {
                 TabName = "Tab class 1",
                 MyStringContent = "Try drag the tab from left to right",
@@ -77,7 +77,7 @@ namespace Demo.ViewModel
 
         protected TabClass2 CreateTab2()
         {
-            var tab = new TabClass2()
+            var tab = new TabClass2
             {
                 TabName = "Tab class 2, with a long name",
                 MyStringContent = "Try drag the tab outside the bonds of the tab control",
@@ -90,7 +90,7 @@ namespace Demo.ViewModel
 
         protected TabClass3 CreateTab3()
         {
-            var tab = new TabClass3()
+            var tab = new TabClass3
             {
                 TabName = "Tab class 3",
                 MyStringContent =
@@ -103,7 +103,7 @@ namespace Demo.ViewModel
 
         protected TabClass4 CreateTab4()
         {
-            var tab = new TabClass4()
+            var tab = new TabClass4
             {
                 TabName = "Tab class 4",
                 MyStringContent = "This tab demonstrates a custom tab header implementation",
