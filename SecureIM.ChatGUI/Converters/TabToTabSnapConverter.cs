@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Data;
-using Demo.ViewModel;
+using SecureIM.ChatGUI.ViewModel;
+using SecureIM.ChatGUI.ViewModel.TabClasses;
 
-namespace Demo.Converters
+namespace SecureIM.ChatGUI.Converters
 {
     /// <summary>
-    ///     This converter is to demonstrate how to dynamically choose what tabs can snap out to form new windows.
+    ///     This converter is to SecureIM.ChatGUInstrate how to dynamically choose what tabs can snap out to form new windows.
     /// </summary>
     public class TabToTabSnapConverter : IValueConverter
     {

@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace Demo.Converters
+namespace SecureIM.ChatGUI.Converters
 {
     public class InverseBooleanToVisibilityConverter : IValueConverter
     {

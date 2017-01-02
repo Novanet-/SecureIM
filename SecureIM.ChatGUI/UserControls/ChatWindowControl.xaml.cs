@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Windows.Controls;
 using System.Windows.Input;
 using SecureIM.ChatBackend;
 
-namespace Demo.UserControls
+namespace SecureIM.ChatGUI.UserControls
 {
     /// <summary>
     ///     Interaction logic for ChatWindowControl.xaml
@@ -12,7 +11,7 @@ namespace Demo.UserControls
     {
         #region Private Fields
 
-        public ChatBackend Backend { get; }
+        public ChatBackend.ChatBackend Backend { get; }
 
         #endregion Private Fields
 
@@ -25,7 +24,7 @@ namespace Demo.UserControls
         public ChatWindowControl()
         {
             InitializeComponent();
-            Backend = new ChatBackend(DisplayMessage);
+            Backend = new ChatBackend.ChatBackend(DisplayMessage);
         }
 
         #endregion Public Constructors

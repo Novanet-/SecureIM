@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureIM.ChatBackend", "Sec
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureIM.Smartcard", "SecureIM.Smartcard\SecureIM.Smartcard.csproj", "{C4D4F353-9443-4512-9298-6328059B47D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo", "Demo\Demo.csproj", "{7D38F2BF-9CC6-4377-9098-9E86B73BEE4B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureIM.ChatGUI", "SecureIM.ChatGUI\SecureIM.ChatGUI.csproj", "{7D38F2BF-9CC6-4377-9098-9E86B73BEE4B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

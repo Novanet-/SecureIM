@@ -8,11 +8,12 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 using ChromeTabs;
-using Demo.Properties;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using SecureIM.ChatGUI.Properties;
+using SecureIM.ChatGUI.ViewModel.TabClasses;
 
-namespace Demo.ViewModel
+namespace SecureIM.ChatGUI.ViewModel
 {
     public class ViewModelExampleBase : ViewModelBase
     {
@@ -94,7 +95,7 @@ namespace Demo.ViewModel
             {
                 TabName = "Tab class 3",
                 MyStringContent =
-                        "Try right clicking on the tab header. This tab can not be dragged out to a new window, to demonstrate that you can dynamically choose what tabs can, based on the viewmodel.",
+                        "Try right clicking on the tab header. This tab can not be dragged out to a new window, to SecureIM.ChatGUInstrate that you can dynamically choose what tabs can, based on the viewmodel.",
                 MyImageUrl = new Uri("/Resources/Kitten.jpg", UriKind.Relative),
                 TabIcon = new BitmapImage(new Uri("/Resources/3.png", UriKind.Relative))
             };
@@ -106,7 +107,7 @@ namespace Demo.ViewModel
             var tab = new TabClass4
             {
                 TabName = "Tab class 4",
-                MyStringContent = "This tab demonstrates a custom tab header implementation",
+                MyStringContent = "This tab SecureIM.ChatGUInstrates a custom tab header implementation",
                 IsBlinking = true
             };
             return tab;

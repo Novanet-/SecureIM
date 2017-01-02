@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-namespace Demo
+namespace SecureIM.ChatGUI.view.alternativeViews
 {
     public class CustomTabShape : Shape
     {

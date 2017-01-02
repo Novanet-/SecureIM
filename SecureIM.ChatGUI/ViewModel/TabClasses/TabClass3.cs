@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Demo.ViewModel
+namespace SecureIM.ChatGUI.ViewModel.TabClasses
 {
     public class TabClass3 : TabBase
     {

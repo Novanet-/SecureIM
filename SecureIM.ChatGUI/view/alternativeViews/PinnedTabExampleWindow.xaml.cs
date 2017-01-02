@@ -1,8 +1,8 @@
 ﻿using System.Windows;
 using ChromeTabs;
-using Demo.ViewModel;
+using SecureIM.ChatGUI.ViewModel.TabClasses;
 
-namespace Demo
+namespace SecureIM.ChatGUI.view.alternativeViews
 {
     /// <summary>
     ///     Interaction logic for PinnedTabExample.xaml

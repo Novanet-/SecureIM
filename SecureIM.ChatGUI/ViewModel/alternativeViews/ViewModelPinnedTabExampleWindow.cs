@@ -2,8 +2,10 @@
 using System.Linq;
 using System.Windows.Data;
 using GalaSoft.MvvmLight.Command;
+using SecureIM.ChatGUI.ViewModel.interfaces;
+using SecureIM.ChatGUI.ViewModel.TabClasses;
 
-namespace Demo.ViewModel
+namespace SecureIM.ChatGUI.ViewModel.alternativeViews
 {
     public class ViewModelPinnedTabExampleWindow : ViewModelExampleBase, IViewModelPinnedTabExampleWindow
     {

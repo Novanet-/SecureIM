@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Demo.Utilities
+namespace SecureIM.ChatGUI.Utilities
 {
     public class Win32
     {

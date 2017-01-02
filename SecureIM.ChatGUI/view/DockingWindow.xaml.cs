@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Media.Animation;
 
-namespace Demo
+namespace SecureIM.ChatGUI.view
 {
     /// <summary>
     ///     Interaction logic for DockingWindow.xaml

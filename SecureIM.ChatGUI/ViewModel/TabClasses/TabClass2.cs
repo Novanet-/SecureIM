@@ -1,4 +1,4 @@
-﻿namespace Demo.ViewModel
+﻿namespace SecureIM.ChatGUI.ViewModel.TabClasses
 {
     public class TabClass2 : TabBase
     {

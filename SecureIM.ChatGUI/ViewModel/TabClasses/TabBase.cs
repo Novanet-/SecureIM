@@ -1,7 +1,7 @@
 ﻿using System.Windows.Media;
 using GalaSoft.MvvmLight;
 
-namespace Demo.ViewModel
+namespace SecureIM.ChatGUI.ViewModel.TabClasses
 {
     public abstract class TabBase : ViewModelBase
     {

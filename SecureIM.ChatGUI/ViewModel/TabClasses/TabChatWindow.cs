@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace Demo.ViewModel
+namespace SecureIM.ChatGUI.ViewModel.TabClasses
 {
     public class TabChatWindow : TabBase
     {

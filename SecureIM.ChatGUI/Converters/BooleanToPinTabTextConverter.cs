@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace Demo.Converters
+namespace SecureIM.ChatGUI.Converters
 {
     public class BooleanToPinTabTextConverter : IValueConverter
     {

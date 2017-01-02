@@ -1,7 +1,7 @@
 /*
   In App.xaml:
   <Application.Resources>
-      <vm:ViewModelLocator xmlns:vm="clr-namespace:Demo"
+      <vm:ViewModelLocator xmlns:vm="clr-namespace:SecureIM.ChatGUI"
                            x:Key="Locator" />
   </Application.Resources>
   
@@ -15,8 +15,12 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
+using SecureIM.ChatGUI.SampleData;
+using SecureIM.ChatGUI.ViewModel;
+using SecureIM.ChatGUI.ViewModel.alternativeViews;
+using SecureIM.ChatGUI.ViewModel.interfaces;
 
-namespace Demo.ViewModel
+namespace SecureIM.ChatGUI.ViewModel
 {
     /// <summary>
     /// This class contains static references to all the view models in the
@@ -34,9 +38,9 @@ namespace Demo.ViewModel
             if (ViewModelBase.IsInDesignModeStatic)
             {
                 // Create design time view services and models
-                SimpleIoc.Default.Register<IViewModelMainWindow, SampleData.SampleViewModelMainWindow>();
-                SimpleIoc.Default.Register<IViewModelPinnedTabExampleWindow, SampleData.SampleViewModelPinnedTabExampleWindow>();
-                SimpleIoc.Default.Register<IViewModelCustomStyleExampleWindow, SampleData.SampleViewModelCustomStyleExampleWindow>();
+                SimpleIoc.Default.Register<IViewModelMainWindow, SampleViewModelMainWindow>();
+                SimpleIoc.Default.Register<IViewModelPinnedTabExampleWindow, SampleViewModelPinnedTabExampleWindow>();
+                SimpleIoc.Default.Register<IViewModelCustomStyleExampleWindow, SampleViewModelCustomStyleExampleWindow>();
             }
             else
             {

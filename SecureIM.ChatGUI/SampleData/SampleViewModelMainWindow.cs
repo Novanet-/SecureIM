@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Demo.ViewModel;
+using SecureIM.ChatGUI.ViewModel;
+using SecureIM.ChatGUI.ViewModel.interfaces;
+using SecureIM.ChatGUI.ViewModel.TabClasses;
 
-namespace Demo.SampleData
+namespace SecureIM.ChatGUI.SampleData
 {
     public class SampleViewModelMainWindow : ViewModelExampleBase, IViewModelMainWindow
     {

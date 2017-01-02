@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Demo
+namespace SecureIM.ChatGUI.view.alternativeViews
 {
     /// <summary>
     ///     Interaction logic for CustomStyleExampleWindow.xaml

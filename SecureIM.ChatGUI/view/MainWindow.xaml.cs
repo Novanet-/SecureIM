@@ -8,10 +8,11 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using ChromeTabs;
-using Demo.Utilities;
-using Demo.ViewModel;
+using SecureIM.ChatGUI.Utilities;
+using SecureIM.ChatGUI.ViewModel;
+using SecureIM.ChatGUI.ViewModel.TabClasses;
 
-namespace Demo
+namespace SecureIM.ChatGUI.view
 {
     /// <summary>
     ///     Interaction logic for MainWindow.xaml

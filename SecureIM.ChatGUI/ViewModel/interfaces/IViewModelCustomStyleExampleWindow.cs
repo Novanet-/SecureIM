@@ -1,4 +1,4 @@
-﻿namespace Demo.ViewModel
+﻿namespace SecureIM.ChatGUI.ViewModel.interfaces
 {
     public interface IViewModelCustomStyleExampleWindow
     {

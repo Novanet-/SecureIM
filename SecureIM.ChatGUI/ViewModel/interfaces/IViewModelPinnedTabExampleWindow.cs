@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight.Command;
+using SecureIM.ChatGUI.ViewModel.TabClasses;
 
-namespace Demo.ViewModel
+namespace SecureIM.ChatGUI.ViewModel.interfaces
 {
     public interface IViewModelPinnedTabExampleWindow
     {

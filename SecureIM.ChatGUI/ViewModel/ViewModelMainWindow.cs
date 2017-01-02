@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
+using SecureIM.ChatGUI.ViewModel.interfaces;
 
-namespace Demo.ViewModel
+namespace SecureIM.ChatGUI.ViewModel
 {
     public class ViewModelMainWindow : ViewModelExampleBase, IViewModelMainWindow
     {

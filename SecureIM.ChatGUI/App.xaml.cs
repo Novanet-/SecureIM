@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Demo
+namespace SecureIM.ChatGUI
 {
     /// <summary>
     ///     Interaction logic for App.xaml

@@ -7,8 +7,8 @@
     <ProjectGuid>{7D38F2BF-9CC6-4377-9098-9E86B73BEE4B}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Demo</RootNamespace>
-    <AssemblyName>Demo</AssemblyName>
+    <RootNamespace>SecureIM.ChatGUI</RootNamespace>
+    <AssemblyName>SecureIM.ChatGUI</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -38,7 +38,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>Demo.App</StartupObject>
+    <StartupObject>
+    </StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ChromeTabs, Version=1.2.7.0, Culture=neutral, processorArchitecture=MSIL">
@@ -87,14 +88,14 @@
     <Compile Include="Converters\BooleanToPinTabTextConverter.cs" />
     <Compile Include="Converters\InverseBooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\TabToTabSnapConverter.cs" />
-    <Compile Include="CustomStyleExampleWindow.xaml.cs">
+    <Compile Include="view\CustomStyleExampleWindow.xaml.cs">
       <DependentUpon>CustomStyleExampleWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CustomTabShape.cs" />
-    <Compile Include="DockingWindow.xaml.cs">
+    <Compile Include="view\CustomTabShape.cs" />
+    <Compile Include="view\DockingWindow.xaml.cs">
       <DependentUpon>DockingWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PinnedTabExampleWindow.xaml.cs">
+    <Compile Include="view\PinnedTabExampleWindow.xaml.cs">
       <DependentUpon>PinnedTabExampleWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="SampleData\SampleViewModelCustomStyleExampleWindow.cs" />
@@ -109,15 +110,15 @@
     <Compile Include="UserControls\UserControl4.xaml.cs">
       <DependentUpon>UserControl4.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\IViewModelCustomStyleExampleWindow.cs" />
-    <Compile Include="ViewModel\IViewModelMainWindow.cs" />
-    <Compile Include="ViewModel\IViewModelPinnedTabExampleWindow.cs" />
+    <Compile Include="ViewModel\interfaces\IViewModelCustomStyleExampleWindow.cs" />
+    <Compile Include="ViewModel\interfaces\IViewModelMainWindow.cs" />
+    <Compile Include="ViewModel\interfaces\IViewModelPinnedTabExampleWindow.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
-    <Compile Include="ViewModel\TabBase.cs" />
-    <Compile Include="ViewModel\TabChatWindow.cs" />
-    <Compile Include="ViewModel\TabClass1.cs" />
-    <Compile Include="ViewModel\TabClass2.cs" />
-    <Compile Include="ViewModel\TabClass3.cs" />
+    <Compile Include="ViewModel\TabClasses\TabBase.cs" />
+    <Compile Include="ViewModel\TabClasses\TabChatWindow.cs" />
+    <Compile Include="ViewModel\TabClasses\TabClass1.cs" />
+    <Compile Include="ViewModel\TabClasses\TabClass2.cs" />
+    <Compile Include="ViewModel\TabClasses\TabClass3.cs" />
     <Compile Include="UserControls\UserControl2.xaml.cs">
       <DependentUpon>UserControl2.xaml</DependentUpon>
     </Compile>
@@ -125,21 +126,21 @@
       <DependentUpon>UserControl3.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utilities\Win32.cs" />
-    <Compile Include="ViewModel\TabClass4.cs" />
-    <Compile Include="ViewModel\ViewModelCustomStyleExampleWindow.cs" />
+    <Compile Include="ViewModel\TabClasses\TabClass4.cs" />
+    <Compile Include="ViewModel\alternativeViews\ViewModelCustomStyleExampleWindow.cs" />
     <Compile Include="ViewModel\ViewModelExampleBase.cs" />
     <Compile Include="ViewModel\ViewModelMainWindow.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
-    <Compile Include="ViewModel\ViewModelPinnedTabExampleWindow.cs" />
-    <Page Include="CustomStyleExampleWindow.xaml">
+    <Compile Include="ViewModel\alternativeViews\ViewModelPinnedTabExampleWindow.cs" />
+    <Page Include="view\CustomStyleExampleWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="DockingWindow.xaml">
+    <Page Include="view\DockingWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="view\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -147,11 +148,11 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="view\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="PinnedTabExampleWindow.xaml">
+    <Page Include="view\PinnedTabExampleWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

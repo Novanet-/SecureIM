@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace Demo.UserControls
+namespace SecureIM.ChatGUI.UserControls
 {
     /// <summary>
     ///     Interaction logic for UserControl2.xaml
