@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureIM.ChatGUI", "SecureIM.ChatGUI\SecureIM.ChatGUI.csproj", "{FC394E08-4DED-48D9-90A8-65EBFA774680}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureIM.ChatBackend", "SecureIM.ChatBackend\SecureIM.ChatBackend.csproj", "{C278CDC6-398B-44F6-87B9-78920FA361A5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureIM.Smartcard", "SecureIM.Smartcard\SecureIM.Smartcard.csproj", "{C4D4F353-9443-4512-9298-6328059B47D3}"
@@ -17,10 +15,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{FC394E08-4DED-48D9-90A8-65EBFA774680}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FC394E08-4DED-48D9-90A8-65EBFA774680}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FC394E08-4DED-48D9-90A8-65EBFA774680}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FC394E08-4DED-48D9-90A8-65EBFA774680}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C278CDC6-398B-44F6-87B9-78920FA361A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C278CDC6-398B-44F6-87B9-78920FA361A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C278CDC6-398B-44F6-87B9-78920FA361A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
