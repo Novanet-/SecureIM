@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Data;
-using SecureIM.ChatGUI.ViewModel;
 using SecureIM.ChatGUI.ViewModel.TabClasses;
 
 namespace SecureIM.ChatGUI.Converters
@@ -12,10 +11,7 @@ namespace SecureIM.ChatGUI.Converters
     public class TabToTabSnapConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is TabClass3) return false;
-            else return true;
-        }
+            => !(value is TabClass3);
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {

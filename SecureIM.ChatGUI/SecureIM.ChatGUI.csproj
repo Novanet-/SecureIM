@@ -88,19 +88,19 @@
     <Compile Include="Converters\BooleanToPinTabTextConverter.cs" />
     <Compile Include="Converters\InverseBooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\TabToTabSnapConverter.cs" />
-    <Compile Include="view\CustomStyleExampleWindow.xaml.cs">
+    <Compile Include="view\alternativeViews\CustomStyleExampleWindow.xaml.cs">
       <DependentUpon>CustomStyleExampleWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="view\CustomTabShape.cs" />
+    <Compile Include="view\alternativeViews\CustomTabShape.cs" />
     <Compile Include="view\DockingWindow.xaml.cs">
       <DependentUpon>DockingWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="view\PinnedTabExampleWindow.xaml.cs">
+    <Compile Include="view\alternativeViews\PinnedTabExampleWindow.xaml.cs">
       <DependentUpon>PinnedTabExampleWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SampleData\SampleViewModelCustomStyleExampleWindow.cs" />
+    <Compile Include="SampleData\alternativeViewData\SampleViewModelCustomStyleExampleWindow.cs" />
     <Compile Include="SampleData\SampleViewModelMainWindow.cs" />
-    <Compile Include="SampleData\SampleViewModelPinnedTabExampleWindow.cs" />
+    <Compile Include="SampleData\alternativeViewData\SampleViewModelPinnedTabExampleWindow.cs" />
     <Compile Include="UserControls\ChatWindowControl.xaml.cs">
       <DependentUpon>ChatWindowControl.xaml</DependentUpon>
     </Compile>
@@ -132,7 +132,7 @@
     <Compile Include="ViewModel\ViewModelMainWindow.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="ViewModel\alternativeViews\ViewModelPinnedTabExampleWindow.cs" />
-    <Page Include="view\CustomStyleExampleWindow.xaml">
+    <Page Include="view\alternativeViews\CustomStyleExampleWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -152,7 +152,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="view\PinnedTabExampleWindow.xaml">
+    <Page Include="view\alternativeViews\PinnedTabExampleWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -206,12 +206,12 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\kitten.jpg" />
+    <Resource Include="Resources\images\kitten.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\1.png" />
-    <Resource Include="Resources\2.png" />
-    <Resource Include="Resources\3.png" />
+    <Resource Include="Resources\images\1.png" />
+    <Resource Include="Resources\images\2.png" />
+    <Resource Include="Resources\images\3.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SecureIM.ChatBackend\SecureIM.ChatBackend.csproj">

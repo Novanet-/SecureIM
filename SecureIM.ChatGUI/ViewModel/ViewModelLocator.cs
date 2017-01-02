@@ -16,6 +16,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
 using SecureIM.ChatGUI.SampleData;
+using SecureIM.ChatGUI.SampleData.alternativeViewData;
 using SecureIM.ChatGUI.ViewModel;
 using SecureIM.ChatGUI.ViewModel.alternativeViews;
 using SecureIM.ChatGUI.ViewModel.interfaces;

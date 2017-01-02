@@ -8,9 +8,9 @@ namespace SecureIM.ChatGUI.Converters
     public class InverseBooleanToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return new BooleanToVisibilityConverter().Convert(!(bool) value, targetType, parameter, culture);
-        }
+            =>
+                    new BooleanToVisibilityConverter().Convert(!(bool?) value == true, targetType, parameter,
+                                                               culture);
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {

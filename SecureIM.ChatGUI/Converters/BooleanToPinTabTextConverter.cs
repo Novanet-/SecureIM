@@ -7,10 +7,7 @@ namespace SecureIM.ChatGUI.Converters
     public class BooleanToPinTabTextConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if ((bool) value == true) return "Unpin Tab";
-            else return "Pin Tab";
-        }
+            => (bool?) value == true ? "Unpin Tab" : "Pin Tab";
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {

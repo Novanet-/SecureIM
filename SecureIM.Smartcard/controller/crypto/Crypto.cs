@@ -22,7 +22,11 @@ namespace SecureIM.Smartcard.controller.crypto
             int padLength = padToLength - inputLength % padToLength % padToLength;
             byte bytePadLength = Convert.ToByte(padLength);
             var sb = new StringBuilder(inputString);
-            for (byte i = 0; i < bytePadLength; i++) sb.Append(Encoding.ASCII.GetString(new[] {bytePadLength}));
+            for (byte i = 0; i < bytePadLength; i++)
+            {
+                sb.Append(Encoding.ASCII.GetString(new[] {bytePadLength}));
+            }
+
             return sb.ToString();
         }
 

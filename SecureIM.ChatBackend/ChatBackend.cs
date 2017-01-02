@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ServiceModel;
+using JetBrains.Annotations;
 using SecureIM.ChatBackend.model;
 
 namespace SecureIM.ChatBackend
@@ -9,22 +10,17 @@ namespace SecureIM.ChatBackend
     {
         #region Public Properties
 
-
         public Comms Comms { get; private set; }
         public DisplayMessageDelegate DisplayMessageDelegate { get; }
         public User User { get; }
 
-
         #endregion Public Properties
-
-
 
 
         #region Public Constructors
 
-
         /// <summary>
-        /// ChatBackend constructor should be called with a delegate that is capable of displaying messages.
+        ///     ChatBackend constructor should be called with a delegate that is capable of displaying messages.
         /// </summary>
         /// <param name="dmd">DisplayMessageDelegate</param>
         public ChatBackend(DisplayMessageDelegate dmd)
@@ -34,37 +30,29 @@ namespace SecureIM.ChatBackend
             StartService();
         }
 
-
         #endregion Public Constructors
-
-
 
 
         #region Private Constructors
 
-
         /// <summary>
-        /// The default constructor is only here for testing purposes.
+        ///     The default constructor is only here for testing purposes.
         /// </summary>
         private ChatBackend() { }
-
 
         #endregion Private Constructors
 
 
-
-
         #region Public Methods
 
-
         /// <summary>
-        /// This method gets called by our friends when they want to display a message on our screen.
-        /// We're really only returning a string for demonstration purposes … it might be cleaner
-        /// to return void and also make this a one-way communication channel.
+        ///     This method gets called by our friends when they want to display a message on our screen.
+        ///     We're really only returning a string for demonstration purposes … it might be cleaner
+        ///     to return void and also make this a one-way communication channel.
         /// </summary>
         /// <param name="messageComposite">The messageComposite.</param>
         /// <exception cref="System.ArgumentNullException">messageComposite</exception>
-        public void DisplayMessage(MessageComposite messageComposite)
+        public void DisplayMessage([NotNull] MessageComposite messageComposite)
         {
             if (messageComposite == null) throw new ArgumentNullException(nameof(messageComposite));
 
@@ -72,10 +60,10 @@ namespace SecureIM.ChatBackend
         }
 
         /// <summary>
-        /// The front-end calls the SendMessage method in order to broadcast a message to our friends
+        ///     The front-end calls the SendMessage method in order to broadcast a message to our friends
         /// </summary>
         /// <param name="text">The text.</param>
-        public void SendMessage(string text)
+        public void SendMessage([NotNull] string text)
         {
             if (text.StartsWith("setname:", StringComparison.OrdinalIgnoreCase))
             {
@@ -90,17 +78,13 @@ namespace SecureIM.ChatBackend
             }
         }
 
-
         #endregion Public Methods
-
-
 
 
         #region Private Methods
 
-
         /// <summary>
-        /// Starts the service.
+        ///     Starts the service.
         /// </summary>
         private void StartService()
         {
@@ -119,7 +103,7 @@ namespace SecureIM.ChatBackend
         }
 
         /// <summary>
-        /// Stops the service.
+        ///     Stops the service.
         /// </summary>
         private void StopService()
         {
@@ -134,7 +118,6 @@ namespace SecureIM.ChatBackend
             channelFactory.Close();
             Comms.Host.Close();
         }
-
 
         #endregion Private Methods
     }

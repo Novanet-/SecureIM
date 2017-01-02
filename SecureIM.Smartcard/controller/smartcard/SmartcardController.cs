@@ -179,6 +179,7 @@ namespace SecureIM.Smartcard.controller.smartcard
 
             string readerName = ChooseReader(readerNames);
             if (readerName == null) throw new Exception("No readers found/Could not connect to reader");
+
             return readerName;
         }
 

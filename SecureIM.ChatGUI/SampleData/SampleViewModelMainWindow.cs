@@ -17,16 +17,13 @@ namespace SecureIM.ChatGUI.SampleData
         {
             get
             {
-                if (_itemCollection == null)
+                return _itemCollection ?? (_itemCollection = new ObservableCollection<TabBase>
                 {
-                    _itemCollection = new ObservableCollection<TabBase>();
-
-                    _itemCollection.Add(CreateTab1());
-                    _itemCollection.Add(CreateTab2());
-                    _itemCollection.Add(CreateTab3());
-                    _itemCollection.Add(CreateTabLoremIpsum());
-                }
-                return _itemCollection;
+                    CreateTab1(),
+                    CreateTab2(),
+                    CreateTab3(),
+                    CreateTabLoremIpsum()
+                });
             }
             set { _itemCollection = value; }
         }
