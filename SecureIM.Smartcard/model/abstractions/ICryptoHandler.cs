@@ -8,7 +8,7 @@
 
         string Encrypt(string data, byte[] keyBytes);
 
-        bool GenerateAsymmetricKeyPair();
+        void GenerateAsymmetricKeyPair();
 
         byte[] GetPublicKey();
 
