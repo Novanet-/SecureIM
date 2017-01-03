@@ -175,7 +175,7 @@ namespace SecureIM.ChatGUI.ViewModel
         }
 
         //To close a tab, we simply remove the viewmodel from the source collection.
-        private void CloseTabCommandAction(TabBase vm) { ItemCollection.Remove(vm); }
+        private void CloseTabCommandAction(TabBase vm) => ItemCollection.Remove(vm);
 
         //Adds a random tab
         private void AddTabCommandAction()

@@ -178,7 +178,7 @@
 
                         <ControlTemplate.Triggers>
                             <!--  This is a trigger that will blink the tab with a notifying color bound to a boolean value in the ViewModel  -->
-                            <DataTrigger Binding="{Binding IsBlinking}" Value="true">
+                            <DataTrigger Binding="{Binding (tabClasses:TabClass4.IsBlinking)}" Value="true">
                                 <DataTrigger.EnterActions>
                                     <BeginStoryboard x:Name="BeginBlinkTabStoryboard">
                                         <Storyboard Duration="1:0:0"

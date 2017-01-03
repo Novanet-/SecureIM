@@ -42,9 +42,9 @@ namespace SecureIM.ChatGUI.ViewModel
             ItemCollection.Add(CreateTabChatWindow());
 
             SelectedTab = ItemCollection.FirstOrDefault();
-            var view = CollectionViewSource.GetDefaultView(ItemCollection) as ICollectionView;
+            var view = CollectionViewSource.GetDefaultView(ItemCollection);
 
-            //This sort description is what keeps the source collection sorted, based on tab number. 
+            //This sort description is what keeps the source collection sorted, based on tab number.
             //You can also use the sort description to manually sort the tabs, based on your own criterias.
             view.SortDescriptions.Add(new SortDescription("TabNumber", ListSortDirection.Ascending));
 

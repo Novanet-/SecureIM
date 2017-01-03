@@ -4,7 +4,9 @@
         xmlns:converters="clr-namespace:SecureIM.ChatGUI.Converters"
         xmlns:ct="clr-namespace:ChromeTabs;assembly=ChromeTabs"
         xmlns:ctConv="clr-namespace:ChromeTabs.Converters;assembly=ChromeTabs"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="clr-namespace:SecureIM.ChatGUI"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:tabClasses="clr-namespace:SecureIM.ChatGUI.ViewModel.TabClasses"
         xmlns:userControls="clr-namespace:SecureIM.ChatGUI.UserControls"
         xmlns:viewModel="clr-namespace:SecureIM.ChatGUI.ViewModel"
@@ -15,7 +17,8 @@
         Height="600"
         Background="WhiteSmoke"
         DataContext="{Binding Source={StaticResource Locator},
-                              Path=ViewModelMainWindow}">
+                              Path=ViewModelMainWindow}"
+        mc:Ignorable="d">
     <!--  These DataTemplates load the correct user control based on the viewmodel  -->
     <Window.Resources>
         <converters:TabToTabSnapConverter x:Key="TabToTabSnapConverter" />
@@ -39,6 +42,7 @@
         </Grid.RowDefinitions>
         <!--  The tab control with with tab tearing support.  -->
         <ct:ChromeTabControl x:Name="MyChromeTabControl"
+                             d:DataContext="{d:DesignInstance viewModel:ViewModelMainWindow}"
                              AddTabButtonBehavior="OpenNewTab"
                              AddTabCommand="{Binding AddTabCommand}"
                              Background="AliceBlue"
@@ -53,7 +57,6 @@
                              ReorderTabsCommand="{Binding ReorderTabsCommand}"
                              SelectedItem="{Binding SelectedTab}"
                              SelectedTabBrush="WhiteSmoke"
-                             SelectionChanged="MyChromeTabControl_SelectionChanged"
                              TabDraggedOutsideBonds="ChromeTabControl_TabDraggedOutsideBonds"
                              TabPersistBehavior="All"
                              TabTearTriggerDistance="10">
@@ -116,7 +119,6 @@
                                           CommandTarget="{Binding Mode=OneWay,
                                                                   RelativeSource={RelativeSource TemplatedParent}}"
                                           Header="Close other tabs" />
-
                             </ContextMenu>
                         </Grid.ContextMenu>
 
@@ -139,14 +141,16 @@
                     HorizontalAlignment="Right"
                     VerticalAlignment="Center"
                     Orientation="Horizontal">
-            <Button x:Name="button"
+            <Button x:Name="Button"
                     Width="75"
                     Margin="5"
                     HorizontalAlignment="Left"
+                    d:DataContext="{d:DesignInstance viewModel:ViewModelExampleBase}"
                     Command="{Binding AddTabCommand}"
                     Content="Add Tab" />
             <CheckBox Margin="5"
                       VerticalAlignment="Center"
+                      d:DataContext="{d:DesignInstance viewModel:ViewModelExampleBase}"
                       Content="Can add tabs"
                       IsChecked="{Binding CanAddTabs,
                                           Mode=TwoWay}" />
@@ -175,6 +179,5 @@
                     Click="BnOpenCustomStyleExample_Click"
                     Content="Custom style example" />
         </StackPanel>
-
     </Grid>
 </Window>

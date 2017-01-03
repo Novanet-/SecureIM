@@ -14,14 +14,14 @@
             <RowDefinition Height="35*" />
             <RowDefinition Height="35" />
         </Grid.RowDefinitions>
-        <TextBox Name="textBoxChatPane"
+        <TextBox Name="TextBoxChatPane"
                  Grid.Row="0"
                  Width="Auto"
                  Height="Auto"
                  Margin="6,6,6,6"
                  HorizontalAlignment="Stretch"
                  VerticalAlignment="Stretch" />
-        <TextBox Name="textBoxEntryField"
+        <TextBox Name="TextBoxEntryField"
                  Grid.Row="1"
                  Width="Auto"
                  Height="23"

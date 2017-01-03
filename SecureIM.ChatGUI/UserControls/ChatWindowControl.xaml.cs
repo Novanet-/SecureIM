@@ -43,7 +43,7 @@ namespace SecureIM.ChatGUI.UserControls
         {
             string username = messageComposite.Username ?? "";
             string message = messageComposite.Message ?? "";
-            textBoxChatPane.Text += username + ": " + message + Environment.NewLine;
+            TextBoxChatPane.Text += username + ": " + message + Environment.NewLine;
         }
 
         #endregion Public Methods
@@ -55,8 +55,8 @@ namespace SecureIM.ChatGUI.UserControls
         {
             if (!(e.Key == Key.Return || e.Key == Key.Enter)) return;
 
-            Backend.SendMessage(textBoxEntryField.Text);
-            textBoxEntryField.Clear();
+            Backend.SendMessage(TextBoxEntryField.Text);
+            TextBoxEntryField.Clear();
         }
 
         #endregion Private Methods
