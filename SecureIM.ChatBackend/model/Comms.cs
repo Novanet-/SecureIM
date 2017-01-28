@@ -1,4 +1,5 @@
 using System.ServiceModel;
+using JetBrains.Annotations;
 
 namespace SecureIM.ChatBackend.model
 {
@@ -26,7 +27,8 @@ namespace SecureIM.ChatBackend.model
         /// <param name="channelFactory">The channel factory.</param>
         /// <param name="chatChannel">The chat channel.</param>
         /// <param name="host">The host.</param>
-        public Comms(ChannelFactory<IChatBackend> channelFactory, IChatBackend chatChannel, ServiceHost host)
+        public Comms([NotNull] ChannelFactory<IChatBackend> channelFactory, [NotNull] IChatBackend chatChannel,
+                     [NotNull] ServiceHost host)
         {
             ChatChannel = chatChannel;
             ChannelFactory = channelFactory;

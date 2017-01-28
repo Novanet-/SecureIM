@@ -2,7 +2,7 @@
 
 namespace SecureIM.Smartcard.model.smartcard.enums
 {
-    internal enum SecureIMCardInstructions
+    public enum SecureIMCardInstructions
     {
         INS_ECC_GEN_KEYPAIR,
         INS_ECC_GET_S,
@@ -13,5 +13,6 @@ namespace SecureIM.Smartcard.model.smartcard.enums
         INS_ECC_GEN_3DES_KEY,
         INS_ECC_SET_INPUT_TEXT,
         INS_ECC_DO_DES_CIPHER,
+        INS_SELECT_SCIM
     }
 }

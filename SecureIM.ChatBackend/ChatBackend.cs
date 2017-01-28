@@ -2,6 +2,8 @@
 using System.ServiceModel;
 using JetBrains.Annotations;
 using SecureIM.ChatBackend.model;
+using SecureIM.Smartcard.model.abstractions;
+using SecureIM.Smartcard.model.smartcard;
 
 namespace SecureIM.ChatBackend
 {
@@ -10,9 +12,10 @@ namespace SecureIM.ChatBackend
     {
         #region Public Properties
 
-        public Comms Comms { get; private set; }
-        public DisplayMessageDelegate DisplayMessageDelegate { get; }
-        public User User { get; }
+        [NotNull] public Comms Comms { get; private set; }
+        [NotNull] public DisplayMessageDelegate DisplayMessageDelegate { get; }
+        [NotNull] public User User { get; }
+        [NotNull] public ICryptoHandler CryptoHandler { get; }
 
         #endregion Public Properties
 
@@ -23,10 +26,12 @@ namespace SecureIM.ChatBackend
         ///     ChatBackend constructor should be called with a delegate that is capable of displaying messages.
         /// </summary>
         /// <param name="dmd">DisplayMessageDelegate</param>
-        public ChatBackend(DisplayMessageDelegate dmd)
+        // ReSharper disable once NotNullMemberIsNotInitialized
+        public ChatBackend([NotNull] DisplayMessageDelegate dmd)
         {
             User = new User();
             DisplayMessageDelegate = dmd;
+            CryptoHandler = new SmartcardCryptoHandler();
             StartService();
         }
 
@@ -38,6 +43,7 @@ namespace SecureIM.ChatBackend
         /// <summary>
         ///     The default constructor is only here for testing purposes.
         /// </summary>
+        // ReSharper disable once NotNullMemberIsNotInitialized
         private ChatBackend() { }
 
         #endregion Private Constructors
@@ -56,7 +62,7 @@ namespace SecureIM.ChatBackend
         {
             if (messageComposite == null) throw new ArgumentNullException(nameof(messageComposite));
 
-            DisplayMessageDelegate?.Invoke(messageComposite);
+            DisplayMessageDelegate(messageComposite);
         }
 
         /// <summary>
@@ -69,6 +75,14 @@ namespace SecureIM.ChatBackend
             {
                 User.Name = text.Substring("setname:".Length).Trim();
                 DisplayMessageDelegate(new MessageComposite("Event", "Setting your name to " + User.Name));
+            }
+            if (text.StartsWith("test1:", StringComparison.OrdinalIgnoreCase))
+            {
+                CryptoHandler.GenerateAsymmetricKeyPair();
+            }
+            if (text.StartsWith("exit:", StringComparison.OrdinalIgnoreCase))
+            {
+                StopService();
             }
             else
             {
@@ -107,8 +121,6 @@ namespace SecureIM.ChatBackend
         /// </summary>
         private void StopService()
         {
-            if (Comms.Host == null) return;
-
             var channelFactory = new ChannelFactory<IChatBackend>("ChatEndpoint");
             channelFactory.CreateChannel()
                           .DisplayMessage(new MessageComposite("Event", User.Name + " is leaving the conversation."));
