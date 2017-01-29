@@ -53,7 +53,10 @@ namespace SecureIM.Smartcard.model.smartcard
         }
 
         public void GenerateAsymmetricKeyPair()
-            => SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GEN_KEYPAIR);
+        {
+//            SmartcardController.SendCommand(SecureIMCardInstructions.INS_SELECT_SCIM);
+            SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GEN_KEYPAIR);
+        }
 
         public byte[] GetPublicKey() => SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GET_W);
 

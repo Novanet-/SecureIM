@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Text;
 using JetBrains.Annotations;
 using PCSC;
 using PCSC.Iso7816;
@@ -15,9 +16,13 @@ namespace SecureIM.Smartcard.controller.smartcard
         public static byte[] SECUREIMCARD_AID { get; } = {0xA0, 0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x10, 0x01};
 
         public SCardProtocol ActiveProtocol { get; }
+
         public SCardContext CardContext { get; } = new SCardContext();
+
         public SCardReader CardReader { get; }
+
         public IntPtr PioSendPci { get; }
+
         public SmartcardControllerBuilder ScControllerBuilder { get; } = new SmartcardControllerBuilder();
 
         #endregion Public Properties
@@ -26,7 +31,7 @@ namespace SecureIM.Smartcard.controller.smartcard
         #region Public Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SmartcardController"/> class.
+        ///     Initializes a new instance of the <see cref="SmartcardController" /> class.
         /// </summary>
         /// <exception cref="PCSCException">Protocol not supported: " + CardReader.ActiveProtocol</exception>
         public SmartcardController()
@@ -59,7 +64,7 @@ namespace SecureIM.Smartcard.controller.smartcard
         #region Public Methods
 
         /// <summary>
-        /// Sends the command.
+        ///     Sends the command.
         /// </summary>
         /// <param name="command">The command.</param>
         /// <param name="p1">The p1.</param>
@@ -69,23 +74,17 @@ namespace SecureIM.Smartcard.controller.smartcard
         /// <returns></returns>
         /// <exception cref="System.ArgumentOutOfRangeException">command - null</exception>
         [NotNull]
-        public byte[] SendCommand(SecureIMCardInstructions command, byte? p1 = 0x00, byte? p2 = 0x00,
-                                  [CanBeNull] byte[] data = null,
-                                  byte? le = 0x00)
+        public byte[] SendCommand(SecureIMCardInstructions command, byte? p1 = 0x00, byte? p2 = 0x00, [CanBeNull] byte[] data = null, byte? le = 0x00)
         {
-            var response = new byte[] {};
-            if (command == SecureIMCardInstructions.INS_SELECT_SCIM) { response = SelectApplet(); }
-            else if (command == SecureIMCardInstructions.INS_ECC_GEN_KEYPAIR) { GenerateKeyPair(); }
-            else if (command == SecureIMCardInstructions.INS_ECC_GET_S) { response = GetPrivateKey(); }
-            else if (command == SecureIMCardInstructions.INS_ECC_GET_W) { response = GetPublicKey(); }
-            else if (command == SecureIMCardInstructions.INS_ECC_SET_GUEST_W) { SetPublicKey(); }
-            else if (command == SecureIMCardInstructions.INS_ECC_GEN_SECRET) { GenerateSecret(); }
-            else if (command == SecureIMCardInstructions.INS_ECC_GEN_3DES_KEY) { GenerateDesKey(); }
-            else if (command == SecureIMCardInstructions.INS_ECC_SET_INPUT_TEXT) { SetInputText(); }
-            else if (command == SecureIMCardInstructions.INS_ECC_DO_DES_CIPHER) { response = DoDesCipher(); }
-            else if (command == SecureIMCardInstructions.INS_ECC_SET_S) { }
-            else
-            { throw new ArgumentOutOfRangeException(nameof(command), command, null); }
+            string dataString = data != null && data.Length != 0 ? data.ToString() : "None";
+            Debug.WriteLine($"Creating and sending {command} with P1 = {p1}, P2 = {p2} and Data = {dataString}");
+
+            byte[] response = SendCommandTransmitter(command);
+
+            var responseDataString = new StringBuilder();
+            foreach (byte dataByte in response) { responseDataString.Append($"{dataByte:X2} "); }
+
+            Debug.WriteLine($"{command} sent with Response = {responseDataString}");
 
             return response;
         }
@@ -109,11 +108,7 @@ namespace SecureIM.Smartcard.controller.smartcard
 
         private void GenerateDesKey() { throw new NotImplementedException(); }
 
-        private void GenerateKeyPair() { throw new NotImplementedException(); }
-
         private void GenerateSecret() { throw new NotImplementedException(); }
-
-        private byte[] GetPrivateKey() { throw new NotImplementedException(); }
 
         private byte[] GetPublicKey() { throw new NotImplementedException(); }
 
@@ -126,11 +121,45 @@ namespace SecureIM.Smartcard.controller.smartcard
         private byte[] SelectApplet(byte[] aid = null)
         {
             aid = aid ?? SECUREIMCARD_AID;
-            Debug.WriteLine("Creating ISSUE APDU \n");
-            CommandApdu apdu = APDUFactory.SELECT(ActiveProtocol, aid);
-            Debug.WriteLine("Sending SELECT APDU \n");
+            CommandApdu apdu = APDUFactory.SELECT(aid);
+            return TransmitAPDU(apdu);
+        }
 
-            return TransmitAPDU(apdu, CardReader);
+        [NotNull]
+        private byte[] SendCommandTransmitter(SecureIMCardInstructions command)
+        {
+            var response = new byte[] {};
+            switch (command)
+            {
+                case SecureIMCardInstructions.INS_SELECT_SCIM:
+                    return SelectApplet();
+                case SecureIMCardInstructions.INS_ECC_GEN_KEYPAIR:
+                    return TransmitAPDU(APDUFactory.ECC_GEN_KEYPAIR());
+                case SecureIMCardInstructions.INS_ECC_GET_S:
+                    return TransmitAPDU(APDUFactory.GET_PRI_KEY());
+                case SecureIMCardInstructions.INS_ECC_GET_W:
+                    return GetPublicKey();
+                case SecureIMCardInstructions.INS_ECC_SET_GUEST_W:
+                    SetPublicKey();
+                    break;
+                case SecureIMCardInstructions.INS_ECC_GEN_SECRET:
+                    GenerateSecret();
+                    break;
+                case SecureIMCardInstructions.INS_ECC_GEN_3DES_KEY:
+                    GenerateDesKey();
+                    break;
+                case SecureIMCardInstructions.INS_ECC_SET_INPUT_TEXT:
+                    SetInputText();
+                    break;
+                case SecureIMCardInstructions.INS_ECC_DO_DES_CIPHER:
+                    return DoDesCipher();
+                case SecureIMCardInstructions.INS_ECC_SET_S:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(command), command, null);
+            }
+
+            return response;
         }
 
         private void SetInputText() { throw new NotImplementedException(); }
@@ -144,14 +173,14 @@ namespace SecureIM.Smartcard.controller.smartcard
         /// <param name="reader">The reader.</param>
         /// <returns></returns>
         [NotNull]
-        private byte[] TransmitAPDU([NotNull] Apdu apdu, [NotNull] ISCardReader reader)
+        private byte[] TransmitAPDU([NotNull] Apdu apdu)
         {
             var pbRecvBuffer = new byte[256];
 
-            SCardError err = reader.Transmit(PioSendPci, apdu.ToArray(), ref pbRecvBuffer);
+            SCardError err = CardReader.Transmit(PioSendPci, apdu.ToArray(), ref pbRecvBuffer);
             CheckErr(err);
 
-            reader.Dispose();
+            //            CardReader.Dispose();
 
             return pbRecvBuffer;
         }

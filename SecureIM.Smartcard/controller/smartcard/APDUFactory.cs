@@ -9,6 +9,9 @@ namespace SecureIM.Smartcard.controller.smartcard
 {
     internal static class APDUFactory
     {
+        public static SCardProtocol ScardProtocol { get; private set; } = SCardProtocol.T0;
+
+
         #region Public Methods
 
 
@@ -22,12 +25,12 @@ namespace SecureIM.Smartcard.controller.smartcard
         [NotNull]
         public static CommandApdu SELECT(SCardProtocol scardProtocol, [NotNull] byte[] appletAID)
         {
-            var selectAPDU = new CommandApdu(IsoCase.Case3Short, scardProtocol)
+            var selectAPDU = new CommandApdu(IsoCase.Case3Short, ScardProtocol)
             {
-                CLA = 0x80,
+                CLA = 0x00,
                 INS = 0xA4,
                 P1 = 0x04,
-                P2 = 0x0,
+                P2 = 0x00,
                 Data = appletAID
             };
 
@@ -51,7 +54,6 @@ namespace SecureIM.Smartcard.controller.smartcard
                 INS = 0x41,
                 P1 = 0x0,
                 P2 = 0x0, // We don't know the ID tag size
-                Le = 0x00
             };
 
             if (!issueAPDU.IsValid) throw new Exception("Invalid APDU");
