@@ -78,7 +78,15 @@ namespace SecureIM.ChatBackend
             }
             if (text.StartsWith("test1:", StringComparison.OrdinalIgnoreCase))
             {
+
                 CryptoHandler.GenerateAsymmetricKeyPair();
+                byte[] pubKeyBytes = CryptoHandler.GetPublicKey();
+                Array.Resize(ref pubKeyBytes, 49);
+                byte[] priKeyBytes = CryptoHandler.GetPrivateKey();
+                Array.Resize(ref priKeyBytes, 24);
+
+                CryptoHandler.Encrypt("hello", pubKeyBytes);
+
             }
             if (text.StartsWith("exit:", StringComparison.OrdinalIgnoreCase))
             {
