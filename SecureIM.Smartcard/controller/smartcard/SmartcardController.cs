@@ -75,7 +75,7 @@ namespace SecureIM.Smartcard.controller.smartcard
         {
             string dataString = data != null && data.Length != 0 ? ToHexString(data) : "None";
             Debug.WriteLine($"Creating and sending {command} with P1 = {p1}, P2 = {p2} and Data = {dataString}");
-            byte[] response = SendCommandTransmitter(command, p1, p2, data, le);
+            byte[] response = SendCommandTransmitter(command, data, le);
 //            var responseDataString = new StringBuilder();
 //
 //            foreach (byte dataByte in response) { responseDataString.Append($"{dataByte:X2} "); }
@@ -104,14 +104,14 @@ namespace SecureIM.Smartcard.controller.smartcard
         /// Sends the command transmitter.
         /// </summary>
         /// <param name="command">The command.</param>
-        /// <param name="p1">The p1.</param>
-        /// <param name="p2">The p2.</param>
         /// <param name="data">The data.</param>
         /// <param name="le">The le.</param>
+        /// 
+        /// 
         /// <returns></returns>
         /// <exception cref="System.ArgumentOutOfRangeException">command - null</exception>
         [NotNull]
-        private byte[] SendCommandTransmitter(SecureIMCardInstructions command, byte p1, byte p2, byte[] data, byte le)
+        private byte[] SendCommandTransmitter(SecureIMCardInstructions command, byte[] data, byte le)
         {
             switch (command)
             {
