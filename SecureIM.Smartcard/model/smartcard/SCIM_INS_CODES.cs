@@ -2,6 +2,9 @@
 
 namespace SecureIM.Smartcard.model.smartcard
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public static class SCIM_INS_CODES
     {

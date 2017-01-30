@@ -10,6 +10,12 @@ namespace SecureIM.Smartcard.model.smartcard
     {
         #region Public Properties
 
+        /// <summary>
+        /// Gets the smartcard controller.
+        /// </summary>
+        /// <value>
+        /// The smartcard controller.
+        /// </value>
         public SmartcardController SmartcardController { get; }
 
         #endregion Public Properties
@@ -17,6 +23,9 @@ namespace SecureIM.Smartcard.model.smartcard
 
         #region Public Constructors
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SmartcardCryptoHandler"/> class.
+        /// </summary>
         public SmartcardCryptoHandler() { SmartcardController = new SmartcardController(); }
 
         #endregion Public Constructors
@@ -24,6 +33,12 @@ namespace SecureIM.Smartcard.model.smartcard
 
         #region Public Methods
 
+        /// <summary>
+        /// Decrypts the specified data.
+        /// </summary>
+        /// <param name="data">The data.</param>
+        /// <param name="keyBytes">The key bytes.</param>
+        /// <returns></returns>
         public string Decrypt([NotNull] string data, [CanBeNull] byte[] keyBytes = null)
         {
             byte[] dataBytes = Encoding.ASCII.GetBytes(data);
@@ -38,6 +53,12 @@ namespace SecureIM.Smartcard.model.smartcard
             return Encoding.ASCII.GetString(decryptedBytes);
         }
 
+        /// <summary>
+        /// Encrypts the specified data.
+        /// </summary>
+        /// <param name="data">The data.</param>
+        /// <param name="keyBytes">The key bytes.</param>
+        /// <returns></returns>
         public string Encrypt([NotNull] string data, [NotNull] byte[] keyBytes)
         {
             byte[] dataBytes = Encoding.ASCII.GetBytes(data);
@@ -57,10 +78,25 @@ namespace SecureIM.Smartcard.model.smartcard
             return Encoding.ASCII.GetString(encryptedBytes);
         }
 
+        /// <summary>
+        /// Generates the asymmetric key pair.
+        /// </summary>
         public void GenerateAsymmetricKeyPair() => SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GEN_KEYPAIR);
 
+        /// <summary>
+        /// Gets the public key.
+        /// </summary>
+        /// <returns></returns>
         public byte[] GetPublicKey() => SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GET_PUB_KEY);
+        /// <summary>
+        /// Gets the priv key.
+        /// </summary>
+        /// <returns></returns>
         public byte[] GetPrivKey() => SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GET_PUB_KEY);
+        /// <summary>
+        /// Gets the private key.
+        /// </summary>
+        /// <returns></returns>
         public byte[] GetPrivateKey() => SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GET_PRI_KEY);
 
         #endregion Public Methods

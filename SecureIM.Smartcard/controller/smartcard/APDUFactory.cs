@@ -40,7 +40,7 @@ namespace SecureIM.Smartcard.controller.smartcard
         }
 
         /// <summary>
-        ///     Gens the ECC keypair.
+        /// Gens the ECC keypair.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="System.Exception">Invalid APDU</exception>
@@ -61,7 +61,7 @@ namespace SecureIM.Smartcard.controller.smartcard
         }
 
         /// <summary>
-        ///     Gets the pri key.
+        /// Gets the pri key.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="System.Exception">Invalid APDU</exception>
@@ -83,7 +83,7 @@ namespace SecureIM.Smartcard.controller.smartcard
         }
 
         /// <summary>
-        ///     Gets the pub key.
+        /// Gets the pub key.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="System.Exception">Invalid APDU</exception>
@@ -105,7 +105,7 @@ namespace SecureIM.Smartcard.controller.smartcard
         }
 
         /// <summary>
-        ///     Sets the guest pub key.
+        /// Sets the guest pub key.
         /// </summary>
         /// <param name="pubKeyBytes">The pub key bytes.</param>
         /// <returns></returns>
@@ -128,7 +128,7 @@ namespace SecureIM.Smartcard.controller.smartcard
         }
 
         /// <summary>
-        ///     Gens the secret.
+        /// Gens the secret.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="System.Exception">Invalid APDU</exception>
@@ -150,7 +150,7 @@ namespace SecureIM.Smartcard.controller.smartcard
         }
 
         /// <summary>
-        ///     Gens the DES key.
+        /// Gens the DES key.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="System.Exception">Invalid APDU</exception>
@@ -172,7 +172,7 @@ namespace SecureIM.Smartcard.controller.smartcard
         }
 
         /// <summary>
-        ///     Sets the input text.
+        /// Sets the input text.
         /// </summary>
         /// <param name="inputTextBytes">The input text bytes.</param>
         /// <returns></returns>
@@ -195,10 +195,10 @@ namespace SecureIM.Smartcard.controller.smartcard
         }
 
         /// <summary>
-        ///     Does the cipher.
+        /// Does the cipher.
         /// </summary>
         /// <param name="decrypt">if set to <c>true</c> [decrypt].</param>
-        /// <param name="expectedLength"></param>
+        /// <param name="expectedLength">The expected length.</param>
         /// <returns></returns>
         /// <exception cref="System.Exception">Invalid APDU</exception>
         [NotNull]

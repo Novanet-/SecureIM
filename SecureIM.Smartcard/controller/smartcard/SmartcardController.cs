@@ -27,7 +27,7 @@ namespace SecureIM.Smartcard.controller.smartcard
         #region Public Constructors
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="SmartcardController" /> class.
+        /// Initializes a new instance of the <see cref="SmartcardController" /> class.
         /// </summary>
         /// <exception cref="PCSCException">Protocol not supported: " + CardReader.ActiveProtocol</exception>
         public SmartcardController()
@@ -61,7 +61,7 @@ namespace SecureIM.Smartcard.controller.smartcard
 
 
         /// <summary>
-        ///     Sends the command.
+        /// Sends the command.
         /// </summary>
         /// <param name="command">The command.</param>
         /// <param name="p1">The p1.</param>
@@ -91,7 +91,7 @@ namespace SecureIM.Smartcard.controller.smartcard
         #region Private Methods
 
         /// <summary>
-        ///     Checks the error.
+        /// Checks the error.
         /// </summary>
         /// <param name="err">The error.</param>
         /// <exception cref="PCSCException"></exception>
@@ -100,6 +100,16 @@ namespace SecureIM.Smartcard.controller.smartcard
             if (err != SCardError.Success) throw new PCSCException(err, SCardHelper.StringifyError(err));
         }
 
+        /// <summary>
+        /// Sends the command transmitter.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <param name="p1">The p1.</param>
+        /// <param name="p2">The p2.</param>
+        /// <param name="data">The data.</param>
+        /// <param name="le">The le.</param>
+        /// <returns></returns>
+        /// <exception cref="System.ArgumentOutOfRangeException">command - null</exception>
         [NotNull]
         private byte[] SendCommandTransmitter(SecureIMCardInstructions command, byte p1, byte p2, byte[] data, byte le)
         {
@@ -136,10 +146,9 @@ namespace SecureIM.Smartcard.controller.smartcard
         }
 
         /// <summary>
-        ///     Transmits the apdu.
+        /// Transmits the apdu.
         /// </summary>
         /// <param name="apdu">The apdu.</param>
-        /// <param name="reader">The reader.</param>
         /// <returns></returns>
         [NotNull]
         private byte[] TransmitAPDU([NotNull] Apdu apdu)
@@ -154,6 +163,11 @@ namespace SecureIM.Smartcard.controller.smartcard
             return pbRecvBuffer;
         }
 
+        /// <summary>
+        /// To the hexadecimal string.
+        /// </summary>
+        /// <param name="hex">The hexadecimal.</param>
+        /// <returns></returns>
         [NotNull]
         public static string ToHexString([NotNull] byte[] hex)
         {

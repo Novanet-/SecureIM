@@ -8,8 +8,6 @@ namespace SecureIM.Smartcard.controller.smartcard
 {
     public class SmartcardControllerBuilder
     {
-        public SmartcardControllerBuilder() { }
-
         /// <summary>
         /// Chooses the card.
         /// </summary>
@@ -76,7 +74,7 @@ namespace SecureIM.Smartcard.controller.smartcard
         }
 
         /// <summary>
-        ///     Establishes the card connection.
+        /// Establishes the card connection.
         /// </summary>
         /// <param name="context">The context.</param>
         /// <returns></returns>
