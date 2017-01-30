@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.ServiceModel;
 using JetBrains.Annotations;
 using SecureIM.ChatBackend.model;
@@ -85,7 +86,9 @@ namespace SecureIM.ChatBackend
                 byte[] priKeyBytes = CryptoHandler.GetPrivateKey();
                 Array.Resize(ref priKeyBytes, 24);
 
-                CryptoHandler.Encrypt("hello", pubKeyBytes);
+                string ct = CryptoHandler.Encrypt("hello", pubKeyBytes);
+                string pt = CryptoHandler.Decrypt(ct, pubKeyBytes);
+                Debug.Write($"{pt} should = \"hello\" ");
 
             }
             if (text.StartsWith("exit:", StringComparison.OrdinalIgnoreCase))
