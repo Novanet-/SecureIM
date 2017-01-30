@@ -28,12 +28,12 @@ namespace SecureIM.Smartcard.model.smartcard
         {
             byte[] dataBytes = Encoding.ASCII.GetBytes(data);
 
-            SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_SET_GUEST_W, 0x00, 0x00, keyBytes);
+            SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_SET_GUEST_PUB_KEY, 0x00, 0x00, keyBytes);
             SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GEN_SECRET);
             SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GEN_3DES_KEY);
             SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_SET_INPUT_TEXT, 0x00, 0x00, dataBytes);
 
-            byte[] decryptedBytes = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_DO_DES_CIPHER, 0x01);
+            byte[] decryptedBytes = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_DO_DES_CIPHER_ENCRYPT, 0x01);
 
             return Encoding.ASCII.GetString(decryptedBytes);
         }
@@ -42,23 +42,26 @@ namespace SecureIM.Smartcard.model.smartcard
         {
             byte[] dataBytes = Encoding.ASCII.GetBytes(data);
 
-            SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_SET_GUEST_W, 0x00, 0x00, keyBytes);
+            SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_SET_GUEST_PUB_KEY, 0x00, 0x00, keyBytes);
             SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GEN_SECRET);
             SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GEN_3DES_KEY);
             SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_SET_INPUT_TEXT, 0x00, 0x00, dataBytes);
 
-            byte[] encryptedBytes = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_DO_DES_CIPHER);
+            byte[] encryptedBytes = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_DO_DES_CIPHER_ENCRYPT);
+            if (encryptedBytes[0] == 0x6C)
+            {
+                byte le = encryptedBytes[1];
+                SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_DO_DES_CIPHER_ENCRYPT_GET_RESPONSE, 0, 0, null, le);
+            }
 
             return Encoding.ASCII.GetString(encryptedBytes);
         }
 
-        public void GenerateAsymmetricKeyPair()
-        {
-//            SmartcardController.SendCommand(SecureIMCardInstructions.INS_SELECT_SCIM);
-            SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GEN_KEYPAIR);
-        }
+        public void GenerateAsymmetricKeyPair() => SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GEN_KEYPAIR);
 
-        public byte[] GetPublicKey() => SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GET_W);
+        public byte[] GetPublicKey() => SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GET_PUB_KEY);
+        public byte[] GetPrivKey() => SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GET_PUB_KEY);
+        public byte[] GetPrivateKey() => SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GET_PRI_KEY);
 
         #endregion Public Methods
     }
