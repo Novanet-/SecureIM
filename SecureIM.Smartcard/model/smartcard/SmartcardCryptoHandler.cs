@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using JetBrains.Annotations;
 using SecureIM.Smartcard.controller.smartcard;
 using SecureIM.Smartcard.model.abstractions;
@@ -41,14 +42,20 @@ namespace SecureIM.Smartcard.model.smartcard
         /// <returns></returns>
         public string Decrypt([NotNull] string data, [CanBeNull] byte[] keyBytes = null)
         {
-            byte[] dataBytes = Encoding.ASCII.GetBytes(data);
+            byte[] dataBytes = Encoding.Default.GetBytes(data);
 
             SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_SET_GUEST_PUB_KEY, 0x00, 0x00, keyBytes);
             SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GEN_SECRET);
             SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GEN_3DES_KEY);
             SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_SET_INPUT_TEXT, 0x00, 0x00, dataBytes);
 
-            byte[] decryptedBytes = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_DO_DES_CIPHER_ENCRYPT, 0x01);
+            byte[] decryptedBytes = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_DO_DES_CIPHER_DECRYPT, 0x01);
+            if (decryptedBytes[0] == 0x6C)
+            {
+                byte le = decryptedBytes[1];
+                decryptedBytes = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_DO_DES_CIPHER_DECRYPT_GET_RESPONSE, 0, 0, null, le);
+                Array.Resize(ref decryptedBytes, decryptedBytes.Length - 2);
+            }
 
             return Encoding.ASCII.GetString(decryptedBytes);
         }
@@ -72,10 +79,11 @@ namespace SecureIM.Smartcard.model.smartcard
             if (encryptedBytes[0] == 0x6C)
             {
                 byte le = encryptedBytes[1];
-                SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_DO_DES_CIPHER_ENCRYPT_GET_RESPONSE, 0, 0, null, le);
+                encryptedBytes = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_DO_DES_CIPHER_ENCRYPT_GET_RESPONSE, 0, 0, null, le);
+                Array.Resize(ref encryptedBytes, encryptedBytes.Length - 2);
             }
 
-            return Encoding.ASCII.GetString(encryptedBytes);
+            return Encoding.Default.GetString(encryptedBytes);
         }
 
         /// <summary>
