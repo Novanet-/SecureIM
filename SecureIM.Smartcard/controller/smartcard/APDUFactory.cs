@@ -9,7 +9,7 @@ namespace SecureIM.Smartcard.controller.smartcard
 {
     internal static class APDUFactory
     {
-        public static SCardProtocol ScardProtocol { get; private set; } = SCardProtocol.T0;
+        public static SCardProtocol SCardProtocol { get; } = SCardProtocol.T0;
 
 
         #region Public Methods
@@ -23,9 +23,9 @@ namespace SecureIM.Smartcard.controller.smartcard
         /// <returns></returns>
         /// <exception cref="System.Exception">Invalid APDU</exception>
         [NotNull]
-        public static CommandApdu SELECT(SCardProtocol scardProtocol, [NotNull] byte[] appletAID)
+        public static CommandApdu SELECT([NotNull] byte[] appletAID)
         {
-            var selectAPDU = new CommandApdu(IsoCase.Case3Short, ScardProtocol)
+            var selectAPDU = new CommandApdu(IsoCase.Case3Short, SCardProtocol)
             {
                 CLA = 0x00,
                 INS = 0xA4,
@@ -42,13 +42,12 @@ namespace SecureIM.Smartcard.controller.smartcard
         /// <summary>
         ///     Gens the ECC keypair.
         /// </summary>
-        /// <param name="scardProtocol">The scard protocol.</param>
         /// <returns></returns>
         /// <exception cref="System.Exception">Invalid APDU</exception>
         [NotNull]
-        public static CommandApdu ECC_GEN_KEYPAIR(SCardProtocol scardProtocol)
+        public static CommandApdu ECC_GEN_KEYPAIR()
         {
-            var issueAPDU = new CommandApdu(IsoCase.Case1, scardProtocol)
+            var apdu = new CommandApdu(IsoCase.Case1, SCardProtocol)
             {
                 CLA = 0x80,
                 INS = 0x41,
@@ -56,66 +55,65 @@ namespace SecureIM.Smartcard.controller.smartcard
                 P2 = 0x0, // We don't know the ID tag size
             };
 
-            if (!issueAPDU.IsValid) throw new Exception("Invalid APDU");
+            if (!apdu.IsValid) throw new Exception("Invalid APDU");
 
-            return issueAPDU;
+            return apdu;
         }
 
         /// <summary>
         ///     Gets the pri key.
         /// </summary>
-        /// <param name="scardProtocol">The scard protocol.</param>
         /// <returns></returns>
         /// <exception cref="System.Exception">Invalid APDU</exception>
         [NotNull]
-        public static CommandApdu GET_PRI_KEY(SCardProtocol scardProtocol)
+        public static CommandApdu GET_PRI_KEY()
         {
-            var issueAPDU = new CommandApdu(IsoCase.Case2Short, scardProtocol)
+            var apdu = new CommandApdu(IsoCase.Case2Short, SCardProtocol)
             {
                 CLA = 0x80,
                 INS = 0x44,
                 P1 = 0x0,
                 P2 = 0x0, // We don't know the ID tag size
+                Le = 0x18
             };
 
-            if (!issueAPDU.IsValid) throw new Exception("Invalid APDU");
+            if (!apdu.IsValid) throw new Exception("Invalid APDU");
 
-            return issueAPDU;
+            return apdu;
         }
 
         /// <summary>
         ///     Gets the pub key.
         /// </summary>
-        /// <param name="scardProtocol">The scard protocol.</param>
         /// <returns></returns>
         /// <exception cref="System.Exception">Invalid APDU</exception>
         [NotNull]
-        public static CommandApdu GET_PUB_KEY(SCardProtocol scardProtocol)
+        public static CommandApdu GET_PUB_KEY()
         {
-            var issueAPDU = new CommandApdu(IsoCase.Case2Short, scardProtocol)
+            var apdu = new CommandApdu(IsoCase.Case2Short, SCardProtocol)
             {
                 CLA = 0x80,
                 INS = 0x45,
                 P1 = 0x0,
                 P2 = 0x0, // We don't know the ID tag size
+                Le = 0x31
             };
 
-            if (!issueAPDU.IsValid) throw new Exception("Invalid APDU");
+            if (!apdu.IsValid) throw new Exception("Invalid APDU");
 
-            return issueAPDU;
+            return apdu;
         }
 
         /// <summary>
         ///     Sets the guest pub key.
         /// </summary>
-        /// <param name="scardProtocol">The scard protocol.</param>
         /// <param name="pubKeyBytes">The pub key bytes.</param>
         /// <returns></returns>
         /// <exception cref="System.Exception">Invalid APDU</exception>
         [NotNull]
-        public static CommandApdu SET_GUEST_PUB_KEY(SCardProtocol scardProtocol, [NotNull] byte[] pubKeyBytes)
+        public static CommandApdu SET_GUEST_PUB_KEY([NotNull] byte[] pubKeyBytes)
         {
-            var issueAPDU = new CommandApdu(IsoCase.Case3Short, scardProtocol)
+            var apdu = new CommandApdu(IsoCase.Case3Short, SCardProtocol)
             {
                 CLA = 0x80,
                 INS = 0x47,
@@ -124,66 +122,65 @@ namespace SecureIM.Smartcard.controller.smartcard
                 Data = pubKeyBytes
             };
 
-            if (!issueAPDU.IsValid) throw new Exception("Invalid APDU");
+            if (!apdu.IsValid) throw new Exception("Invalid APDU");
 
-            return issueAPDU;
+            return apdu;
         }
 
         /// <summary>
         ///     Gens the secret.
         /// </summary>
-        /// <param name="scardProtocol">The scard protocol.</param>
         /// <returns></returns>
         /// <exception cref="System.Exception">Invalid APDU</exception>
         [NotNull]
-        public static CommandApdu GEN_SECRET(SCardProtocol scardProtocol)
+        public static CommandApdu GEN_SECRET()
         {
-            var issueAPDU = new CommandApdu(IsoCase.Case2Short, scardProtocol)
+            var apdu = new CommandApdu(IsoCase.Case2Short, SCardProtocol)
             {
                 CLA = 0x80,
                 INS = 0x50,
                 P1 = 0x0,
                 P2 = 0x0, // We don't know the ID tag size
+                Le = 0x18
             };
 
-            if (!issueAPDU.IsValid) throw new Exception("Invalid APDU");
+            if (!apdu.IsValid) throw new Exception("Invalid APDU");
 
-            return issueAPDU;
+            return apdu;
         }
 
         /// <summary>
         ///     Gens the DES key.
         /// </summary>
-        /// <param name="scardProtocol">The scard protocol.</param>
         /// <returns></returns>
         /// <exception cref="System.Exception">Invalid APDU</exception>
         [NotNull]
-        public static CommandApdu GEN_DES_KEY(SCardProtocol scardProtocol)
+        public static CommandApdu GEN_DES_KEY()
         {
-            var issueAPDU = new CommandApdu(IsoCase.Case2Short, scardProtocol)
+            var apdu = new CommandApdu(IsoCase.Case2Short, SCardProtocol)
             {
                 CLA = 0x80,
                 INS = 0x51,
                 P1 = 0x0,
-                P2 = 0x0
+                P2 = 0x0,
+                Le = 0x18
             };
 
-            if (!issueAPDU.IsValid) throw new Exception("Invalid APDU");
+            if (!apdu.IsValid) throw new Exception("Invalid APDU");
 
-            return issueAPDU;
+            return apdu;
         }
 
         /// <summary>
         ///     Sets the input text.
         /// </summary>
-        /// <param name="scardProtocol">The scard protocol.</param>
         /// <param name="inputTextBytes">The input text bytes.</param>
         /// <returns></returns>
         /// <exception cref="System.Exception">Invalid APDU</exception>
         [NotNull]
-        public static CommandApdu SET_INPUT_TEXT(SCardProtocol scardProtocol, [NotNull] byte[] inputTextBytes)
+        public static CommandApdu SET_INPUT_TEXT([NotNull] byte[] inputTextBytes)
         {
-            var issueAPDU = new CommandApdu(IsoCase.Case3Short, scardProtocol)
+            var apdu = new CommandApdu(IsoCase.Case3Short, SCardProtocol)
             {
                 CLA = 0x80,
                 INS = 0x59,
@@ -192,32 +189,33 @@ namespace SecureIM.Smartcard.controller.smartcard
                 Data = inputTextBytes
             };
 
-            if (!issueAPDU.IsValid) throw new Exception("Invalid APDU");
+            if (!apdu.IsValid) throw new Exception("Invalid APDU");
 
-            return issueAPDU;
+            return apdu;
         }
 
         /// <summary>
         ///     Does the cipher.
         /// </summary>
-        /// <param name="scardProtocol">The scard protocol.</param>
         /// <param name="decrypt">if set to <c>true</c> [decrypt].</param>
+        /// <param name="expectedLength"></param>
         /// <returns></returns>
         /// <exception cref="System.Exception">Invalid APDU</exception>
         [NotNull]
-        public static CommandApdu DO_CIPHER(SCardProtocol scardProtocol, bool decrypt)
+        public static CommandApdu DO_CIPHER(bool decrypt, byte expectedLength = 0)
         {
-            var issueAPDU = new CommandApdu(IsoCase.Case2Short, scardProtocol)
+            var apdu = new CommandApdu(IsoCase.Case2Short, SCardProtocol)
             {
                 CLA = 0x80,
                 INS = 0x70,
                 P1 = (byte) (decrypt ? 0x01 : 0x00),
-                P2 = 0x0
+                P2 = 0x0,
+                Le = expectedLength
             };
 
-            if (!issueAPDU.IsValid) throw new Exception("Invalid APDU");
+            if (!apdu.IsValid) throw new Exception("Invalid APDU");
 
-            return issueAPDU;
+            return apdu;
         }
 
 
