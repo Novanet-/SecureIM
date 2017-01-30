@@ -16,6 +16,7 @@ namespace SecureIM.Smartcard.model.abstractions
 
         [NotNull]
         byte[] GetPublicKey();
+        byte[] GetPrivateKey();
 
         #endregion Public Methods
     }
