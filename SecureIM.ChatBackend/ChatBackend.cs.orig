@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.ServiceModel;
 using JetBrains.Annotations;
 using SecureIM.ChatBackend.model;
@@ -12,13 +13,19 @@ namespace SecureIM.ChatBackend
     {
         #region Public Properties
 
-        [NotNull] public Comms Comms { get; private set; }
-        [NotNull] public DisplayMessageDelegate DisplayMessageDelegate { get; }
-        [NotNull] public User User { get; }
-        [NotNull] public ICryptoHandler CryptoHandler { get; }
+        [NotNull]
+        public Comms Comms { get; private set; }
+
+        [NotNull]
+        public DisplayMessageDelegate DisplayMessageDelegate { get; }
+
+        [NotNull]
+        public User User { get; }
+
+        [NotNull]
+        public ICryptoHandler CryptoHandler { get; }
 
         #endregion Public Properties
-
 
         #region Public Constructors
 
@@ -37,17 +44,17 @@ namespace SecureIM.ChatBackend
 
         #endregion Public Constructors
 
-
         #region Private Constructors
 
         /// <summary>
         ///     The default constructor is only here for testing purposes.
         /// </summary>
         // ReSharper disable once NotNullMemberIsNotInitialized
-        private ChatBackend() { }
+        private ChatBackend()
+        {
+        }
 
         #endregion Private Constructors
-
 
         #region Public Methods
 
@@ -78,21 +85,26 @@ namespace SecureIM.ChatBackend
             }
             if (text.StartsWith("test1:", StringComparison.OrdinalIgnoreCase))
             {
-
                 CryptoHandler.GenerateAsymmetricKeyPair();
                 byte[] pubKeyBytes = CryptoHandler.GetPublicKey();
-                Array.Resize(ref pubKeyBytes, 49);
                 byte[] priKeyBytes = CryptoHandler.GetPrivateKey();
-                Array.Resize(ref priKeyBytes, 24);
 
+<<<<<<< Updated upstream
                 string ct = CryptoHandler.Encrypt("hello", pubKeyBytes);
                 string pt = CryptoHandler.Decrypt(ct, pubKeyBytes);
                 Debug.Write($"{pt} should = \"hello\" ");
 
+=======
+                CryptoHandler.Encrypt("hello", pubKeyBytes);
+>>>>>>> Stashed changes
             }
             if (text.StartsWith("exit:", StringComparison.OrdinalIgnoreCase))
             {
                 StopService();
+            }
+            if (text.StartsWith("genkey:", StringComparison.OrdinalIgnoreCase))
+            {
+                CryptoHandler.GenerateAsymmetricKeyPair();
             }
             else
             {
@@ -108,7 +120,6 @@ namespace SecureIM.ChatBackend
         }
 
         #endregion Public Methods
-
 
         #region Private Methods
 
@@ -138,7 +149,7 @@ namespace SecureIM.ChatBackend
         {
             var channelFactory = new ChannelFactory<IChatBackend>("ChatEndpoint");
             channelFactory.CreateChannel()
-                          .DisplayMessage(new MessageComposite("Event", User.Name + " is leaving the conversation."));
+                .DisplayMessage(new MessageComposite("Event", User.Name + " is leaving the conversation."));
 
             if (Comms.Host.State == CommunicationState.Closed) return;
 
