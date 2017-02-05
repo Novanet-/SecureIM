@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using System.ServiceModel;
+using SecureIM.ChatBackend.model;
 
 namespace SecureIM.ChatBackend
 {
@@ -9,7 +10,6 @@ namespace SecureIM.ChatBackend
     [ServiceContract]
     public interface IChatBackend
     {
-
         #region Public Methods
 
         /// <summary>
@@ -26,20 +26,18 @@ namespace SecureIM.ChatBackend
         void SendMessage(string text);
 
         #endregion Public Methods
-
     }
 
     [DataContract]
     public class MessageComposite
     {
-
         #region Public Properties
 
         [DataMember]
-        public string Message { get; set; } = "";
+        public User Sender { get; set; }
 
         [DataMember]
-        public User Sender { get; }
+        public Message Message { get; set; }
 
         #endregion Public Properties
 
@@ -53,15 +51,16 @@ namespace SecureIM.ChatBackend
         public MessageComposite(User u, string m)
         {
             Sender = u;
-            Message = m;
+            Message = new Message(m);
         }
 
-        public MessageComposite(string message, User sender)
+        public MessageComposite(string messageText, User sender)
         {
-            if (message == null) throw new ArgumentNullException(nameof(message));
+            if (messageText == null) throw new ArgumentNullException(nameof(messageText));
             if (sender == null) throw new ArgumentNullException(nameof(sender));
-            Message = message;
+
             Sender = sender;
+            Message = new Message(messageText);
         }
 
         #endregion Public Constructors

@@ -13,15 +13,8 @@ namespace SecureIM.ChatBackend
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class ChatBackend : IChatBackend
     {
-        #region Public Properties
-
-        [NotNull] public Comms Comms { get; private set; }
-        [NotNull] public DisplayMessageDelegate DisplayMessageDelegate { get; }
-        [NotNull] public User User { get; }
-        [NotNull] public ICryptoHandler CryptoHandler { get; }
-
-        #endregion Public Properties
-
+        private readonly User _eventUser = new User("Event");
+        private readonly User _infoUser = new User("Info");
 
         #region Public Constructors
 
@@ -40,17 +33,33 @@ namespace SecureIM.ChatBackend
 
         #endregion Public Constructors
 
-
         #region Private Constructors
 
         /// <summary>
         ///     The default constructor is only here for testing purposes.
         /// </summary>
         // ReSharper disable once NotNullMemberIsNotInitialized
-        private ChatBackend() { }
+        private ChatBackend()
+        {
+        }
 
         #endregion Private Constructors
 
+        #region Public Properties
+
+        [NotNull]
+        public Comms Comms { get; private set; }
+
+        [NotNull]
+        public DisplayMessageDelegate DisplayMessageDelegate { get; }
+
+        [NotNull]
+        public User User { get; }
+
+        [NotNull]
+        public ICryptoHandler CryptoHandler { get; }
+
+        #endregion Public Properties
 
         #region Public Methods
 
@@ -67,12 +76,13 @@ namespace SecureIM.ChatBackend
 
             try
             {
-                string cipherText = Encoding.UTF8.DecodeBase64(messageComposite.Message);
+                string cipherText = Encoding.UTF8.DecodeBase64(messageComposite.Message.MessageText);
                 //TODO: This is temporary, fix it
                 byte[] targetPubKeyBytes = CryptoHandler.GetPublicKey();
 
                 string plaintext = CryptoHandler.Decrypt(cipherText, targetPubKeyBytes);
-                messageComposite.Message = plaintext;
+//                messageComposite.Message.MessageText = plaintext;
+                messageComposite = new MessageComposite(messageComposite.Sender, messageComposite.Message.MessageText);
             }
             catch
             {
@@ -91,11 +101,11 @@ namespace SecureIM.ChatBackend
             if (text.StartsWith("setname:", StringComparison.OrdinalIgnoreCase))
             {
                 User.Name = text.Substring("setname:".Length).Trim();
-                DisplayMessageDelegate(new MessageComposite("Event", "Setting your name to " + User.Name));
+//                DisplayMessageDelegate(new MessageComposite("Event", "Setting your name to " + User.Name));
+                DisplayMessageDelegate(new MessageComposite(new User("Event", null), "Setting your name to " + User.Name));
             }
             else if (text.StartsWith("test1:", StringComparison.OrdinalIgnoreCase))
             {
-
                 CryptoHandler.GenerateAsymmetricKeyPair();
                 byte[] pubKeyBytes = CryptoHandler.GetPublicKey();
                 byte[] priKeyBytes = CryptoHandler.GetPrivateKey();
@@ -103,7 +113,6 @@ namespace SecureIM.ChatBackend
                 string ct = CryptoHandler.Encrypt("hello", pubKeyBytes);
                 string pt = CryptoHandler.Decrypt(ct, pubKeyBytes);
                 Debug.Write($"{pt} should = \"hello\" ");
-
             }
             else if (text.StartsWith("test2:", StringComparison.OrdinalIgnoreCase))
             {
@@ -116,7 +125,6 @@ namespace SecureIM.ChatBackend
                 var messageComposite = new MessageComposite(User, cipherText);
                 new ChannelFactory<IChatBackend>("ChatEndpoint").CreateChannel()
                     .DisplayMessage(messageComposite);
-
             }
             else if (text.StartsWith("exit:", StringComparison.OrdinalIgnoreCase))
             {
@@ -131,7 +139,6 @@ namespace SecureIM.ChatBackend
         }
 
         #endregion Public Methods
-
 
         #region Private Methods
 
@@ -148,10 +155,12 @@ namespace SecureIM.ChatBackend
             Comms.Host.Open();
 
             // Information to send to the channel
-            channel.DisplayMessage(new MessageComposite("Event", User.Name + " has entered the conversation."));
+            string userJoinedMessage = $"{User.Name} has entered the conversation.";
+            channel.DisplayMessage(new MessageComposite(_eventUser, userJoinedMessage));
 
             // Information to display locally
-            DisplayMessageDelegate(new MessageComposite("Info", "To change your name, type setname: NEW_NAME"));
+            const string changeNamePrompt = "To change your name, type setname: NEW_NAME";
+            DisplayMessageDelegate(new MessageComposite(_infoUser, changeNamePrompt));
         }
 
         /// <summary>
@@ -160,8 +169,8 @@ namespace SecureIM.ChatBackend
         private void StopService()
         {
             var channelFactory = new ChannelFactory<IChatBackend>("ChatEndpoint");
-            channelFactory.CreateChannel()
-                          .DisplayMessage(new MessageComposite("Event", User.Name + " is leaving the conversation."));
+            string userLeftMessage = $"{User.Name} is leaving the conversation.";
+            channelFactory.CreateChannel().DisplayMessage(new MessageComposite(_eventUser, userLeftMessage));
 
             if (Comms.Host.State == CommunicationState.Closed) return;
 

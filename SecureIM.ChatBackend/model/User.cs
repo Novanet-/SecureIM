@@ -1,18 +1,28 @@
+using System;
+using System.Runtime.Serialization;
+
 namespace SecureIM.ChatBackend.model
 {
+    [DataContract]
     public class User
     {
-        #region Public Properties
+        public User()
+        {
+        }
 
+        public User(string name)
+        {
+            if (name == null) throw new ArgumentNullException(nameof(name));
+            Name = name;
+        }
 
-        public string Name { get; protected internal set; } = "Anonymous";
+        public User(string name, byte[] pubKeyBytes)
+        {
+            Name = name;
+            PublicKey = pubKeyBytes;
+        }
 
-
-        #endregion Public Properties
-
-
-
-
-        // ReSharper disable once UnusedMember.Local
+        [DataMember] public string Name { get; set; } = "Anonymous";
+        [DataMember] public byte[] PublicKey { get; set; }
     }
 }

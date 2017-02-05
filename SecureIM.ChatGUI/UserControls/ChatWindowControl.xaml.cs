@@ -42,7 +42,7 @@ namespace SecureIM.ChatGUI.UserControls
         public void DisplayMessage(MessageComposite messageComposite)
         {
             string username = messageComposite.Sender.Name ?? "";
-            string message = messageComposite.Message ?? "";
+            string message = messageComposite.Message.MessageText ?? "";
             TextBoxChatPane.Text += username + ": " + message + Environment.NewLine;
         }
 
