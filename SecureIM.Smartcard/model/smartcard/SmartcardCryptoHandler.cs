@@ -1,6 +1,8 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using JetBrains.Annotations;
 using SecureIM.Smartcard.controller.smartcard;
+using SecureIM.Smartcard.helpers;
 using SecureIM.Smartcard.model.abstractions;
 using SecureIM.Smartcard.model.smartcard.enums;
 

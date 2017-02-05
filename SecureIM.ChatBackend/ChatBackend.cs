@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.ServiceModel;
+using System.Text;
 using JetBrains.Annotations;
 using SecureIM.ChatBackend.model;
+using SecureIM.Smartcard.helpers;
 using SecureIM.Smartcard.model.abstractions;
 using SecureIM.Smartcard.model.smartcard;
 
@@ -62,6 +65,22 @@ namespace SecureIM.ChatBackend
         {
             if (messageComposite == null) throw new ArgumentNullException(nameof(messageComposite));
 
+            try
+            {
+                string cipherText = Encoding.UTF8.DecodeBase64(messageComposite.Message);
+                //TODO: This is temporary, fix it
+                byte[] targetPubKeyBytes = CryptoHandler.GetPublicKey();
+
+                string plaintext = CryptoHandler.Decrypt(cipherText, targetPubKeyBytes);
+                messageComposite.Message = plaintext;
+            }
+            catch (FormatException e)
+            {
+//                Debug.WriteLine(e.ToString());
+            }
+
+            
+
             DisplayMessageDelegate(messageComposite);
         }
 
@@ -76,32 +95,38 @@ namespace SecureIM.ChatBackend
                 User.Name = text.Substring("setname:".Length).Trim();
                 DisplayMessageDelegate(new MessageComposite("Event", "Setting your name to " + User.Name));
             }
-            if (text.StartsWith("test1:", StringComparison.OrdinalIgnoreCase))
+            else if (text.StartsWith("test1:", StringComparison.OrdinalIgnoreCase))
             {
 
                 CryptoHandler.GenerateAsymmetricKeyPair();
                 byte[] pubKeyBytes = CryptoHandler.GetPublicKey();
-                Array.Resize(ref pubKeyBytes, 49);
                 byte[] priKeyBytes = CryptoHandler.GetPrivateKey();
-                Array.Resize(ref priKeyBytes, 24);
 
                 string ct = CryptoHandler.Encrypt("hello", pubKeyBytes);
                 string pt = CryptoHandler.Decrypt(ct, pubKeyBytes);
                 Debug.Write($"{pt} should = \"hello\" ");
 
             }
-            if (text.StartsWith("exit:", StringComparison.OrdinalIgnoreCase))
-            {
-                StopService();
-            }
-            else
+            else if (text.StartsWith("test2:", StringComparison.OrdinalIgnoreCase))
             {
                 //TODO: This is temporary, fix it
                 byte[] targetPubKeyBytes = CryptoHandler.GetPublicKey();
 
                 string cipherText = CryptoHandler.Encrypt(text, targetPubKeyBytes);
+                cipherText = Encoding.UTF8.EncodeBase64(cipherText);
                 // In order to send a message, we call our friends' DisplayMessage method
                 var messageComposite = new MessageComposite(User.Name, cipherText);
+                new ChannelFactory<IChatBackend>("ChatEndpoint").CreateChannel()
+                    .DisplayMessage(messageComposite);
+
+            }
+            else if (text.StartsWith("exit:", StringComparison.OrdinalIgnoreCase))
+            {
+                StopService();
+            }
+            else
+            {
+                var messageComposite = new MessageComposite(User.Name, text);
                 new ChannelFactory<IChatBackend>("ChatEndpoint").CreateChannel()
                     .DisplayMessage(messageComposite);
             }
