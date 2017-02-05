@@ -74,12 +74,10 @@ namespace SecureIM.ChatBackend
                 string plaintext = CryptoHandler.Decrypt(cipherText, targetPubKeyBytes);
                 messageComposite.Message = plaintext;
             }
-            catch (FormatException e)
+            catch
             {
-//                Debug.WriteLine(e.ToString());
+                // ignored
             }
-
-            
 
             DisplayMessageDelegate(messageComposite);
         }
@@ -115,7 +113,7 @@ namespace SecureIM.ChatBackend
                 string cipherText = CryptoHandler.Encrypt(text, targetPubKeyBytes);
                 cipherText = Encoding.UTF8.EncodeBase64(cipherText);
                 // In order to send a message, we call our friends' DisplayMessage method
-                var messageComposite = new MessageComposite(User.Name, cipherText);
+                var messageComposite = new MessageComposite(User, cipherText);
                 new ChannelFactory<IChatBackend>("ChatEndpoint").CreateChannel()
                     .DisplayMessage(messageComposite);
 
@@ -126,7 +124,7 @@ namespace SecureIM.ChatBackend
             }
             else
             {
-                var messageComposite = new MessageComposite(User.Name, text);
+                var messageComposite = new MessageComposite(User, text);
                 new ChannelFactory<IChatBackend>("ChatEndpoint").CreateChannel()
                     .DisplayMessage(messageComposite);
             }
