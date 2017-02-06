@@ -23,7 +23,6 @@ namespace SecureIM.Smartcard.controller.smartcard
 
         #endregion Public Properties
 
-
         #region Public Constructors
 
         /// <summary>
@@ -48,17 +47,15 @@ namespace SecureIM.Smartcard.controller.smartcard
                         break;
                 }
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 Debug.WriteLine(e.Message);
             }
         }
 
         #endregion Public Constructors
 
-
         #region Public Methods
-
-
 
         /// <summary>
         /// Sends the command.
@@ -71,22 +68,26 @@ namespace SecureIM.Smartcard.controller.smartcard
         /// <returns></returns>
         /// <exception cref="System.ArgumentOutOfRangeException">command - null</exception>
         [NotNull]
-        public byte[] SendCommand(SecureIMCardInstructions command, byte p1 = 0x00, byte p2 = 0x00, byte[] data = null, byte le = 0x00)
+        public byte[] SendCommand(SecureIMCardInstructions command, byte p1 = 0x00, byte p2 = 0x00, [CanBeNull] byte[] data = null, byte le = 0x00)
         {
-            string dataString = data != null && data.Length != 0 ? ToHexString(data) : "None";
-            Debug.WriteLine($"Creating and sending {command} with P1 = {p1}, P2 = {p2} and Data = {dataString}");
-            byte[] response = SendCommandTransmitter(command, p1, p2, data, le);
-//            var responseDataString = new StringBuilder();
-//
-//            foreach (byte dataByte in response) { responseDataString.Append($"{dataByte:X2} "); }
+            byte[] response = {};
+            try
+            {
+                string dataString = data != null && data.Length != 0 ? ToHexString(data) : "None";
 
-            Debug.WriteLine($"{command} sent with Response = {ToHexString(response)}");
-            Debug.WriteLine("");
+                Debug.WriteLine($"Creating and sending {command} with P1 = {p1}, P2 = {p2} and Data = {dataString}");
+                response = SendCommandTransmitter(command, data, le);
+                Debug.WriteLine($"{command} sent with Response = {ToHexString(response)}");
+                Debug.WriteLine("");
+            }
+            catch (InvalidOperationException e)
+            {
+                Debug.WriteLine(e.ToString());
+            }
             return response;
         }
 
         #endregion Public Methods
-
 
         #region Private Methods
 
@@ -104,14 +105,14 @@ namespace SecureIM.Smartcard.controller.smartcard
         /// Sends the command transmitter.
         /// </summary>
         /// <param name="command">The command.</param>
-        /// <param name="p1">The p1.</param>
-        /// <param name="p2">The p2.</param>
         /// <param name="data">The data.</param>
         /// <param name="le">The le.</param>
+        ///
+        ///
         /// <returns></returns>
         /// <exception cref="System.ArgumentOutOfRangeException">command - null</exception>
         [NotNull]
-        private byte[] SendCommandTransmitter(SecureIMCardInstructions command, byte p1, byte p2, byte[] data, byte le)
+        private byte[] SendCommandTransmitter(SecureIMCardInstructions command, [NotNull] byte[] data, byte le)
         {
             switch (command)
             {
@@ -174,7 +175,8 @@ namespace SecureIM.Smartcard.controller.smartcard
             if (hex.Length == 0) return string.Empty;
 
             var s = new StringBuilder();
-            foreach (byte b in hex) { s.Append($"{b:X2} "); }
+            foreach (byte b in hex)
+                s.Append($"{b:X2} ");
 
             return s.ToString();
         }

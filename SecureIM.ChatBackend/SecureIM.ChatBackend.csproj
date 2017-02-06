@@ -55,10 +55,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChatBackend.cs" />
+    <Compile Include="model\MessageComposite.cs" />
+    <Compile Include="model\Message.cs" />
     <Compile Include="model\Comms.cs" />
-    <Compile Include="model\User.cs" />
     <Compile Include="IChatBackend.cs" />
+    <Compile Include="model\MessageFlags.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="model\User.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

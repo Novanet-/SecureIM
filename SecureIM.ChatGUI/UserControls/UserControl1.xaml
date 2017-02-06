@@ -19,10 +19,8 @@
         <Label Content="{Binding TabName}" FontSize="18" />
         <ScrollViewer Grid.Row="1">
             <TextBlock Text="{Binding MyStringContent}" TextWrapping="Wrap" />
-
         </ScrollViewer>
         <Label Grid.Row="2" Content="{Binding TestButton}" />
         <!--</StackPanel>-->
     </Grid>
 </UserControl>
-

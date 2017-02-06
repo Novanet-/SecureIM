@@ -128,11 +128,12 @@
     <Compile Include="controller\smartcard\APDUFactory.cs" />
     <Compile Include="controller\smartcard\SmartcardController.cs" />
     <Compile Include="controller\smartcard\SmartcardControllerBuilder.cs" />
+    <Compile Include="helpers\EncodingForBase64.cs" />
     <Compile Include="model\abstractions\ICryptoHandler.cs" />
     <Compile Include="model\smartcard\enums\SecureIMCardInstructions.cs" />
     <Compile Include="model\smartcard\enums\SmartcardException.cs" />
     <Compile Include="model\smartcard\SCIM_INS_CODES.cs" />
-    <Compile Include="model\smartcard\SmartcardCryptoHandler.cs" />
+    <Compile Include="controller\smartcard\SmartcardCryptoHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
