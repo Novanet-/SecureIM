@@ -1,19 +1,39 @@
 ﻿using System;
+using System.Diagnostics;
+using JetBrains.Annotations;
 
 namespace SecureIM.Smartcard.helpers
 {
     public static class EncodingForBase64
     {
-        public static string EncodeBase64(this System.Text.Encoding encoding, string text)
+        [CanBeNull]
+        public static string EncodeBase64([NotNull] this System.Text.Encoding encoding, [NotNull] string text)
         {
-            byte[] textAsBytes = encoding.GetBytes(text);
-            return Convert.ToBase64String(textAsBytes);
+            try
+            {
+                byte[] textAsBytes = encoding.GetBytes(text);
+                return Convert.ToBase64String(textAsBytes);
+            }
+            catch (FormatException e)
+            {
+                Debug.WriteLine(e.ToString());
+                return null;
+            }
         }
 
-        public static string DecodeBase64(this System.Text.Encoding encoding, string encodedText)
+        [CanBeNull]
+        public static string DecodeBase64([NotNull] this System.Text.Encoding encoding, [NotNull] string encodedText)
         {
-            byte[] textAsBytes = Convert.FromBase64String(encodedText);
-            return encoding.GetString(textAsBytes);
+            try
+            {
+                byte[] textAsBytes = Convert.FromBase64String(encodedText);
+                return encoding.GetString(textAsBytes);
+            }
+            catch (FormatException e)
+            {
+                Debug.WriteLine(e.ToString());
+                return null;
+            }
         }
     }
 }

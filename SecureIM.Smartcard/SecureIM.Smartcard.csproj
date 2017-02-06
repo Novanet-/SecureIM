@@ -133,7 +133,7 @@
     <Compile Include="model\smartcard\enums\SecureIMCardInstructions.cs" />
     <Compile Include="model\smartcard\enums\SmartcardException.cs" />
     <Compile Include="model\smartcard\SCIM_INS_CODES.cs" />
-    <Compile Include="model\smartcard\SmartcardCryptoHandler.cs" />
+    <Compile Include="controller\smartcard\SmartcardCryptoHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

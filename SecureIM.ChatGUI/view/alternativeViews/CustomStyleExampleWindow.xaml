@@ -15,7 +15,7 @@
         xmlns:view="clr-namespace:SecureIM.ChatGUI.view"
         xmlns:viewModel="clr-namespace:SecureIM.ChatGUI.ViewModel"
         xmlns:vm="clr-namespace:SecureIM.ChatGUI.ViewModel"
-        Title="CustomStyleExampleWindow"
+        Title="CustomessageTextStyleExamessageTextpleWindow"
         Width="500"
         Height="500"
         DataContext="{Binding Source={StaticResource Locator},

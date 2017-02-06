@@ -1,16 +1,17 @@
 ﻿using System.Runtime.Serialization;
+using JetBrains.Annotations;
 
 namespace SecureIM.ChatBackend.model
 {
     [DataContract]
     public class Message
     {
-        public Message(string messageText)
+        public Message([NotNull] string text)
         {
-            MessageText = messageText;
+            Text = text;
         }
 
         [DataMember]
-        public string MessageText { get; set; }
+        public string Text { get; set; }
     }
 }

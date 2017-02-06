@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Text;
 using JetBrains.Annotations;
-using SecureIM.Smartcard.controller.smartcard;
-using SecureIM.Smartcard.helpers;
 using SecureIM.Smartcard.model.abstractions;
 using SecureIM.Smartcard.model.smartcard.enums;
 
-namespace SecureIM.Smartcard.model.smartcard
+namespace SecureIM.Smartcard.controller.smartcard
 {
     public class SmartcardCryptoHandler : ICryptoHandler
     {
@@ -55,7 +53,7 @@ namespace SecureIM.Smartcard.model.smartcard
             {
                 byte le = decryptedBytes[1];
                 decryptedBytes = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_DO_DES_CIPHER_DECRYPT_GET_RESPONSE, 0, 0, null, le);
-                Array.Resize(ref decryptedBytes, decryptedBytes.Length - 2);
+                decryptedBytes = TrimSwFromResponse(decryptedBytes);
             }
 
             return Encoding.ASCII.GetString(decryptedBytes);
@@ -81,10 +79,17 @@ namespace SecureIM.Smartcard.model.smartcard
             {
                 byte le = encryptedBytes[1];
                 encryptedBytes = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_DO_DES_CIPHER_ENCRYPT_GET_RESPONSE, 0, 0, null, le);
-                Array.Resize(ref encryptedBytes, encryptedBytes.Length - 2);
+                encryptedBytes = TrimSwFromResponse(encryptedBytes);
             }
 
             return Encoding.Default.GetString(encryptedBytes);
+        }
+
+        [NotNull]
+        private static byte[] TrimSwFromResponse(byte[] responseBytes)
+        {
+            Array.Resize(ref responseBytes, responseBytes.Length - 2);
+            return responseBytes;
         }
 
         /// <summary>
@@ -96,17 +101,13 @@ namespace SecureIM.Smartcard.model.smartcard
         /// Gets the public key.
         /// </summary>
         /// <returns></returns>
-        public byte[] GetPublicKey() => SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GET_PUB_KEY);
-        /// <summary>
-        /// Gets the priv key.
-        /// </summary>
-        /// <returns></returns>
-        public byte[] GetPrivKey() => SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GET_PUB_KEY);
+        public byte[] GetPublicKey() => TrimSwFromResponse(SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GET_PUB_KEY));
+
         /// <summary>
         /// Gets the private key.
         /// </summary>
         /// <returns></returns>
-        public byte[] GetPrivateKey() => SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GET_PRI_KEY);
+        public byte[] GetPrivateKey() => TrimSwFromResponse(SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GET_PRI_KEY));
 
         #endregion Public Methods
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 using SecureIM.ChatBackend;
+using SecureIM.ChatBackend.model;
 
 namespace SecureIM.ChatGUI.UserControls
 {
@@ -42,7 +43,7 @@ namespace SecureIM.ChatGUI.UserControls
         public void DisplayMessage(MessageComposite messageComposite)
         {
             string username = messageComposite.Sender.Name ?? "";
-            string message = messageComposite.Message.MessageText ?? "";
+            string message = messageComposite.Message.Text ?? "";
             TextBoxChatPane.Text += username + ": " + message + Environment.NewLine;
         }
 
