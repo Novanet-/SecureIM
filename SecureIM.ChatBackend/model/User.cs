@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.Serialization;
+using JetBrains.Annotations;
 
 namespace SecureIM.ChatBackend.model
 {
@@ -10,19 +11,17 @@ namespace SecureIM.ChatBackend.model
         {
         }
 
-        public User(string name)
-        {
-            if (name == null) throw new ArgumentNullException(nameof(name));
-            Name = name;
-        }
-
-        public User(string name, byte[] pubKeyBytes)
+        public User([NotNull] string name, [NotNull] string pubKeyBytes = null)
         {
             Name = name;
             PublicKey = pubKeyBytes;
         }
+        public User([NotNull] string pubKeyBytes)
+        {
+            PublicKey = pubKeyBytes;
+        }
 
         [DataMember] public string Name { get; set; } = "Anonymous";
-        [DataMember] public byte[] PublicKey { get; set; }
+        [DataMember] public string PublicKey { get; set; }
     }
 }

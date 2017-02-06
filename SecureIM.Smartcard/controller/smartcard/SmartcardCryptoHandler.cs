@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Text;
 using JetBrains.Annotations;
 using SecureIM.Smartcard.model.abstractions;
@@ -88,7 +89,10 @@ namespace SecureIM.Smartcard.controller.smartcard
         [NotNull]
         private static byte[] TrimSwFromResponse(byte[] responseBytes)
         {
-            Array.Resize(ref responseBytes, responseBytes.Length - 2);
+            if (responseBytes.Length > 2)
+            {
+                Array.Resize(ref responseBytes, responseBytes.Length - 2);
+            }
             return responseBytes;
         }
 
