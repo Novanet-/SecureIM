@@ -55,7 +55,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChatBackend.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="model\MessageComposite.cs" />
     <Compile Include="model\Message.cs" />
     <Compile Include="model\Comms.cs" />

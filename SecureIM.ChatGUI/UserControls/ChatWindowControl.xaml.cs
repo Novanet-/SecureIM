@@ -24,7 +24,10 @@ namespace SecureIM.ChatGUI.UserControls
         public ChatWindowControl()
         {
             InitializeComponent();
-            Backend = new ChatBackend.ChatBackend(DisplayMessage);
+            Backend = ChatBackend.ChatBackend.Instance;
+            Backend.DisplayMessageDelegate = DisplayMessage;
+            Backend.StartService();
+
         }
 
         #endregion Public Constructors

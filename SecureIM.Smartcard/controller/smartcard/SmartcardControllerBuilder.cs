@@ -78,6 +78,7 @@ namespace SecureIM.Smartcard.controller.smartcard
         /// </summary>
         /// <param name="context">The context.</param>
         /// <returns></returns>
+        /// <exception cref="SmartcardException">Condition.</exception>
         [NotNull]
         internal SCardReader EstablishCardConnection([NotNull] ISCardContext context)
         {

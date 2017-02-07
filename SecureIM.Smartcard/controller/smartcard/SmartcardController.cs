@@ -28,7 +28,6 @@ namespace SecureIM.Smartcard.controller.smartcard
         /// <summary>
         /// Initializes a new instance of the <see cref="SmartcardController" /> class.
         /// </summary>
-        /// <exception cref="PCSCException">Protocol not supported: " + CardReader.ActiveProtocol</exception>
         public SmartcardController()
         {
             CardReader = ScControllerBuilder.EstablishCardConnection(CardContext);
@@ -67,6 +66,7 @@ namespace SecureIM.Smartcard.controller.smartcard
         /// <param name="le">The le.</param>
         /// <returns></returns>
         /// <exception cref="System.ArgumentOutOfRangeException">command - null</exception>
+        /// <exception cref="OverflowException">The array is multidimensional and contains more than <see cref="F:System.Int32.MaxValue" /> elements.</exception>
         [NotNull]
         public byte[] SendCommand(SecureIMCardInstructions command, byte p1 = 0x00, byte p2 = 0x00, [CanBeNull] byte[] data = null, byte le = 0x00)
         {

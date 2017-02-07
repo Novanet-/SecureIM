@@ -34,7 +34,10 @@ namespace SecureIM.ChatGUI.view
         {
             InitializeComponent();
             OpenWindows = new List<DockingWindow>();
+            Backend = ChatBackend.ChatBackend.Instance;
         }
+
+        public ChatBackend.ChatBackend Backend { get; set; }
 
         #endregion Public Constructors
 

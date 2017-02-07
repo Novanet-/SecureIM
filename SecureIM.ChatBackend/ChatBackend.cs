@@ -15,48 +15,50 @@ namespace SecureIM.ChatBackend
     {
         #region Private Fields
 
-        private readonly User _eventUser = new User("Event");
-        private readonly User _infoUser = new User("Info");
+        private DisplayMessageDelegate _displayMessageDelegate;
 
         #endregion Private Fields
 
         #region Public Properties
 
-        [NotNull] public Comms Comms { get; private set; }
+        [ItemNotNull] public static Lazy<ChatBackend> Lazy { get; } = new Lazy<ChatBackend>(() => new ChatBackend());
+        public Comms Comms { get; private set; }
         [NotNull] public ICryptoHandler CryptoHandler { get; }
         [NotNull] public User CurrentUser { get; }
-        [NotNull] public DisplayMessageDelegate DisplayMessageDelegate { get; }
+        [NotNull] public DisplayMessageDelegate DisplayMessageDelegate
+        {
+            get { return _displayMessageDelegate; }
+            set
+            {
+                if (DisplayMessageDelegateIsSet) return;
+
+                _displayMessageDelegate = value;
+                DisplayMessageDelegateIsSet = true;
+            }
+        }
+
+        public bool DisplayMessageDelegateIsSet { get; set; }
+        public User EventUser { get; } = new User("Event");
+        public User InfoUser { get; } = new User("Info");
+
+        [NotNull] public static ChatBackend Instance => Lazy.Value;
 
         #endregion Public Properties
 
-        #region Public Constructors
+        #region Private Constructors
 
-        /// <summary>
-        ///     ChatBackend constructor should be called with a delegate that is capable of displaying messages.
-        /// </summary>
-        /// <param name="dmd">DisplayMessageDelegate</param>
-        // ReSharper disable once NotNullMemberIsNotInitialized
-        public ChatBackend([NotNull] DisplayMessageDelegate dmd)
+        private ChatBackend()
         {
             CurrentUser = new User();
-            DisplayMessageDelegate = dmd;
             CryptoHandler = new SmartcardCryptoHandler();
-            StartService();
         }
 
-        #endregion Public Constructors
-
-        #region Private Constructors
+        #endregion Private Constructors
 
         /// <summary>
         ///     The default constructor is only here for testing purposes.
         /// </summary>
         // ReSharper disable once NotNullMemberIsNotInitialized
-        private ChatBackend()
-        {
-        }
-
-        #endregion Private Constructors
 
         #region Public Methods
 
@@ -67,8 +69,11 @@ namespace SecureIM.ChatBackend
         /// </summary>
         /// <param name="messageComposite">The messageComposite.</param>
         /// <exception cref="System.ArgumentNullException">messageComposite</exception>
+        /// <exception cref="Exception">A delegate callback throws an exception.</exception>
         public void DisplayMessage([NotNull] MessageComposite messageComposite)
         {
+            if (!DisplayMessageDelegateIsSet) return;
+
             if (messageComposite == null) throw new ArgumentNullException(nameof(messageComposite));
 
             if (messageComposite.Flags.HasFlag(MessageFlags.Encoded)
@@ -76,9 +81,12 @@ namespace SecureIM.ChatBackend
             {
                 string decodedMessageText = Encoding.UTF8.DecodeBase64(messageComposite.Message.Text);
 
-                byte[] targetPubKeyBytes = CryptoHandler.GetPublicKey();
-                string plainText = CryptoHandler.Decrypt(decodedMessageText, targetPubKeyBytes);
-                messageComposite = new MessageComposite(messageComposite.Sender, plainText);
+                if (decodedMessageText != null)
+                {
+                    byte[] targetPubKeyBytes = CryptoHandler.GetPublicKey();
+                    string plainText = CryptoHandler.Decrypt(decodedMessageText, targetPubKeyBytes);
+                    messageComposite = new MessageComposite(messageComposite.Sender, plainText);
+                }
             }
 
             DisplayMessageDelegate(messageComposite);
@@ -88,12 +96,16 @@ namespace SecureIM.ChatBackend
         ///     The front-end calls the SendMessage method in order to broadcast a message to our friends
         /// </summary>
         /// <param name="text">The text.</param>
-        public void SendMessage([NotNull] string text)
+        /// <exception cref="RegexMatchTimeoutException">A time-out occurred. For more information about time-outs, see the Remarks section.</exception>
+        /// <exception cref="ArgumentException">A regular expression parsing error occurred. </exception>
+        public void SendMessage(string text)
         {
+            if (!DisplayMessageDelegateIsSet) return;
+
             var commandRegEx = new Regex(@"^([\w]+:)\s*(.*)", RegexOptions.Multiline);
             Match commandMatch = commandRegEx.Match(text);
             GroupCollection messageGroups = commandMatch.Groups;
-            string commandMatchString = commandMatch.Success ? messageGroups[1].Value.ToLower() : "";
+            string commandMatchString = commandMatch.Success ? messageGroups[1].Value.ToLower() : string.Empty;
 
             string plainText;
             string cipherText;
@@ -103,7 +115,7 @@ namespace SecureIM.ChatBackend
                 case "setname:":
                     CurrentUser.Name = text.Substring(commandMatchString.Length).Trim();
                     string nameSetString = "Setting your name to " + CurrentUser.Name;
-                    SendMessageToChannel(_eventUser, nameSetString);
+                    SendMessageToChannel(EventUser, nameSetString);
                     break;
 
                 case "genkey:":
@@ -151,7 +163,7 @@ namespace SecureIM.ChatBackend
                 case "eb64:":
                     plainText = messageGroups[2].Value;
                     cipherText = Encoding.UTF8.EncodeBase64(plainText);
-                    if (!string.IsNullOrEmpty(plainText)) SendMessageToChannel(CurrentUser, cipherText, MessageFlags.Encoded);
+                    if (!string.IsNullOrEmpty(cipherText)) SendMessageToChannel(CurrentUser, cipherText, MessageFlags.Encoded);
                     break;
 
                 default:
@@ -201,8 +213,10 @@ namespace SecureIM.ChatBackend
         /// <summary>
         ///     Starts the service.
         /// </summary>
-        private void StartService()
+        public void StartService()
         {
+            if (!DisplayMessageDelegateIsSet) return;
+
             var channelFactory = new ChannelFactory<IChatBackend>("ChatEndpoint");
             IChatBackend channel = channelFactory.CreateChannel();
             var serviceHost = new ServiceHost(this);
@@ -212,11 +226,11 @@ namespace SecureIM.ChatBackend
 
             // Information to send to the channel
             string userJoinedMessage = $"{CurrentUser.Name} has entered the conversation.";
-            channel.DisplayMessage(new MessageComposite(_eventUser, userJoinedMessage));
+            channel.DisplayMessage(new MessageComposite(EventUser, userJoinedMessage));
 
             // Information to display locally
             const string changeNamePrompt = "To change your name, type setname: NEW_NAME";
-            DisplayMessageDelegate(new MessageComposite(_infoUser, changeNamePrompt));
+            DisplayMessageDelegate(new MessageComposite(InfoUser, changeNamePrompt));
         }
 
         /// <summary>
@@ -226,7 +240,7 @@ namespace SecureIM.ChatBackend
         {
             var channelFactory = new ChannelFactory<IChatBackend>("ChatEndpoint");
             string userLeftMessage = $"{CurrentUser.Name} is leaving the conversation.";
-            channelFactory.CreateChannel().DisplayMessage(new MessageComposite(_eventUser, userLeftMessage));
+            channelFactory.CreateChannel().DisplayMessage(new MessageComposite(EventUser, userLeftMessage));
 
             if (Comms.Host.State == CommunicationState.Closed) return;
 

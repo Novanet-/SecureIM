@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Text;
 using JetBrains.Annotations;
 using SecureIM.Smartcard.model.abstractions;
@@ -21,16 +20,17 @@ namespace SecureIM.Smartcard.controller.smartcard
 
         #endregion Public Properties
 
-
         #region Public Constructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SmartcardCryptoHandler"/> class.
         /// </summary>
-        public SmartcardCryptoHandler() { SmartcardController = new SmartcardController(); }
+        public SmartcardCryptoHandler()
+        {
+            SmartcardController = new SmartcardController();
+        }
 
         #endregion Public Constructors
-
 
         #region Public Methods
 
@@ -43,22 +43,34 @@ namespace SecureIM.Smartcard.controller.smartcard
         public string Decrypt([NotNull] string data, [CanBeNull] byte[] keyBytes = null)
         {
             byte[] dataBytes = Encoding.Default.GetBytes(data);
-
-            SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_SET_GUEST_PUB_KEY, 0x00, 0x00, keyBytes);
-            SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GEN_SECRET);
-            SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GEN_3DES_KEY);
-            SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_SET_INPUT_TEXT, 0x00, 0x00, dataBytes);
-
-            byte[] decryptedBytes = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_DO_DES_CIPHER_DECRYPT, 0x01);
-            if (decryptedBytes[0] == 0x6C)
+            byte[] decryptedBytes = {};
+            try
             {
-                byte le = decryptedBytes[1];
-                decryptedBytes = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_DO_DES_CIPHER_DECRYPT_GET_RESPONSE, 0, 0, null, le);
-                decryptedBytes = TrimSwFromResponse(decryptedBytes);
-            }
+                SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_SET_GUEST_PUB_KEY, 0x00, 0x00, keyBytes);
+                SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GEN_SECRET);
+                SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GEN_3DES_KEY);
+                SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_SET_INPUT_TEXT, 0x00, 0x00, dataBytes);
 
+                decryptedBytes = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_DO_DES_CIPHER_DECRYPT, 0x01);
+                if (decryptedBytes[0] == 0x6C)
+                {
+                    byte le = decryptedBytes[1];
+                    decryptedBytes = SmartcardController.SendCommand(
+                        SecureIMCardInstructions.INS_ECC_DO_DES_CIPHER_DECRYPT_GET_RESPONSE,
+                        0,
+                        0,
+                        null,
+                        le);
+                    decryptedBytes = TrimSwFromResponse(decryptedBytes);
+                }
+            }
+            catch (OverflowException e)
+            {
+                e.ToString();
+            }
             return Encoding.ASCII.GetString(decryptedBytes);
         }
+
 
         /// <summary>
         /// Encrypts the specified data.
@@ -90,9 +102,8 @@ namespace SecureIM.Smartcard.controller.smartcard
         private static byte[] TrimSwFromResponse(byte[] responseBytes)
         {
             if (responseBytes.Length > 2)
-            {
                 Array.Resize(ref responseBytes, responseBytes.Length - 2);
-            }
+
             return responseBytes;
         }
 
