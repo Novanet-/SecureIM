@@ -11,7 +11,7 @@ using SecureIM.Smartcard.model.abstractions;
 namespace SecureIM.ChatBackend
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
-    public class ChatBackend : IChatBackend
+    public sealed class ChatBackend : IChatBackend
     {
         #region Private Fields
 
@@ -71,8 +71,8 @@ namespace SecureIM.ChatBackend
         {
             if (messageComposite == null) throw new ArgumentNullException(nameof(messageComposite));
 
-            if (messageComposite.Flags.HasFlag(MessageFlags.Encoded) &&
-                messageComposite.Flags.HasFlag(MessageFlags.Encrypted))
+            if (messageComposite.Flags.HasFlag(MessageFlags.Encoded)
+                && messageComposite.Flags.HasFlag(MessageFlags.Encrypted))
             {
                 string decodedMessageText = Encoding.UTF8.DecodeBase64(messageComposite.Message.Text);
 

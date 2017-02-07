@@ -92,6 +92,7 @@
     <Compile Include="Converters\BooleanToPinTabTextConverter.cs" />
     <Compile Include="Converters\InverseBooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\TabToTabSnapConverter.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="view\alternativeViews\CustomStyleExampleWindow.xaml.cs">
       <DependentUpon>CustomStyleExampleWindow.xaml</DependentUpon>
     </Compile>

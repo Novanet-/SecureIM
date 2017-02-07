@@ -23,6 +23,7 @@ namespace SecureIM.ChatBackend.model
         /// <param name="sender">The sender.</param>
         /// <param name="messageText">The messageText.</param>
         /// <param name="flags"></param>
+        /// <exception cref="ArgumentNullException"><paramref name="messageText"/>"/> is <c>null</c>.</exception>
         public MessageComposite([NotNull] User sender, [NotNull] string messageText, MessageFlags flags = MessageFlags.None)
         {
             if (messageText == null) throw new ArgumentNullException(nameof(messageText));

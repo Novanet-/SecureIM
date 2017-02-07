@@ -16,6 +16,7 @@ namespace SecureIM.ChatBackend.model
             Name = name;
             PublicKey = pubKeyBytes;
         }
+
         public User([NotNull] string pubKeyBytes)
         {
             PublicKey = pubKeyBytes;

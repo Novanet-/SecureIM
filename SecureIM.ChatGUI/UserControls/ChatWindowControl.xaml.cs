@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Input;
-using SecureIM.ChatBackend;
 using SecureIM.ChatBackend.model;
 
 namespace SecureIM.ChatGUI.UserControls

@@ -29,10 +29,7 @@ namespace SecureIM.ChatGUI.ViewModel
         public TabBase SelectedTab
         {
             get { return _selectedTab; }
-            set
-            {
-                if (_selectedTab != value) Set(() => SelectedTab, ref _selectedTab, value);
-            }
+            set { if (_selectedTab != value) Set(() => SelectedTab, ref _selectedTab, value); }
         }
 
         private bool _canAddTabs;
@@ -50,7 +47,6 @@ namespace SecureIM.ChatGUI.ViewModel
             }
         }
 
-
         public ViewModelExampleBase()
         {
             ItemCollection = new ObservableCollection<TabBase>();
@@ -63,7 +59,7 @@ namespace SecureIM.ChatGUI.ViewModel
 
         protected TabClass1 CreateTab1()
         {
-            var i = 0;
+            const int i = 0;
             var tab = new TabClass1()
             {
                 TabName = "Tab class 1",
@@ -112,6 +108,7 @@ namespace SecureIM.ChatGUI.ViewModel
             };
             return tab;
         }
+
         protected TabChatWindow CreateTabChatWindow()
         {
             var tab = new TabChatWindow()
@@ -147,13 +144,17 @@ namespace SecureIM.ChatGUI.ViewModel
             tabCollection[from].TabNumber = tabCollection[to].TabNumber; //Set the new index of our dragged tab
 
             if (to > from)
+            {
                 for (int i = @from + 1; i <= to; i++)
                     tabCollection[i].TabNumber--;
-                            //When we increment the tab index, we need to decrement all other tabs.
+            }
+            //When we increment the tab index, we need to decrement all other tabs.
             else if (from > to) //when we decrement the tab index
+            {
                 for (int i = to; i < @from; i++)
                     tabCollection[i].TabNumber++;
-                            //When we decrement the tab index, we need to increment all other tabs.
+            }
+            //When we decrement the tab index, we need to increment all other tabs.
 
             view.Refresh(); //Refresh the view to force the sort description to do its work.
         }

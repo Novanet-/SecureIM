@@ -3,7 +3,8 @@ using System.Runtime.Serialization;
 
 namespace SecureIM.Smartcard.model.smartcard.enums
 {
-    class SmartcardException : Exception
+    [Serializable]
+    internal class SmartcardException : Exception
     {
         public static string ConnectionError { get; } = "Could not connect to reader {0}:\n{1}";
         public static string NoReadersError { get; } = "You need at least one reader in order to run this example.";

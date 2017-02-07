@@ -76,7 +76,7 @@ namespace SecureIM.Smartcard.controller.smartcard
                 string dataString = data != null && data.Length != 0 ? ToHexString(data) : "None";
 
                 Debug.WriteLine($"Creating and sending {command} with P1 = {p1}, P2 = {p2} and Data = {dataString}");
-                response = SendCommandTransmitter(command, data, le);
+                if (data != null) response = SendCommandTransmitter(command, data, le);
                 Debug.WriteLine($"{command} sent with Response = {ToHexString(response)}");
                 Debug.WriteLine("");
             }

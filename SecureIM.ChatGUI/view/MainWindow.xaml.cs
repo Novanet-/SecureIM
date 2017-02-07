@@ -80,8 +80,8 @@ namespace SecureIM.ChatGUI.view
             IEnumerable<Window> allWindows = SortWindowsTopToBottom(Application.Current.Windows.OfType<Window>());
             IEnumerable<Window> windowsUnderCurrent = from win in allWindows
                                                       where
-                                                      (win.WindowState == WindowState.Maximized ||
-                                                       new Rect(win.Left, win.Top, win.Width, win.Height).Contains(
+                                                      (win.WindowState == WindowState.Maximized
+                                                       || new Rect(win.Left, win.Top, win.Width, win.Height).Contains(
                                                                                                                    screenPoint))
                                                       && !Equals(win, source)
                                                       select win;
