@@ -5,6 +5,6 @@
     /// </summary>
     public partial class UserControl1
     {
-        public UserControl1() { InitializeComponent(); }
+        public UserControl1() { this.Dispatcher.InvokeAsync(InitializeComponent); }
     }
 }

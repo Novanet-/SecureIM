@@ -9,7 +9,7 @@ namespace SecureIM.ChatGUI.view.alternativeViews
     /// </summary>
     public partial class PinnedTabExampleWindow : Window
     {
-        public PinnedTabExampleWindow() { InitializeComponent(); }
+        public PinnedTabExampleWindow() { this.Dispatcher.InvokeAsync(InitializeComponent); }
 
         private void TabControl_ContainerItemPreparedForOverride(object sender, ContainerOverrideEventArgs e)
         {

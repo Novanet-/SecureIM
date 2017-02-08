@@ -7,6 +7,7 @@ namespace SecureIM.ChatBackend.model
     {
         None = 0,
         Encoded = 1,
-        Encrypted = 4
+        Encrypted = 4,
+        Broadcast = 8
     }
 }

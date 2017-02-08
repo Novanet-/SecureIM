@@ -36,9 +36,9 @@ namespace SecureIM.ChatGUI.ViewModel
         {
             //Adding items to the collection creates a tab
             ItemCollection.Add(CreateTab1());
-            ItemCollection.Add(CreateTab2());
-            ItemCollection.Add(CreateTab3());
-            ItemCollection.Add(CreateTabLoremIpsum());
+//            ItemCollection.Add(CreateTab2());
+//            ItemCollection.Add(CreateTab3());
+//            ItemCollection.Add(CreateTabLoremIpsum());
             ItemCollection.Add(CreateTabChatWindow());
 
             SelectedTab = ItemCollection.FirstOrDefault();

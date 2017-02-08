@@ -7,6 +7,6 @@ namespace SecureIM.ChatGUI.UserControls
     /// </summary>
     public partial class UserControl3 : UserControl
     {
-        public UserControl3() { InitializeComponent(); }
+        public UserControl3() { this.Dispatcher.InvokeAsync(InitializeComponent); }
     }
 }

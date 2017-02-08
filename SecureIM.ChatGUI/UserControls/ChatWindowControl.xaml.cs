@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using SecureIM.ChatBackend.model;
 
@@ -15,7 +16,6 @@ namespace SecureIM.ChatGUI.UserControls
 
         #endregion Private Fields
 
-
         #region Public Constructors
 
         /// <summary>
@@ -23,15 +23,15 @@ namespace SecureIM.ChatGUI.UserControls
         /// </summary>
         public ChatWindowControl()
         {
-            InitializeComponent();
+            this.Dispatcher.InvokeAsync(InitializeComponent);
             Backend = ChatBackend.ChatBackend.Instance;
             Backend.DisplayMessageDelegate = DisplayMessage;
-            Backend.StartService();
 
+            Task.Run(() => Backend.StartService());
+//                Backend.StartService();
         }
 
         #endregion Public Constructors
-
 
         #region Public Methods
 
@@ -46,11 +46,10 @@ namespace SecureIM.ChatGUI.UserControls
         {
             string username = messageComposite.Sender.Name ?? "";
             string message = messageComposite.Message.Text ?? "";
-            TextBoxChatPane.Text += username + ": " + message + Environment.NewLine;
+            this.Dispatcher.InvokeAsync(() => TextBoxChatPane.Text += username + ": " + message + Environment.NewLine);
         }
 
         #endregion Public Methods
-
 
         #region Private Methods
 
@@ -58,8 +57,11 @@ namespace SecureIM.ChatGUI.UserControls
         {
             if (!(e.Key == Key.Return || e.Key == Key.Enter)) return;
 
-            Backend.SendMessage(TextBoxEntryField.Text);
-            TextBoxEntryField.Clear();
+            this.Dispatcher.InvokeAsync(() =>
+            {
+                Backend.SendMessage(TextBoxEntryField.Text);
+                TextBoxEntryField.Clear();
+            });
         }
 
         #endregion Private Methods

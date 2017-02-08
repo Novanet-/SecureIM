@@ -8,7 +8,7 @@ namespace SecureIM.ChatGUI.view
     /// </summary>
     public partial class DockingWindow
     {
-        public DockingWindow() { InitializeComponent(); }
+        public DockingWindow() { this.Dispatcher.InvokeAsync(InitializeComponent); }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {

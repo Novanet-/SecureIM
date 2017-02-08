@@ -32,7 +32,7 @@ namespace SecureIM.ChatGUI.view
 
         public MainWindow()
         {
-            InitializeComponent();
+            this.Dispatcher.InvokeAsync(InitializeComponent);
             OpenWindows = new List<DockingWindow>();
             Backend = ChatBackend.ChatBackend.Instance;
         }
