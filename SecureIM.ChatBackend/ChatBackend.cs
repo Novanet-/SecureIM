@@ -116,33 +116,45 @@ namespace SecureIM.ChatBackend
             string cipherText;
             string pubKeyB64;
             var messageReceiver = new User();
+            string messageText;
+            User messageSender = EventUser;
             switch (commandMatchString)
             {
                 case "setname:":
                     CurrentUser.Name = text.Substring(commandMatchString.Length).Trim();
                     string nameSetString = "Setting your name to " + CurrentUser.Name;
-                    SendMessageToChannel(EventUser, messageReceiver, nameSetString);
+                    messageText = nameSetString;
+                    SendMessageToChannel(messageSender, messageReceiver, messageText);
                     break;
 
                 case "genkey:":
                     CryptoHandler.GenerateAsymmetricKeyPair();
 
                     pubKeyB64 = EncodeByteArrayBase64(CryptoHandler.GetPublicKey());
-                    if (!string.IsNullOrEmpty(pubKeyB64)) SendMessageToChannel(CurrentUser, messageReceiver, pubKeyB64, MessageFlags.Encoded);
+                    if (!string.IsNullOrEmpty(pubKeyB64))
+                    {
+                        messageSender = CurrentUser;
+                        messageText = pubKeyB64;
+                        SendMessageToChannel(messageSender, messageReceiver, messageText, MessageFlags.Encoded);
+                    }
 
                     string priKeyB64 = EncodeByteArrayBase64(CryptoHandler.GetPrivateKey());
-                    if (!string.IsNullOrEmpty(priKeyB64)) SendMessageToChannel(CurrentUser, messageReceiver, priKeyB64, MessageFlags.Encoded);
+                    if (!string.IsNullOrEmpty(priKeyB64)) SendMessageToChannel(messageSender, messageReceiver, priKeyB64, MessageFlags.Encoded);
                     break;
 
                 case "getpub:":
                     pubKeyB64 = EncodeByteArrayBase64(CryptoHandler.GetPublicKey());
-                    if (!string.IsNullOrEmpty(pubKeyB64)) SendMessageToChannel(CurrentUser, messageReceiver, pubKeyB64, MessageFlags.Encoded);
+                    messageSender = CurrentUser;
+                    messageText = pubKeyB64;
+                    if (!string.IsNullOrEmpty(pubKeyB64)) SendMessageToChannel(messageSender, messageReceiver, messageText, MessageFlags.Encoded);
                     break;
 
                 case "regpub:":
                     pubKeyB64 = EncodeByteArrayBase64(CryptoHandler.GetPublicKey());
                     CurrentUser.PublicKey = pubKeyB64;
-                    SendMessageToChannel(CurrentUser, messageReceiver, $"Registered: {pubKeyB64}", MessageFlags.Encoded);
+                    messageSender = CurrentUser;
+                    messageText = $"Registered: {pubKeyB64}";
+                    SendMessageToChannel(messageSender, messageReceiver, messageText, MessageFlags.Encoded);
                     break;
 
                 case "encrypt:":
@@ -150,26 +162,30 @@ namespace SecureIM.ChatBackend
                     cipherText = EncryptChatMessage(commandData);
                     cipherText = Encoding.UTF8.EncodeBase64(cipherText);
                     if (!string.IsNullOrEmpty(cipherText))
-                        SendMessageToChannel(CurrentUser, messageReceiver, cipherText, MessageFlags.Encoded | MessageFlags.Encrypted);
+                        messageSender = CurrentUser;
+                    SendMessageToChannel(messageSender, messageReceiver, cipherText, MessageFlags.Encoded | MessageFlags.Encrypted);
                     break;
 
                 case "decrypt:":
                     cipherText = messageGroups[2].Value;
                     commandData = DecryptChatMessage(cipherText);
                     commandData = Encoding.UTF8.EncodeBase64(commandData);
-                    if (!string.IsNullOrEmpty(commandData)) SendMessageToChannel(CurrentUser, messageReceiver, commandData, MessageFlags.Encoded);
+                    messageSender = CurrentUser;
+                    if (!string.IsNullOrEmpty(commandData)) SendMessageToChannel(messageSender, messageReceiver, commandData, MessageFlags.Encoded);
                     break;
 
                 case "db64:":
                     cipherText = messageGroups[2].Value;
                     commandData = Encoding.UTF8.DecodeBase64(cipherText);
-                    if (!string.IsNullOrEmpty(commandData)) SendMessageToChannel(CurrentUser, messageReceiver, commandData);
+                    messageSender = CurrentUser;
+                    if (!string.IsNullOrEmpty(commandData)) SendMessageToChannel(messageSender, messageReceiver, commandData);
                     break;
 
                 case "eb64:":
                     commandData = messageGroups[2].Value;
                     cipherText = Encoding.UTF8.EncodeBase64(commandData);
-                    if (!string.IsNullOrEmpty(cipherText)) SendMessageToChannel(CurrentUser, messageReceiver, cipherText, MessageFlags.Encoded);
+                    messageSender = CurrentUser;
+                    if (!string.IsNullOrEmpty(cipherText)) SendMessageToChannel(messageSender, messageReceiver, cipherText, MessageFlags.Encoded);
                     break;
                 case "addfriend:":
                     commandData = messageGroups[2].Value;
@@ -179,11 +195,13 @@ namespace SecureIM.ChatBackend
                     var newFriend = new User(alias, pubKeyB64);
                     FriendsList.Add(newFriend);
                     string confirmMessage = $"Friend ({alias}) added with public key: {pubKeyB64}";
-                    SendMessageToChannel(CurrentUser, CurrentUser, confirmMessage);
+                    messageSender = CurrentUser;
+                    SendMessageToChannel(messageSender, CurrentUser, confirmMessage);
                     break;
 
                 default:
-                    SendMessageToChannel(CurrentUser, messageReceiver, text);
+                    messageSender = CurrentUser;
+                    SendMessageToChannel(messageSender, messageReceiver, text);
                     break;
             }
         }
