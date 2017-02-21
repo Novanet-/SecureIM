@@ -55,6 +55,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChatBackend.cs" />
+    <Compile Include="ChatCommandHandler.cs" />
+    <Compile Include="helpers\BackendHelper.cs" />
     <Compile Include="model\MessageComposite.cs" />
     <Compile Include="model\Message.cs" />
     <Compile Include="model\Comms.cs" />

@@ -4,6 +4,7 @@ using System.Text;
 using JetBrains.Annotations;
 using PCSC;
 using PCSC.Iso7816;
+using SecureIM.Smartcard.helpers;
 using SecureIM.Smartcard.model.smartcard.enums;
 
 namespace SecureIM.Smartcard.controller.smartcard
@@ -73,11 +74,11 @@ namespace SecureIM.Smartcard.controller.smartcard
             byte[] response = {};
             try
             {
-                string dataString = data != null && data.Length != 0 ? ToHexString(data) : "None";
+                string dataString = data != null && data.Length != 0 ? ByteArrayHelper.ToHexString(data) : "None";
 
                 Debug.WriteLine($"Creating and sending {command} with P1 = {p1}, P2 = {p2} and Data = {dataString}");
                 response = SendCommandTransmitter(command, data, le);
-                Debug.WriteLine($"{command} sent with Response = {ToHexString(response)}");
+                Debug.WriteLine($"{command} sent with Response = {ByteArrayHelper.ToHexString(response)}");
                 Debug.WriteLine("");
             }
             catch (InvalidOperationException e)
@@ -162,23 +163,6 @@ namespace SecureIM.Smartcard.controller.smartcard
             //            CardReader.Dispose();
 
             return pbRecvBuffer;
-        }
-
-        /// <summary>
-        /// To the hexadecimal string.
-        /// </summary>
-        /// <param name="hex">The hexadecimal.</param>
-        /// <returns></returns>
-        [NotNull]
-        public static string ToHexString([NotNull] byte[] hex)
-        {
-            if (hex.Length == 0) return string.Empty;
-
-            var s = new StringBuilder();
-            foreach (byte b in hex)
-                s.Append($"{b:X2} ");
-
-            return s.ToString();
         }
 
         #endregion Private Methods

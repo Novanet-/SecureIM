@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using SecureIM.ChatBackend.helpers;
 using SecureIM.ChatBackend.model;
 using SecureIM.Smartcard.controller.smartcard;
 using SecureIM.Smartcard.helpers;
@@ -18,18 +20,19 @@ namespace SecureIM.ChatBackend
         #region Private Fields
 
         private DisplayMessageDelegate _displayMessageDelegate;
-        public User BroadcastUser { get; } = new User("Broadcast");
-        public List<User> FriendsList { get; }
 
         #endregion Private Fields
 
         #region Public Properties
 
         [ItemNotNull] public static Lazy<ChatBackend> Lazy { get; } = new Lazy<ChatBackend>(() => new ChatBackend());
+        public User BroadcastUser { get; } = new User("Broadcast");
+        public ChatCommandHandler ChatCommandHandler { get; }
         public Comms Comms { get; private set; }
         [NotNull] public ICryptoHandler CryptoHandler { get; }
         [NotNull] public User CurrentUser { get; }
         [NotNull] public DisplayMessageDelegate DisplayMessageDelegate
+
         {
             get { return _displayMessageDelegate; }
             set
@@ -43,9 +46,10 @@ namespace SecureIM.ChatBackend
 
         public bool DisplayMessageDelegateIsSet { get; set; }
         public User EventUser { get; } = new User("Event");
+        public List<User> FriendsList { get; }
         public User InfoUser { get; } = new User("Info");
-
         [NotNull] public static ChatBackend Instance => Lazy.Value;
+        public SendMessageDelegate SendMessageDelegate { get; }
 
         #endregion Public Properties
 
@@ -56,6 +60,8 @@ namespace SecureIM.ChatBackend
             CurrentUser = new User();
             CryptoHandler = new SmartcardCryptoHandler();
             FriendsList = new List<User>();
+            ChatCommandHandler = new ChatCommandHandler();
+            SendMessageDelegate = SendMessageToChannel;
         }
 
         #endregion Private Constructors
@@ -84,13 +90,24 @@ namespace SecureIM.ChatBackend
             if (messageComposite.Flags.HasFlag(MessageFlags.Encoded)
                 && messageComposite.Flags.HasFlag(MessageFlags.Encrypted))
             {
-                string decodedMessageText = Encoding.UTF8.DecodeBase64(messageComposite.Message.Text);
+                string decodedMessageText = Encoding.Default.DecodeBase64(messageComposite.Message.Text);
 
                 if (decodedMessageText != null)
                 {
-                    byte[] targetPubKeyBytes = CryptoHandler.GetPublicKey();
-                    string plainText = CryptoHandler.Decrypt(decodedMessageText, targetPubKeyBytes);
-                    messageComposite = new MessageComposite(messageComposite.Sender, messageComposite.Receiver, plainText, messageComposite.Flags);
+                    byte[] currentPubKey = CryptoHandler.GetPublicKey();
+                    byte[] targetPubKeyBytes = null;
+                    byte[] senderPubKeyBytes = BackendHelper.DecodeToByteArrayBase64(messageComposite.Sender.PublicKey);
+                    byte[] receiverPubKeyBytes = BackendHelper.DecodeToByteArrayBase64(messageComposite.Receiver.PublicKey);
+
+                    if (currentPubKey.SequenceEqual(senderPubKeyBytes))
+                        targetPubKeyBytes = receiverPubKeyBytes;
+                    else if (currentPubKey.SequenceEqual(receiverPubKeyBytes))
+                        targetPubKeyBytes = senderPubKeyBytes;
+                    if (targetPubKeyBytes != null)
+                    {
+                        string plainText = CryptoHandler.Decrypt(decodedMessageText, targetPubKeyBytes);
+                        messageComposite = new MessageComposite(messageComposite.Sender, messageComposite.Receiver, plainText, messageComposite.Flags);
+                    }
                 }
             }
 
@@ -109,146 +126,42 @@ namespace SecureIM.ChatBackend
 
             var commandRegEx = new Regex(@"^([\w]+:)\s*(.*)", RegexOptions.Multiline);
             Match commandMatch = commandRegEx.Match(text);
-            GroupCollection messageGroups = commandMatch.Groups;
-            string commandMatchString = commandMatch.Success ? messageGroups[1].Value.ToLower() : string.Empty;
+            GroupCollection commandMatchGroups = commandMatch.Groups;
+            string commandMatchString = commandMatch.Success ? commandMatchGroups[1].Value.ToLower() : string.Empty;
 
-            string commandData;
-            string cipherText;
-            string pubKeyB64;
-            var messageReceiver = new User();
-            string messageText;
-            User messageSender = EventUser;
             switch (commandMatchString)
             {
                 case "setname:":
-                    CurrentUser.Name = text.Substring(commandMatchString.Length).Trim();
-                    string nameSetString = "Setting your name to " + CurrentUser.Name;
-                    messageText = nameSetString;
-                    SendMessageToChannel(messageSender, messageReceiver, messageText);
+                    ChatCommandHandler.SetName(text, commandMatchString, SendMessageDelegate);
                     break;
-
                 case "genkey:":
-                    CryptoHandler.GenerateAsymmetricKeyPair();
-
-                    pubKeyB64 = EncodeByteArrayBase64(CryptoHandler.GetPublicKey());
-                    if (!string.IsNullOrEmpty(pubKeyB64))
-                    {
-                        messageSender = CurrentUser;
-                        messageText = pubKeyB64;
-                        SendMessageToChannel(messageSender, messageReceiver, messageText, MessageFlags.Encoded);
-                    }
-
-                    string priKeyB64 = EncodeByteArrayBase64(CryptoHandler.GetPrivateKey());
-                    if (!string.IsNullOrEmpty(priKeyB64)) SendMessageToChannel(messageSender, messageReceiver, priKeyB64, MessageFlags.Encoded);
+                    ChatCommandHandler.GenerateKeyPair(SendMessageDelegate);
                     break;
-
                 case "getpub:":
-                    pubKeyB64 = EncodeByteArrayBase64(CryptoHandler.GetPublicKey());
-                    messageSender = CurrentUser;
-                    messageText = pubKeyB64;
-                    if (!string.IsNullOrEmpty(pubKeyB64)) SendMessageToChannel(messageSender, messageReceiver, messageText, MessageFlags.Encoded);
+                    ChatCommandHandler.GetPublicKey(SendMessageDelegate);
                     break;
-
                 case "regpub:":
-                    pubKeyB64 = EncodeByteArrayBase64(CryptoHandler.GetPublicKey());
-                    CurrentUser.PublicKey = pubKeyB64;
-                    messageSender = CurrentUser;
-                    messageText = $"Registered: {pubKeyB64}";
-                    SendMessageToChannel(messageSender, messageReceiver, messageText, MessageFlags.Encoded);
+                    ChatCommandHandler.RegisterPublicKey(SendMessageDelegate);
                     break;
-
                 case "encrypt:":
-                    commandData = messageGroups[2].Value;
-                    cipherText = EncryptChatMessage(commandData);
-                    cipherText = Encoding.UTF8.EncodeBase64(cipherText);
-                    if (!string.IsNullOrEmpty(cipherText))
-                        messageSender = CurrentUser;
-                    SendMessageToChannel(messageSender, messageReceiver, cipherText, MessageFlags.Encoded | MessageFlags.Encrypted);
+                    ChatCommandHandler.Encrypt(commandMatchGroups, SendMessageDelegate);
                     break;
-
                 case "decrypt:":
-                    cipherText = messageGroups[2].Value;
-                    commandData = DecryptChatMessage(cipherText);
-                    commandData = Encoding.UTF8.EncodeBase64(commandData);
-                    messageSender = CurrentUser;
-                    if (!string.IsNullOrEmpty(commandData)) SendMessageToChannel(messageSender, messageReceiver, commandData, MessageFlags.Encoded);
+                    ChatCommandHandler.Decrypt(commandMatchGroups, SendMessageDelegate);
                     break;
-
                 case "db64:":
-                    cipherText = messageGroups[2].Value;
-                    commandData = Encoding.UTF8.DecodeBase64(cipherText);
-                    messageSender = CurrentUser;
-                    if (!string.IsNullOrEmpty(commandData)) SendMessageToChannel(messageSender, messageReceiver, commandData);
+                    ChatCommandHandler.DecodeBase64(commandMatchGroups, SendMessageDelegate);
                     break;
-
                 case "eb64:":
-                    commandData = messageGroups[2].Value;
-                    cipherText = Encoding.UTF8.EncodeBase64(commandData);
-                    messageSender = CurrentUser;
-                    if (!string.IsNullOrEmpty(cipherText)) SendMessageToChannel(messageSender, messageReceiver, cipherText, MessageFlags.Encoded);
+                    ChatCommandHandler.EncodeBase64(commandMatchGroups, SendMessageDelegate);
                     break;
                 case "addfriend:":
-                    commandData = messageGroups[2].Value;
-                    string[] commandDataSplit = commandData.Split(':');
-                    string alias = commandDataSplit[0];
-                    pubKeyB64 = commandDataSplit[1];
-                    var newFriend = new User(alias, pubKeyB64);
-                    FriendsList.Add(newFriend);
-                    string confirmMessage = $"Friend ({alias}) added with public key: {pubKeyB64}";
-                    messageSender = CurrentUser;
-                    SendMessageToChannel(messageSender, CurrentUser, confirmMessage);
+                    ChatCommandHandler.AddFriend(commandMatchGroups, SendMessageDelegate);
                     break;
-
                 default:
-                    messageSender = CurrentUser;
-                    SendMessageToChannel(messageSender, messageReceiver, text);
+                    ChatCommandHandler.PlainMessageSend(text, SendMessageDelegate);
                     break;
             }
-        }
-
-        #endregion Public Methods
-
-        #region Private Methods
-
-        [CanBeNull]
-        private static string EncodeByteArrayBase64([NotNull] byte[] dataBytes)
-        {
-            string pubKeyB64 = Encoding.UTF8.EncodeBase64(Encoding.UTF8.GetString(dataBytes));
-            return pubKeyB64;
-        }
-
-        //        [NotNull]
-        //        private static string GetMessageCommandData([NotNull] string text, [NotNull] string command)
-        //            => text.Split(new[] { command }, StringSplitOptions.None)[1];
-
-        private static void SendMessageToChannel([NotNull] User sender, [NotNull] User receiver, [NotNull] string messageText,
-            MessageFlags messageFlags = MessageFlags.None)
-        {
-            Task.Run(() =>
-            {
-                var messageComposite = new MessageComposite(sender, receiver, messageText, messageFlags);
-                new ChannelFactory<IChatBackend>("ChatEndpoint").CreateChannel().DisplayMessage(messageComposite);
-            });
-
-
-//            var messageComposite = new MessageComposite(sender, receiver, messageText, messageFlags);
-//            new ChannelFactory<IChatBackend>("ChatEndpoint").CreateChannel().DisplayMessage(messageComposite);
-        }
-
-        [NotNull]
-        private string DecryptChatMessage([NotNull] string text)
-        {
-            //            text = GetMessageCommandData(text, "decrypt:");
-            string plainText = CryptoHandler.Decrypt(text, CryptoHandler.GetPublicKey());
-            return plainText;
-        }
-
-        [NotNull]
-        private string EncryptChatMessage([NotNull] string text)
-        {
-            //            text = GetMessageCommandData(text, "encrypt:");
-            string cipherText = CryptoHandler.Encrypt(text, CryptoHandler.GetPublicKey());
-            return cipherText;
         }
 
         /// <summary>
@@ -272,6 +185,45 @@ namespace SecureIM.ChatBackend
             // Information to display locally
             const string changeNamePrompt = "To change your name, type setname: NEW_NAME";
             DisplayMessageDelegate(new MessageComposite(InfoUser, CurrentUser, changeNamePrompt, MessageFlags.Broadcast));
+        }
+
+        #endregion Public Methods
+
+        #region Internal Methods
+
+        [NotNull]
+        internal string DecryptChatMessage([NotNull] string text, byte[] targetPubKey)
+        {
+            // TODO: Proper pub key
+//            targetPubKey = CryptoHandler.GetPublicKey();
+            string plainText = CryptoHandler.Decrypt(text, targetPubKey);
+            return plainText;
+        }
+
+        [NotNull]
+        internal string EncryptChatMessage([NotNull] string text, byte[] targetPubKey)
+        {
+            // TODO: Proper pub key
+//            targetPubKey = CryptoHandler.GetPublicKey();
+            string cipherText = CryptoHandler.Encrypt(text, targetPubKey);
+            return cipherText;
+        }
+
+        #endregion Internal Methods
+
+        #region Private Methods
+
+        private static void SendMessageToChannel([NotNull] User sender, [NotNull] User receiver, [NotNull] string messageText,
+            MessageFlags messageFlags = MessageFlags.None)
+        {
+            Task.Run(() =>
+            {
+                var messageComposite = new MessageComposite(sender, receiver, messageText, messageFlags);
+                new ChannelFactory<IChatBackend>("ChatEndpoint").CreateChannel().DisplayMessage(messageComposite);
+            });
+
+            //            var messageComposite = new MessageComposite(sender, receiver, messageText, messageFlags);
+            //            new ChannelFactory<IChatBackend>("ChatEndpoint").CreateChannel().DisplayMessage(messageComposite);
         }
 
         /// <summary>

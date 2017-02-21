@@ -141,7 +141,7 @@ namespace SecureIM.Smartcard.controller.smartcard
                 INS = 0x50,
                 P1 = 0x0,
                 P2 = 0x0, // We don't know the ID tag size
-                Le = 0x18
+                Le = 0x14
             };
 
             if (!apdu.IsValid) throw new Exception("Invalid APDU");
