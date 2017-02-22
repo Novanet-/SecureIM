@@ -97,6 +97,10 @@
     <Compile Include="Converters\InverseBooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\TabToTabSnapConverter.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="UserControls\ChatMainControl.xaml.cs">
+      <DependentUpon>ChatMainControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModel\TabClasses\TabChatMain.cs" />
     <Compile Include="view\alternativeViews\CustomStyleExampleWindow.xaml.cs">
       <DependentUpon>CustomStyleExampleWindow.xaml</DependentUpon>
     </Compile>
@@ -141,6 +145,10 @@
     <Compile Include="ViewModel\ViewModelMainWindow.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="ViewModel\alternativeViews\ViewModelPinnedTabExampleWindow.cs" />
+    <Page Include="UserControls\ChatMainControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="view\alternativeViews\CustomStyleExampleWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
