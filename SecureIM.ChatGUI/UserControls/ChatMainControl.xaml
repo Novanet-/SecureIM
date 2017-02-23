@@ -6,8 +6,8 @@
              xmlns:tabClasses="clr-namespace:SecureIM.ChatGUI.ViewModel.TabClasses"
              xmlns:viewModel1="clr-namespace:SecureIM.ChatGUI.ViewModel"
              d:DataContext="{d:DesignInstance tabClasses:TabChatMain}"
-             d:DesignHeight="300"
-             d:DesignWidth="300"
+             d:DesignHeight="500"
+             d:DesignWidth="700"
              mc:Ignorable="d">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -21,7 +21,7 @@
         <TextBox Name="TextBoxChatPane"
                  Grid.Row="0"
                  Width="Auto"
-                 Height="75"
+                 Height="151"
                  Margin="6,0,6,6"
                  HorizontalAlignment="Stretch"
                  VerticalAlignment="Bottom" Grid.ColumnSpan="2" />
@@ -33,16 +33,16 @@
                  HorizontalAlignment="Stretch"
                  VerticalAlignment="Stretch"
                  KeyDown="TextBoxEntryField_OnKeyDown" Grid.ColumnSpan="2" Grid.Column="0" />
-        <Button x:Name="BtnGenKeyPair" Content="Generate Key Pair" HorizontalAlignment="Left" Margin="25,25,0,0" VerticalAlignment="Top" Width="107"
-                Grid.Row="0" Grid.ColumnSpan="2" Click="BtnGenKeyPair_Click"/>
-        <Button x:Name="BtnGetPubKey" Content="Get Public Key" HorizontalAlignment="Left" Margin="50,25,0,0" VerticalAlignment="Top" Width="107"
-                Grid.Row="0" Grid.Column="1" Click="BtnGetPubKey_Click"/>
-        <Button x:Name="BtnSetName" Content="Set Name" HorizontalAlignment="Left" Margin="25,75,0,0" VerticalAlignment="Top" Width="107"
-                Grid.Row="0" Grid.ColumnSpan="2" Click="BtnSetName_Click"/>
-        <TextBox x:Name="TxtSetName" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Height="20" Margin="50,75,0,0" TextWrapping="Wrap" Text="New Name..." VerticalAlignment="Top" Width="107" FontStyle="Italic" TextDecorations="{x:Null}" FontSize="10"/>
-        <Button x:Name="BtnAddFriend" Content="Add Friend" HorizontalAlignment="Left" Margin="25,125,0,0" VerticalAlignment="Top" Width="107"
-                Grid.Row="0" Grid.ColumnSpan="2" Click="BtnAddFriend_Click"/>
-        <TextBox x:Name="TxtAlias" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Height="20" Margin="50,125,0,0" TextWrapping="Wrap" Text="Friend's Alias..." VerticalAlignment="Top" Width="107" FontStyle="Italic" TextDecorations="{x:Null}" FontSize="10"/>
-        <TextBox x:Name="TxtFriendPublicKey" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Height="20" Margin="50,150,0,0" TextWrapping="Wrap" Text="Friend's Public Key..." VerticalAlignment="Top" Width="107" FontStyle="Italic" TextDecorations="{x:Null}" FontSize="10"/>
+        <Button x:Name="BtnGenKeyPair" Content="Generate Key Pair" HorizontalAlignment="Left" Margin="25,25,0,0" VerticalAlignment="Top" Width="156"
+                Grid.Row="0" Click="BtnGenKeyPair_Click" Height="35"/>
+        <Button x:Name="BtnGetPubKey" Content="Get Public Key" HorizontalAlignment="Left" Margin="25,100,0,0" VerticalAlignment="Top" Width="156"
+                Grid.Row="0" Click="BtnGetPubKey_Click" Height="35"/>
+        <Button x:Name="BtnSetName" Content="Set Name" HorizontalAlignment="Left" Margin="25,175,0,0" VerticalAlignment="Top" Width="156"
+                Grid.Row="0" Click="BtnSetName_Click" Height="35"/>
+        <TextBox x:Name="TxtSetName" Grid.Row="0" HorizontalAlignment="Left" Height="33" Margin="236,175,0,0" TextWrapping="Wrap" Text="New Name..." VerticalAlignment="Top" Width="156" FontStyle="Italic" TextDecorations="{x:Null}" FontSize="10" Grid.ColumnSpan="2"/>
+        <Button x:Name="BtnAddFriend" Content="Add Friend" HorizontalAlignment="Left" Margin="25,250,0,0" VerticalAlignment="Top" Width="156"
+                Grid.Row="0" Click="BtnAddFriend_Click" Height="35"/>
+        <TextBox x:Name="TxtAlias" Grid.Row="0" HorizontalAlignment="Left" Height="33" Margin="236,250,0,0" TextWrapping="Wrap" Text="Friend's Alias..." VerticalAlignment="Top" Width="156" FontStyle="Italic" TextDecorations="{x:Null}" FontSize="10" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="TxtFriendPublicKey" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Height="33" Margin="207,250,0,0" TextWrapping="Wrap" Text="Friend's Public Key..." VerticalAlignment="Top" Width="156" FontStyle="Italic" TextDecorations="{x:Null}" FontSize="10"/>
     </Grid>
 </UserControl>

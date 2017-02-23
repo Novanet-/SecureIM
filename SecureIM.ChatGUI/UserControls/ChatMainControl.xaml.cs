@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
+using SecureIM.ChatBackend;
 using SecureIM.ChatBackend.model;
 
 namespace SecureIM.ChatGUI.UserControls
@@ -10,11 +12,11 @@ namespace SecureIM.ChatGUI.UserControls
     /// </summary>
     public partial class ChatMainControl
     {
-        #region Private Fields
+        #region Public Properties
 
         public ChatBackend.ChatBackend Backend { get; }
 
-        #endregion Private Fields
+        #endregion Public Properties
 
         #region Public Constructors
 
@@ -23,12 +25,12 @@ namespace SecureIM.ChatGUI.UserControls
         /// </summary>
         public ChatMainControl()
         {
-            this.Dispatcher.InvokeAsync(InitializeComponent);
+            Dispatcher.InvokeAsync(InitializeComponent);
             Backend = ChatBackend.ChatBackend.Instance;
             Backend.DisplayMessageDelegate = DisplayMessage;
 
             Task.Run(() => Backend.StartService());
-//                Backend.StartService();
+            //                Backend.StartService();
         }
 
         #endregion Public Constructors
@@ -39,25 +41,58 @@ namespace SecureIM.ChatGUI.UserControls
         ///     Displays the given message in the user's gui
         /// </summary>
         /// <param name="messageComposite">
-        ///     The delegate method that tells the backend how to display messages recieved from other
+        ///     The delegate method that tells the backend how to display messages received from other
         ///     users
         /// </param>
         public void DisplayMessage(MessageComposite messageComposite)
         {
             string username = messageComposite.Sender.Name ?? "";
             string message = messageComposite.Message.Text ?? "";
-            this.Dispatcher.InvokeAsync(() => TextBoxChatPane.Text += username + ": " + message + Environment.NewLine);
+            Dispatcher.InvokeAsync(() =>
+            {
+                TextBoxChatPane.Text += username + ": " + message + Environment.NewLine;
+                TextBoxChatPane.Focus();
+                TextBoxChatPane.CaretIndex = TextBoxChatPane.Text.Length;
+                TextBoxChatPane.ScrollToEnd();
+            });
         }
 
         #endregion Public Methods
 
         #region Private Methods
 
+        private void BtnAddFriend_Click(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void BtnGenKeyPair_Click(object sender, RoutedEventArgs e) => SendCommand("genkey:");
+
+        private void BtnGetPubKey_Click(object sender, RoutedEventArgs e) => SendCommand("getpub:");
+
+
+        private void BtnSetName_Click(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void SendCommand(string commandString)
+        {
+            Dispatcher.InvokeAsync(() =>
+            {
+                var oldDelegate = Backend.DisplayMessageDelegate.Clone() as DisplayMessageDelegate;
+                Backend.DisplayMessageDelegate = DisplayMessage;
+
+                Backend.SendMessage(commandString);
+                TextBoxEntryField.Clear();
+
+                if (oldDelegate != null) Backend.DisplayMessageDelegate = oldDelegate;
+            });
+        }
+
         private void TextBoxEntryField_OnKeyDown(object sender, KeyEventArgs e)
         {
             if (!(e.Key == Key.Return || e.Key == Key.Enter)) return;
 
-            this.Dispatcher.InvokeAsync(() =>
+            Dispatcher.InvokeAsync(() =>
             {
                 Backend.SendMessage(TextBoxEntryField.Text);
                 TextBoxEntryField.Clear();
@@ -65,25 +100,5 @@ namespace SecureIM.ChatGUI.UserControls
         }
 
         #endregion Private Methods
-
-        private void BtnGenKeyPair_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-
-        }
-
-        private void BtnGetPubKey_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-
-        }
-
-        private void BtnSetName_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-
-        }
-
-        private void BtnAddFriend_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-
-        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using SecureIM.ChatBackend;
 using SecureIM.ChatBackend.model;
 
 namespace SecureIM.ChatGUI.UserControls
@@ -25,9 +26,9 @@ namespace SecureIM.ChatGUI.UserControls
         {
             this.Dispatcher.InvokeAsync(InitializeComponent);
             Backend = ChatBackend.ChatBackend.Instance;
-            Backend.DisplayMessageDelegate = DisplayMessage;
+//            Backend.DisplayMessageDelegate = DisplayMessage;
 
-            Task.Run(() => Backend.StartService());
+//            Task.Run(() => Backend.StartService());
 //                Backend.StartService();
         }
 
@@ -59,8 +60,13 @@ namespace SecureIM.ChatGUI.UserControls
 
             this.Dispatcher.InvokeAsync(() =>
             {
+                var oldDelegate = Backend.DisplayMessageDelegate.Clone() as DisplayMessageDelegate;
+                Backend.DisplayMessageDelegate = DisplayMessage;
+
                 Backend.SendMessage(TextBoxEntryField.Text);
                 TextBoxEntryField.Clear();
+
+                if (oldDelegate != null) Backend.DisplayMessageDelegate = oldDelegate;
             });
         }
 

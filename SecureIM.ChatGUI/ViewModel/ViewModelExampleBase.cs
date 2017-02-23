@@ -118,6 +118,15 @@ namespace SecureIM.ChatGUI.ViewModel
             };
             return tab;
         }
+        protected TabChatMain CreateTabChatMain()
+        {
+            var tab = new TabChatMain()
+            {
+                TabName = "TAB CHAT MAIN",
+                MyStringContent = "TAB CHAT MAIN YAY",
+            };
+            return tab;
+        }
 
         protected TabClass1 CreateTabLoremIpsum()
         {
