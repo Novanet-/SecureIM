@@ -12,7 +12,8 @@
         Width="700"
         Height="600"
         DataContext="{Binding Source={StaticResource Locator},
-                              Path=ViewModelPinnedTabExampleWindow}">
+                              Path=ViewModelPinnedTabExampleWindow}"
+        SizeToContent="WidthAndHeight" MinWidth="730" MinHeight="630">
     <!--  This example shows how you implement pinned tab functionality  -->
     <Window.Resources>
         <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
@@ -46,7 +47,7 @@
                              PinTabCommand="{Binding PinTabCommand}"
                              PinnedTabWidth="50"
                              ReorderTabsCommand="{Binding ReorderTabsCommand}"
-                             SelectedItem="{Binding SelectedTab}">
+                             SelectedItem="{Binding SelectedTab}" MinWidth="700" MinHeight="600">
             <!--  We override the control template here to show how you can modify the properties of tab panel and content presenter  -->
             <ct:ChromeTabControl.Template>
                 <ControlTemplate TargetType="{x:Type ct:ChromeTabControl}">

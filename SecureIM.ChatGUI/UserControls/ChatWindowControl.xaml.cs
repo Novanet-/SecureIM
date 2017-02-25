@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using SecureIM.ChatBackend;
 using SecureIM.ChatBackend.model;
 
 namespace SecureIM.ChatGUI.UserControls
@@ -13,11 +12,11 @@ namespace SecureIM.ChatGUI.UserControls
     /// </summary>
     public partial class ChatWindowControl
     {
-        #region Private Fields
+        #region Public Properties
 
         public ChatBackend.ChatBackend Backend { get; }
 
-        #endregion Private Fields
+        #endregion Public Properties
 
         #region Public Constructors
 
@@ -26,12 +25,13 @@ namespace SecureIM.ChatGUI.UserControls
         /// </summary>
         public ChatWindowControl()
         {
-            this.Dispatcher.InvokeAsync(InitializeComponent);
+            InitializeComponent();
             Backend = ChatBackend.ChatBackend.Instance;
             Backend.DisplayMessageDelegate = DisplayMessage;
+;           ScrollToEnd();
 
-//            Task.Run(() => Backend.StartService());
-//                Backend.StartService();
+            //            Task.Run(() => Backend.StartService());
+            //                Backend.StartService();
         }
 
         #endregion Public Constructors
@@ -49,11 +49,11 @@ namespace SecureIM.ChatGUI.UserControls
         {
             string username = messageComposite.Sender.Name ?? "";
             string message = messageComposite.Message.Text ?? "";
-            this.Dispatcher.InvokeAsync(() =>
+            Dispatcher.InvokeAsync(() =>
             {
-                TextBoxChatPane.Text += username + ": " + message + Environment.NewLine;
+                TxtChatPane.AppendText(username + ": " + message + Environment.NewLine);
 
-                BindingExpression exp = this.TextBoxChatPane.GetBindingExpression(TextBox.TextProperty);
+                BindingExpression exp = TxtChatPane.GetBindingExpression(TextBox.TextProperty);
                 exp?.UpdateSource();
             });
         }
@@ -62,18 +62,33 @@ namespace SecureIM.ChatGUI.UserControls
 
         #region Private Methods
 
+
+        private void ScrollToEnd()
+        {
+            if (TxtChatPane == null) return;
+
+            TxtChatPane.SelectionStart = TxtChatPane.Text.Length;
+            TxtChatPane.ScrollToEnd();
+            TxtEntryField.Focus();
+        }
+
         private void TextBoxEntryField_OnKeyDown(object sender, KeyEventArgs e)
         {
             if (!(e.Key == Key.Return || e.Key == Key.Enter)) return;
 
-//            var oldDelegate = Backend.DisplayMessageDelegate;
-//            Backend.DisplayMessageDelegate = DisplayMessage;
+            //            var oldDelegate = Backend.DisplayMessageDelegate;
+            //            Backend.DisplayMessageDelegate = DisplayMessage;
 
-            Backend.SendMessage(TextBoxEntryField.Text);
-            TextBoxEntryField.Clear();
+            Backend.SendMessage(TxtEntryField.Text);
+            TxtEntryField.Clear();
+            TxtEntryField.Focus();
 
-//            if (oldDelegate != null) Backend.DisplayMessageDelegate = oldDelegate;
+            //            if (oldDelegate != null) Backend.DisplayMessageDelegate = oldDelegate;
         }
+
+        private void TxtChatPane_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) => ScrollToEnd();
+
+        private void TxtChatPane_TextChanged(object sender, TextChangedEventArgs e) => ScrollToEnd();
 
         #endregion Private Methods
     }

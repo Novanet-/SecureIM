@@ -6,23 +6,23 @@
              xmlns:tabClasses="clr-namespace:SecureIM.ChatGUI.ViewModel.TabClasses"
              xmlns:viewModel1="clr-namespace:SecureIM.ChatGUI.ViewModel"
              d:DataContext="{d:DesignInstance tabClasses:TabChatWindow}"
-             d:DesignHeight="300"
-             d:DesignWidth="300"
-             mc:Ignorable="d">
+             d:DesignHeight="500"
+             d:DesignWidth="700"
+             mc:Ignorable="d" MinWidth="700" MinHeight="498">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="35*" />
             <RowDefinition Height="35" />
         </Grid.RowDefinitions>
-        <TextBox Name="TextBoxChatPane"
+        <TextBox Name="TxtChatPane"
                  Grid.Row="0"
                  Width="Auto"
                  Height="Auto"
                  Margin="6,6,6,6"
                  HorizontalAlignment="Stretch"
                  VerticalAlignment="Stretch"
-                 Text ="{Binding ChatHistory, Mode=TwoWay,UpdateSourceTrigger=Explicit}" TextWrapping="WrapWithOverflow" IsReadOnly="True"/>
-        <TextBox Name="TextBoxEntryField"
+                 Text ="{Binding ChatHistory, Mode=TwoWay,UpdateSourceTrigger=Explicit}" TextWrapping="WrapWithOverflow" IsReadOnly="True" TextChanged="TxtChatPane_TextChanged" IsVisibleChanged="TxtChatPane_IsVisibleChanged" VerticalScrollBarVisibility="Auto"/>
+        <TextBox Name="TxtEntryField"
                  Grid.Row="1"
                  Width="Auto"
                  Height="23"

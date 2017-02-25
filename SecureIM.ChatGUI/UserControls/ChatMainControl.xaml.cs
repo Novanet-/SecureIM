@@ -4,7 +4,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using SecureIM.ChatBackend;
 using SecureIM.ChatBackend.model;
 
 namespace SecureIM.ChatGUI.UserControls
@@ -27,15 +26,13 @@ namespace SecureIM.ChatGUI.UserControls
         /// </summary>
         public ChatMainControl()
         {
-            Dispatcher.InvokeAsync(InitializeComponent);
+            InitializeComponent();
             Backend = ChatBackend.ChatBackend.Instance;
             Backend.DisplayMessageDelegate = DisplayMessage;
+            ScrollToEnd();
 
             if (!Backend.ServiceStarted)
-            {
                 Task.Run(() => Backend.StartService());
-
-            }
         }
 
         #endregion Public Constructors
@@ -55,12 +52,9 @@ namespace SecureIM.ChatGUI.UserControls
             string message = messageComposite.Message.Text ?? "";
             Dispatcher.InvokeAsync(() =>
             {
-                TxtChatPane.Text += username + ": " + message + Environment.NewLine;
-                TxtChatPane.Focus();
-                TxtChatPane.CaretIndex = TxtChatPane.Text.Length;
-                TxtChatPane.ScrollToEnd();
+                TxtChatPane.AppendText(username + ": " + message + Environment.NewLine);
 
-                BindingExpression exp = this.TxtChatPane.GetBindingExpression(TextBox.TextProperty);
+                BindingExpression exp = TxtChatPane.GetBindingExpression(TextBox.TextProperty);
                 exp?.UpdateSource();
             });
         }
@@ -90,15 +84,24 @@ namespace SecureIM.ChatGUI.UserControls
             SendCommand($"setname:{newName}");
         }
 
+        private void ScrollToEnd()
+        {
+            if (TxtChatPane == null) return;
+
+            TxtChatPane.SelectionStart = TxtChatPane.Text.Length;
+            TxtChatPane.ScrollToEnd();
+            TxtEntryField.Focus();
+        }
+
         private void SendCommand(string commandString)
         {
-//            var oldDelegate = Backend.DisplayMessageDelegate;
-//            Backend.DisplayMessageDelegate = DisplayMessage;
+            //            var oldDelegate = Backend.DisplayMessageDelegate;
+            //            Backend.DisplayMessageDelegate = DisplayMessage;
 
             Backend.SendMessage(commandString);
             TxtEntryField.Clear();
-//
-//            if (oldDelegate != null) Backend.DisplayMessageDelegate = oldDelegate;
+            //
+            //            if (oldDelegate != null) Backend.DisplayMessageDelegate = oldDelegate;
         }
 
         private void TextBoxEntryField_OnKeyDown(object sender, KeyEventArgs e)
@@ -110,7 +113,13 @@ namespace SecureIM.ChatGUI.UserControls
                 Backend.SendMessage(TxtEntryField.Text);
                 TxtEntryField.Clear();
             });
+
+            TxtEntryField.Focus();
         }
+
+        private void TxtChatPane_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) => ScrollToEnd();
+
+        private void TxtChatPane_TextChanged(object sender, TextChangedEventArgs e) => ScrollToEnd();
 
         #endregion Private Methods
     }
