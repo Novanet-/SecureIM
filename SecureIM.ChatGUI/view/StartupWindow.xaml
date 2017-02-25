@@ -1,0 +1,23 @@
+﻿<Window x:Class="SecureIM.ChatGUI.view.StartupWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SecureIM.ChatGUI.view"
+        mc:Ignorable="d"
+        Title="StartupWindow" Height="124.615" Width="243.462">
+    <Grid x:Name="grdMain">
+
+        <Grid x:Name="grdLabel" Margin="0,0,0,64" RenderTransformOrigin="0.656,1.168">
+
+            <Label x:Name="lblChooseReader" Content="Choose Smartcard Reader" Height="30" VerticalAlignment="Center"
+                   HorizontalAlignment="Center" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Disabled" UseLayoutRounding="True" />
+        </Grid>
+        <Grid x:Name="grdList" Margin="0,30,0,0">
+
+            <ListBox x:Name="lstChooseReader" HorizontalAlignment="Left" Height="64" VerticalAlignment="Top"
+                     Width="235" SelectionChanged="lstChooseReader_SelectionChanged" />
+        </Grid>
+
+    </Grid>
+</Window>

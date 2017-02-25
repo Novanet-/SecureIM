@@ -30,7 +30,6 @@ namespace SecureIM.ChatGUI.UserControls
             Backend.DisplayMessageDelegate = DisplayMessage;
 
             Task.Run(() => Backend.StartService());
-            //                Backend.StartService();
         }
 
         #endregion Public Constructors
@@ -63,40 +62,48 @@ namespace SecureIM.ChatGUI.UserControls
 
         private void BtnAddFriend_Click(object sender, RoutedEventArgs e)
         {
+            string friendAlias = TxtAlias.Text;
+            string friendPubKey = TxtFriendPublicKey.Text;
+            SendCommand($"addfriend:{friendAlias}:{friendPubKey}");
         }
 
-        private void BtnGenKeyPair_Click(object sender, RoutedEventArgs e) => SendCommand("genkey:");
+        private void BtnGenKeyPair_Click(object sender, RoutedEventArgs e)
+        {
+            SendCommand("genkey:");
+            SendCommand("regpub:");
+        }
 
         private void BtnGetPubKey_Click(object sender, RoutedEventArgs e) => SendCommand("getpub:");
 
-
         private void BtnSetName_Click(object sender, RoutedEventArgs e)
         {
+            string newName = TxtSetName.Text;
+            SendCommand($"setname:{newName}");
         }
 
         private void SendCommand(string commandString)
         {
             Dispatcher.InvokeAsync(() =>
             {
-                var oldDelegate = Backend.DisplayMessageDelegate.Clone() as DisplayMessageDelegate;
-                Backend.DisplayMessageDelegate = DisplayMessage;
+//                var oldDelegate = Backend.DisplayMessageDelegate.Clone() as DisplayMessageDelegate;
+//                Backend.DisplayMessageDelegate = DisplayMessage;
 
                 Backend.SendMessage(commandString);
                 TextBoxEntryField.Clear();
 
-                if (oldDelegate != null) Backend.DisplayMessageDelegate = oldDelegate;
+//                if (oldDelegate != null) Backend.DisplayMessageDelegate = oldDelegate;
             });
         }
 
         private void TextBoxEntryField_OnKeyDown(object sender, KeyEventArgs e)
         {
-            if (!(e.Key == Key.Return || e.Key == Key.Enter)) return;
-
-            Dispatcher.InvokeAsync(() =>
-            {
-                Backend.SendMessage(TextBoxEntryField.Text);
-                TextBoxEntryField.Clear();
-            });
+//            if (!(e.Key == Key.Return || e.Key == Key.Enter)) return;
+//
+//            Dispatcher.InvokeAsync(() =>
+//            {
+//                Backend.SendMessage(TextBoxEntryField.Text);
+//                TextBoxEntryField.Clear();
+//            });
         }
 
         #endregion Private Methods

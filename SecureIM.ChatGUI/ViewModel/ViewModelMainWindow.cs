@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
+using GalaSoft.MvvmLight.Command;
 using SecureIM.ChatGUI.ViewModel.interfaces;
+using SecureIM.ChatGUI.ViewModel.TabClasses;
 
 namespace SecureIM.ChatGUI.ViewModel
 {
@@ -9,6 +11,7 @@ namespace SecureIM.ChatGUI.ViewModel
     {
         //this property is to show you can lock the tabs with a binding
         private bool _canMoveTabs;
+        public RelayCommand<TabBase> PinTabCommand { get; set; }
 
         public bool CanMoveTabs
         {
@@ -35,7 +38,8 @@ namespace SecureIM.ChatGUI.ViewModel
         public ViewModelMainWindow()
         {
             //Adding items to the collection creates a tab
-            ItemCollection.Add(CreateTabChatMain());
+            TabChatMain tabChatMain = CreateTabChatMain();
+            ItemCollection.Add(tabChatMain);
 //            ItemCollection.Add(CreateTab2());
 //            ItemCollection.Add(CreateTab3());
 //            ItemCollection.Add(CreateTabLoremIpsum());
@@ -46,10 +50,20 @@ namespace SecureIM.ChatGUI.ViewModel
 
             //This sort description is what keeps the source collection sorted, based on tab number.
             //You can also use the sort description to manually sort the tabs, based on your own criterias.
+            view.SortDescriptions.Add(new SortDescription("IsPinned", ListSortDirection.Descending));
             view.SortDescriptions.Add(new SortDescription("TabNumber", ListSortDirection.Ascending));
 
             CanMoveTabs = true;
             ShowAddButton = true;
+
+            PinTabCommand = new RelayCommand<TabBase>(PinTabCommandAction);
+        }
+
+        private void PinTabCommandAction(TabBase tab)
+        {
+            tab.IsPinned = !tab.IsPinned;
+            var view = CollectionViewSource.GetDefaultView(ItemCollection) as ICollectionView;
+            view.Refresh();
         }
     }
 }

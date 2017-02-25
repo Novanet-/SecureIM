@@ -124,6 +124,7 @@ namespace SecureIM.ChatGUI.ViewModel
             {
                 TabName = "TAB CHAT MAIN",
                 MyStringContent = "TAB CHAT MAIN YAY",
+                IsPinned = true
             };
             return tab;
         }

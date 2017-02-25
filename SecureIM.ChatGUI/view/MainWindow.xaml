@@ -57,6 +57,7 @@
                              IsAddButtonVisible="{Binding ShowAddButton}"
                              ItemsSource="{Binding ItemCollection}"
                              MaximumTabWidth="200"
+                             PinTabCommand="{Binding PinTabCommand}"
                              ReorderTabsCommand="{Binding ReorderTabsCommand}"
                              SelectedItem="{Binding SelectedTab}"
                              SelectedTabBrush="WhiteSmoke"

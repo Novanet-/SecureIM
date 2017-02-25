@@ -55,7 +55,7 @@ namespace SecureIM.Smartcard.controller.smartcard
             var reader = new SCardReader(context);
             try
             {
-                SCardError sc = reader.Connect(readerName, SCardShareMode.Exclusive, SCardProtocol.T0);
+                SCardError sc = reader.Connect(readerName, SCardShareMode.Exclusive, SCardProtocol.Any);
                 if (sc != SCardError.Success)
                 {
                     string formatErrorMessage =

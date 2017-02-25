@@ -213,7 +213,7 @@ namespace SecureIM.ChatBackend
 
         #region Private Methods
 
-        private static void SendMessageToChannel([NotNull] User sender, [NotNull] User receiver, [NotNull] string messageText,
+        private void SendMessageToChannel([NotNull] User sender, [NotNull] User receiver, [NotNull] string messageText,
             MessageFlags messageFlags = MessageFlags.None)
         {
             Task.Run(() =>

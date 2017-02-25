@@ -31,6 +31,11 @@ namespace SecureIM.Smartcard.controller.smartcard
         /// </summary>
         public SmartcardController()
         {
+            ConnecToReader();
+        }
+
+        private void ConnecToReader()
+        {
             CardReader = ScControllerBuilder.EstablishCardConnection(CardContext);
             try
             {

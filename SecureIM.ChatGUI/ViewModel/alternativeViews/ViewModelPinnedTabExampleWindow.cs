@@ -14,15 +14,15 @@ namespace SecureIM.ChatGUI.ViewModel.alternativeViews
 
         public ViewModelPinnedTabExampleWindow()
         {
-            TabBase vm1 = CreateTab1();
+            TabBase vm1 = CreateTabChatMain();
             vm1.IsPinned = true;
             ItemCollection.Add(vm1);
-            ItemCollection.Add(CreateTab2());
-            ItemCollection.Add(CreateTab3());
-            ItemCollection.Add(CreateTabLoremIpsum());
+            ItemCollection.Add(CreateTabChatWindow());
+//            ItemCollection.Add(CreateTab3());
+//            ItemCollection.Add(CreateTabLoremIpsum());
             SelectedTab = ItemCollection.FirstOrDefault();
             var view = CollectionViewSource.GetDefaultView(ItemCollection) as ICollectionView;
-            //This sort description is what keeps the source collection sorted, based on tab number. 
+            //This sort description is what keeps the source collection sorted, based on tab number.
             //You can also use the sort description to manually sort the tabs, based on your own criterias,
             //as show below by sorting both by tab number and Pinned status.
             view.SortDescriptions.Add(new SortDescription("IsPinned", ListSortDirection.Descending));
