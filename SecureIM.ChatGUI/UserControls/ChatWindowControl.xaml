@@ -11,25 +11,25 @@
              mc:Ignorable="d" MinWidth="700" MinHeight="498">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="35*" />
-            <RowDefinition Height="35" />
+            <RowDefinition Height="450*" />
+            <RowDefinition Height="50*" />
         </Grid.RowDefinitions>
         <TextBox Name="TxtChatPane"
                  Grid.Row="0"
                  Width="Auto"
                  Height="Auto"
-                 Margin="6,6,6,6"
+                 Margin="10"
                  HorizontalAlignment="Stretch"
                  VerticalAlignment="Stretch"
-                 Text ="{Binding ChatHistory, Mode=TwoWay,UpdateSourceTrigger=Explicit}" TextWrapping="WrapWithOverflow" IsReadOnly="True" TextChanged="TxtChatPane_TextChanged" IsVisibleChanged="TxtChatPane_IsVisibleChanged" VerticalScrollBarVisibility="Auto"/>
+                 Text ="{Binding ChatHistory, Mode=TwoWay,UpdateSourceTrigger=Explicit}" TextWrapping="WrapWithOverflow" IsReadOnly="True" TextChanged="TxtChatPane_TextChanged" IsVisibleChanged="TxtChatPane_IsVisibleChanged" VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Bottom" HorizontalContentAlignment="Stretch"/>
         <TextBox Name="TxtEntryField"
                  Grid.Row="1"
                  Width="Auto"
-                 Height="23"
-                 Margin="6,6,6,6"
+                 Height="Auto"
+                 Margin="10"
                  HorizontalAlignment="Stretch"
                  VerticalAlignment="Stretch"
                  KeyDown="TextBoxEntryField_OnKeyDown"
-                 Text ="{Binding ChatEntry, Mode=TwoWay}"/>
+                 Text ="{Binding ChatEntry, Mode=TwoWay}" VerticalContentAlignment="Center" HorizontalContentAlignment="Stretch" ScrollViewer.CanContentScroll="True"/>
     </Grid>
 </UserControl>

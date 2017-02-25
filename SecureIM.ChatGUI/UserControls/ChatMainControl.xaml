@@ -22,7 +22,7 @@
             <RowDefinition Height="70*"/>
             <RowDefinition Height="70*"/>
             <RowDefinition Height="100*"/>
-            <RowDefinition Height="50*" />
+            <RowDefinition Height="50" />
         </Grid.RowDefinitions>
         <TextBox Name="TxtChatPane"
                  Grid.Row="5"
