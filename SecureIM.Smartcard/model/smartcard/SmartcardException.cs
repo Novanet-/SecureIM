@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace SecureIM.Smartcard.model.smartcard.enums
+namespace SecureIM.Smartcard.model.smartcard
 {
     [Serializable]
     internal class SmartcardException : Exception

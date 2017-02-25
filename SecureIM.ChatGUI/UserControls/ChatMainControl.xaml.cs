@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using SecureIM.ChatBackend;
 using SecureIM.ChatBackend.model;
@@ -29,7 +31,11 @@ namespace SecureIM.ChatGUI.UserControls
             Backend = ChatBackend.ChatBackend.Instance;
             Backend.DisplayMessageDelegate = DisplayMessage;
 
-            Task.Run(() => Backend.StartService());
+            if (!Backend.ServiceStarted)
+            {
+                Task.Run(() => Backend.StartService());
+
+            }
         }
 
         #endregion Public Constructors
@@ -49,10 +55,13 @@ namespace SecureIM.ChatGUI.UserControls
             string message = messageComposite.Message.Text ?? "";
             Dispatcher.InvokeAsync(() =>
             {
-                TextBoxChatPane.Text += username + ": " + message + Environment.NewLine;
-                TextBoxChatPane.Focus();
-                TextBoxChatPane.CaretIndex = TextBoxChatPane.Text.Length;
-                TextBoxChatPane.ScrollToEnd();
+                TxtChatPane.Text += username + ": " + message + Environment.NewLine;
+                TxtChatPane.Focus();
+                TxtChatPane.CaretIndex = TxtChatPane.Text.Length;
+                TxtChatPane.ScrollToEnd();
+
+                BindingExpression exp = this.TxtChatPane.GetBindingExpression(TextBox.TextProperty);
+                exp?.UpdateSource();
             });
         }
 
@@ -83,27 +92,24 @@ namespace SecureIM.ChatGUI.UserControls
 
         private void SendCommand(string commandString)
         {
-            Dispatcher.InvokeAsync(() =>
-            {
-//                var oldDelegate = Backend.DisplayMessageDelegate.Clone() as DisplayMessageDelegate;
-//                Backend.DisplayMessageDelegate = DisplayMessage;
+//            var oldDelegate = Backend.DisplayMessageDelegate;
+//            Backend.DisplayMessageDelegate = DisplayMessage;
 
-                Backend.SendMessage(commandString);
-                TextBoxEntryField.Clear();
-
-//                if (oldDelegate != null) Backend.DisplayMessageDelegate = oldDelegate;
-            });
+            Backend.SendMessage(commandString);
+            TxtEntryField.Clear();
+//
+//            if (oldDelegate != null) Backend.DisplayMessageDelegate = oldDelegate;
         }
 
         private void TextBoxEntryField_OnKeyDown(object sender, KeyEventArgs e)
         {
-//            if (!(e.Key == Key.Return || e.Key == Key.Enter)) return;
-//
-//            Dispatcher.InvokeAsync(() =>
-//            {
-//                Backend.SendMessage(TextBoxEntryField.Text);
-//                TextBoxEntryField.Clear();
-//            });
+            if (!(e.Key == Key.Return || e.Key == Key.Enter)) return;
+
+            Dispatcher.InvokeAsync(() =>
+            {
+                Backend.SendMessage(TxtEntryField.Text);
+                TxtEntryField.Clear();
+            });
         }
 
         #endregion Private Methods

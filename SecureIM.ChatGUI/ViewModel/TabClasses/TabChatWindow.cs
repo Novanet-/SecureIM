@@ -1,10 +1,8 @@
-﻿using System.Windows.Controls;
-
-namespace SecureIM.ChatGUI.ViewModel.TabClasses
+﻿namespace SecureIM.ChatGUI.ViewModel.TabClasses
 {
     public class TabChatWindow : TabBase
     {
-        public string MyStringContent { get; set; }
-        public Label TestButton { get; set; }
+        public string ChatHistory { get; set; }
+        public string ChatEntry { get; set; }
     }
 }

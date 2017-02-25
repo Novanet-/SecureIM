@@ -4,7 +4,7 @@
       <vm:ViewModelLocator xmlns:vm="clr-namespace:SecureIM.ChatGUI"
                            x:Key="Locator" />
   </Application.Resources>
-  
+
   In the View:
   DataContext="{Binding Source={StaticResource Locator}, Path=ViewModelName}"
 
@@ -17,6 +17,7 @@ using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
 using SecureIM.ChatGUI.SampleData;
 using SecureIM.ChatGUI.SampleData.alternativeViewData;
+using SecureIM.ChatGUI.UserControls;
 using SecureIM.ChatGUI.ViewModel;
 using SecureIM.ChatGUI.ViewModel.alternativeViews;
 using SecureIM.ChatGUI.ViewModel.interfaces;
@@ -49,6 +50,7 @@ namespace SecureIM.ChatGUI.ViewModel
                 SimpleIoc.Default.Register<IViewModelMainWindow, ViewModelMainWindow>();
                 SimpleIoc.Default.Register<IViewModelPinnedTabExampleWindow, ViewModelPinnedTabExampleWindow>();
                 SimpleIoc.Default.Register<IViewModelCustomStyleExampleWindow, ViewModelCustomStyleExampleWindow>();
+
             }
 
         }

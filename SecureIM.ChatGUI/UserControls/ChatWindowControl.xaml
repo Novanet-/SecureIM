@@ -20,7 +20,8 @@
                  Height="Auto"
                  Margin="6,6,6,6"
                  HorizontalAlignment="Stretch"
-                 VerticalAlignment="Stretch" />
+                 VerticalAlignment="Stretch"
+                 Text ="{Binding ChatHistory, Mode=TwoWay,UpdateSourceTrigger=Explicit}" TextWrapping="WrapWithOverflow" IsReadOnly="True"/>
         <TextBox Name="TextBoxEntryField"
                  Grid.Row="1"
                  Width="Auto"
@@ -28,6 +29,7 @@
                  Margin="6,6,6,6"
                  HorizontalAlignment="Stretch"
                  VerticalAlignment="Stretch"
-                 KeyDown="TextBoxEntryField_OnKeyDown" />
+                 KeyDown="TextBoxEntryField_OnKeyDown"
+                 Text ="{Binding ChatEntry, Mode=TwoWay}"/>
     </Grid>
 </UserControl>

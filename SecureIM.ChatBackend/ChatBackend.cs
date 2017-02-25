@@ -17,39 +17,27 @@ namespace SecureIM.ChatBackend
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public sealed class ChatBackend : IChatBackend
     {
-        #region Private Fields
-
-        private DisplayMessageDelegate _displayMessageDelegate;
-
-        #endregion Private Fields
-
         #region Public Properties
 
         [ItemNotNull] public static Lazy<ChatBackend> Lazy { get; } = new Lazy<ChatBackend>(() => new ChatBackend());
+
         public User BroadcastUser { get; } = new User("Broadcast");
         public ChatCommandHandler ChatCommandHandler { get; }
         public Comms Comms { get; private set; }
+
         [NotNull] public ICryptoHandler CryptoHandler { get; }
         [NotNull] public User CurrentUser { get; }
-        [NotNull] public DisplayMessageDelegate DisplayMessageDelegate
+        [CanBeNull] public DisplayMessageDelegate DisplayMessageDelegate { get; set; }
 
-        {
-            get { return _displayMessageDelegate; }
-            set
-            {
-                if (DisplayMessageDelegateIsSet) return;
-
-                _displayMessageDelegate = value;
-                DisplayMessageDelegateIsSet = true;
-            }
-        }
-
-        public bool DisplayMessageDelegateIsSet { get; set; }
         public User EventUser { get; } = new User("Event");
         public List<User> FriendsList { get; }
         public User InfoUser { get; } = new User("Info");
+
         [NotNull] public static ChatBackend Instance => Lazy.Value;
+
         public SendMessageDelegate SendMessageDelegate { get; }
+
+        public bool ServiceStarted { get; set; }
 
         #endregion Public Properties
 
@@ -83,8 +71,6 @@ namespace SecureIM.ChatBackend
         /// <exception cref="Exception">A delegate callback throws an exception.</exception>
         public void DisplayMessage([NotNull] MessageComposite messageComposite)
         {
-            if (!DisplayMessageDelegateIsSet) return;
-
             if (messageComposite == null) throw new ArgumentNullException(nameof(messageComposite));
 
             if (messageComposite.Flags.HasFlag(MessageFlags.Encoded)
@@ -111,7 +97,9 @@ namespace SecureIM.ChatBackend
                 }
             }
 
-            DisplayMessageDelegate(messageComposite);
+            if (DisplayMessageDelegate != null) DisplayMessageDelegate?.Invoke(messageComposite);
+            else
+                throw new IMException(IMException.DisplayMessageDelegateError);
         }
 
         /// <summary>
@@ -122,8 +110,6 @@ namespace SecureIM.ChatBackend
         /// <exception cref="ArgumentException">A regular expression parsing error occurred. </exception>
         public void SendMessage(string text)
         {
-            if (!DisplayMessageDelegateIsSet) return;
-
             var commandRegEx = new Regex(@"^([\w]+:)\s*(.*)", RegexOptions.Multiline);
             Match commandMatch = commandRegEx.Match(text);
             GroupCollection commandMatchGroups = commandMatch.Groups;
@@ -134,30 +120,39 @@ namespace SecureIM.ChatBackend
                 case "setname:":
                     ChatCommandHandler.SetName(text, commandMatchString, SendMessageDelegate);
                     break;
+
                 case "genkey:":
                     ChatCommandHandler.GenerateKeyPair(SendMessageDelegate);
                     break;
+
                 case "getpub:":
                     ChatCommandHandler.GetPublicKey(SendMessageDelegate);
                     break;
+
                 case "regpub:":
                     ChatCommandHandler.RegisterPublicKey(SendMessageDelegate);
                     break;
+
                 case "encrypt:":
                     ChatCommandHandler.Encrypt(commandMatchGroups, SendMessageDelegate);
                     break;
+
                 case "decrypt:":
                     ChatCommandHandler.Decrypt(commandMatchGroups, SendMessageDelegate);
                     break;
+
                 case "db64:":
                     ChatCommandHandler.DecodeBase64(commandMatchGroups, SendMessageDelegate);
                     break;
+
                 case "eb64:":
                     ChatCommandHandler.EncodeBase64(commandMatchGroups, SendMessageDelegate);
                     break;
+
                 case "addfriend:":
                     ChatCommandHandler.AddFriend(commandMatchGroups, SendMessageDelegate);
                     break;
+
                 default:
                     ChatCommandHandler.PlainMessageSend(text, SendMessageDelegate);
                     break;
@@ -169,8 +164,6 @@ namespace SecureIM.ChatBackend
         /// </summary>
         public void StartService()
         {
-            if (!DisplayMessageDelegateIsSet) return;
-
             var channelFactory = new ChannelFactory<IChatBackend>("ChatEndpoint");
             IChatBackend channel = channelFactory.CreateChannel();
             var serviceHost = new ServiceHost(this);
@@ -178,13 +171,15 @@ namespace SecureIM.ChatBackend
             Comms = new Comms(channelFactory, channel, serviceHost);
             Comms.Host.Open();
 
+            ServiceStarted = true;
+
             // Information to send to the channel
             string userJoinedMessage = $"{CurrentUser.Name} has entered the conversation.";
             channel.DisplayMessage(new MessageComposite(EventUser, BroadcastUser, userJoinedMessage, MessageFlags.Broadcast));
 
             // Information to display locally
             const string changeNamePrompt = "To change your name, type setname: NEW_NAME";
-            DisplayMessageDelegate(new MessageComposite(InfoUser, CurrentUser, changeNamePrompt, MessageFlags.Broadcast));
+            DisplayMessageDelegate?.Invoke(new MessageComposite(InfoUser, CurrentUser, changeNamePrompt, MessageFlags.Broadcast));
         }
 
         #endregion Public Methods
@@ -195,7 +190,7 @@ namespace SecureIM.ChatBackend
         internal string DecryptChatMessage([NotNull] string text, byte[] targetPubKey)
         {
             // TODO: Proper pub key
-//            targetPubKey = CryptoHandler.GetPublicKey();
+            //            targetPubKey = CryptoHandler.GetPublicKey();
             string plainText = CryptoHandler.Decrypt(text, targetPubKey);
             return plainText;
         }
@@ -204,7 +199,7 @@ namespace SecureIM.ChatBackend
         internal string EncryptChatMessage([NotNull] string text, byte[] targetPubKey)
         {
             // TODO: Proper pub key
-//            targetPubKey = CryptoHandler.GetPublicKey();
+            //            targetPubKey = CryptoHandler.GetPublicKey();
             string cipherText = CryptoHandler.Encrypt(text, targetPubKey);
             return cipherText;
         }

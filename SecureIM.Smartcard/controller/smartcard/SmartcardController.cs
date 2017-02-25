@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 using PCSC;
 using PCSC.Iso7816;
 using SecureIM.Smartcard.helpers;
+using SecureIM.Smartcard.model.smartcard;
 using SecureIM.Smartcard.model.smartcard.enums;
 
 namespace SecureIM.Smartcard.controller.smartcard

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using SecureIM.ChatBackend;
 using SecureIM.ChatBackend.model;
@@ -47,7 +49,13 @@ namespace SecureIM.ChatGUI.UserControls
         {
             string username = messageComposite.Sender.Name ?? "";
             string message = messageComposite.Message.Text ?? "";
-            this.Dispatcher.InvokeAsync(() => TextBoxChatPane.Text += username + ": " + message + Environment.NewLine);
+            this.Dispatcher.InvokeAsync(() =>
+            {
+                TextBoxChatPane.Text += username + ": " + message + Environment.NewLine;
+
+                BindingExpression exp = this.TextBoxChatPane.GetBindingExpression(TextBox.TextProperty);
+                exp?.UpdateSource();
+            });
         }
 
         #endregion Public Methods
@@ -58,16 +66,13 @@ namespace SecureIM.ChatGUI.UserControls
         {
             if (!(e.Key == Key.Return || e.Key == Key.Enter)) return;
 
-            this.Dispatcher.InvokeAsync(() =>
-            {
-//                var oldDelegate = Backend.DisplayMessageDelegate.Clone() as DisplayMessageDelegate;
-//                Backend.DisplayMessageDelegate = DisplayMessage;
+//            var oldDelegate = Backend.DisplayMessageDelegate;
+//            Backend.DisplayMessageDelegate = DisplayMessage;
 
-                Backend.SendMessage(TextBoxEntryField.Text);
-//                TextBoxEntryField.Clear();
-//
-//                if (oldDelegate != null) Backend.DisplayMessageDelegate = oldDelegate;
-            });
+            Backend.SendMessage(TextBoxEntryField.Text);
+            TextBoxEntryField.Clear();
+
+//            if (oldDelegate != null) Backend.DisplayMessageDelegate = oldDelegate;
         }
 
         #endregion Private Methods

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using JetBrains.Annotations;
 using PCSC;
+using SecureIM.Smartcard.model.smartcard;
 using SecureIM.Smartcard.model.smartcard.enums;
 
 namespace SecureIM.Smartcard.controller.smartcard

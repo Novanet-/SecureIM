@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
 using SecureIM.Smartcard.model.abstractions;
+using SecureIM.Smartcard.model.smartcard;
 using SecureIM.Smartcard.model.smartcard.enums;
 using static SecureIM.Smartcard.helpers.ByteArrayHelper;
 

@@ -113,8 +113,8 @@ namespace SecureIM.ChatGUI.ViewModel
         {
             var tab = new TabChatWindow()
             {
-                TabName = "TAB CHAT WINDOW",
-                MyStringContent = "TAB CHAT WINDOW YAY",
+                TabName = "Chat Window",
+                ChatHistory = "",
             };
             return tab;
         }
@@ -122,8 +122,8 @@ namespace SecureIM.ChatGUI.ViewModel
         {
             var tab = new TabChatMain()
             {
-                TabName = "TAB CHAT MAIN",
-                MyStringContent = "TAB CHAT MAIN YAY",
+                TabName = "Control Panel",
+                ChatHistory = "",
                 IsPinned = true
             };
             return tab;
