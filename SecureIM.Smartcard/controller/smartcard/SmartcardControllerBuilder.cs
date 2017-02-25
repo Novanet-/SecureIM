@@ -8,6 +8,41 @@ namespace SecureIM.Smartcard.controller.smartcard
 {
     public class SmartcardControllerBuilder
     {
+        #region Internal Methods
+//
+//        /// <summary>
+//        /// Establishes the card connection.
+//        /// </summary>
+//        /// <param name="context">The context.</param>
+//        /// <returns></returns>
+//        /// <exception cref="SmartcardException">Condition.</exception>
+//        [NotNull]
+//        internal SCardReader EstablishCardConnection([NotNull] ISCardContext context)
+//        {
+//            string readerName = ChooseCard(context);
+//            SCardReader reader = ConnectToCard(context, readerName);
+//            return reader;
+//        }
+
+        internal string[] GetSmartcardReaders([NotNull] ISCardContext context)
+        {
+            context.Establish(SCardScope.System);
+            string[] readerNames = context.GetReaders();
+            if (readerNames.Length < 1) throw new SmartcardException(SmartcardException.NoReadersError);
+
+            return readerNames;
+        }
+
+        internal SCardReader ConnectToReader(ISCardContext context, string readerName)
+        {
+            SCardReader reader = ConnectToCard(context, readerName);
+            return reader;
+        }
+
+        #endregion Internal Methods
+
+        #region Private Methods
+
         /// <summary>
         /// Chooses the card.
         /// </summary>
@@ -73,18 +108,6 @@ namespace SecureIM.Smartcard.controller.smartcard
             return reader;
         }
 
-        /// <summary>
-        /// Establishes the card connection.
-        /// </summary>
-        /// <param name="context">The context.</param>
-        /// <returns></returns>
-        /// <exception cref="SmartcardException">Condition.</exception>
-        [NotNull]
-        internal SCardReader EstablishCardConnection([NotNull] ISCardContext context)
-        {
-            string readerName = ChooseCard(context);
-            SCardReader reader = ConnectToCard(context, readerName);
-            return reader;
-        }
+        #endregion Private Methods
     }
 }

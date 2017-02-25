@@ -16,11 +16,12 @@ namespace SecureIM.Smartcard.controller.smartcard
         // ReSharper disable once InconsistentNaming
         public static byte[] SECUREIMCARD_AID { get; } = {0xA0, 0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x10, 0x01};
 
-        public SCardProtocol ActiveProtocol { get; }
-        public SCardContext CardContext { get; } = new SCardContext();
-        public SCardReader CardReader { get; }
-        public IntPtr PioSendPci { get; }
+        public SCardProtocol ActiveProtocol { get; set; }
+        public SCardContext CardContext { get; }
+        public SCardReader CardReader { get; set; }
+        public IntPtr PioSendPci { get; set; }
         public SmartcardControllerBuilder ScControllerBuilder { get; } = new SmartcardControllerBuilder();
+        public bool ReaderConnected { get; set; } = false;
 
         #endregion Public Properties
 
@@ -31,12 +32,14 @@ namespace SecureIM.Smartcard.controller.smartcard
         /// </summary>
         public SmartcardController()
         {
-            ConnecToReader();
+            CardContext = new SCardContext();
         }
 
-        private void ConnecToReader()
+        public string[] GetSCardReaders() => ScControllerBuilder.GetSmartcardReaders(CardContext);
+
+        public SCardReader ConnectToSCardReader(string readerName)
         {
-            CardReader = ScControllerBuilder.EstablishCardConnection(CardContext);
+            CardReader = ScControllerBuilder.ConnectToReader(CardContext, readerName);
             try
             {
                 ActiveProtocol = CardReader.ActiveProtocol;
@@ -50,12 +53,26 @@ namespace SecureIM.Smartcard.controller.smartcard
                     case SCardProtocol.T1:
                         PioSendPci = SCardPCI.T1;
                         break;
+                    case SCardProtocol.Unset:
+                        break;
+                    case SCardProtocol.Raw:
+                        break;
+                    case SCardProtocol.T15:
+                        break;
+                    case SCardProtocol.Any:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             }
             catch (Exception e)
             {
                 Debug.WriteLine(e.Message);
             }
+
+            ReaderConnected = true;
+
+            return CardReader;
         }
 
         #endregion Public Constructors
@@ -73,10 +90,13 @@ namespace SecureIM.Smartcard.controller.smartcard
         /// <returns></returns>
         /// <exception cref="System.ArgumentOutOfRangeException">command - null</exception>
         /// <exception cref="OverflowException">The array is multidimensional and contains more than <see cref="F:System.Int32.MaxValue" /> elements.</exception>
+        /// <exception cref="SmartcardException">Condition.</exception>
         [NotNull]
         public byte[] SendCommand(SecureIMCardInstructions command, byte p1 = 0x00, byte p2 = 0x00, [CanBeNull] byte[] data = null, byte le = 0x00)
         {
-            byte[] response = {};
+            if (!ReaderConnected) throw new SmartcardException(SmartcardException.NoReadersError);
+
+            byte[] response = { };
             try
             {
                 string dataString = data != null && data.Length != 0 ? ByteArrayHelper.ToHexString(data) : "None";

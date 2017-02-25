@@ -70,6 +70,7 @@
       <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="pcsc-sharp, Version=3.6.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -145,8 +146,8 @@
     <Compile Include="ViewModel\ViewModelMainWindow.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="ViewModel\alternativeViews\ViewModelPinnedTabExampleWindow.cs" />
-    <Compile Include="view\StartupWindow.xaml.cs">
-      <DependentUpon>StartupWindow.xaml</DependentUpon>
+    <Compile Include="view\SmartcardStartupWindow.xaml.cs">
+      <DependentUpon>SmartcardStartupWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="UserControls\ChatMainControl.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -196,7 +197,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="view\StartupWindow.xaml">
+    <Page Include="view\SmartcardStartupWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -241,6 +242,10 @@
     <ProjectReference Include="..\SecureIM.ChatBackend\SecureIM.ChatBackend.csproj">
       <Project>{c278cdc6-398b-44f6-87b9-78920fa361a5}</Project>
       <Name>SecureIM.ChatBackend</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SecureIM.Smartcard\SecureIM.Smartcard.csproj">
+      <Project>{C4D4F353-9443-4512-9298-6328059B47D3}</Project>
+      <Name>SecureIM.Smartcard</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
