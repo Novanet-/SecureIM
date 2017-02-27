@@ -76,7 +76,11 @@ namespace SecureIM.ChatGUI.UserControls
             SendCommand("regpub:");
         }
 
-        private void BtnGetPubKey_Click(object sender, RoutedEventArgs e) => SendCommand("getpub:");
+        private void BtnGetPubKey_Click(object sender, RoutedEventArgs e)
+        {
+            SendCommand("getpub:");
+            SendCommand("regpub:");
+        }
 
         private void BtnSetName_Click(object sender, RoutedEventArgs e)
         {

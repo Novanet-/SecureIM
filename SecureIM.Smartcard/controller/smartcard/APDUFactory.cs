@@ -209,8 +209,7 @@ namespace SecureIM.Smartcard.controller.smartcard
                 CLA = 0x80,
                 INS = 0x70,
                 P1 = (byte) (decrypt ? 0x01 : 0x00),
-                P2 = 0x0,
-                Le = expectedLength
+                P2 = 0x0
             };
 
             if (!apdu.IsValid) throw new Exception("Invalid APDU");

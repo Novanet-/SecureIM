@@ -21,7 +21,7 @@
                  Margin="10"
                  HorizontalAlignment="Stretch"
                  VerticalAlignment="Stretch"
-                 Text ="{Binding ChatHistory, Mode=TwoWay,UpdateSourceTrigger=Explicit}" TextWrapping="WrapWithOverflow" IsReadOnly="True" TextChanged="TxtChatPane_TextChanged" IsVisibleChanged="TxtChatPane_IsVisibleChanged" VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Bottom" HorizontalContentAlignment="Stretch"/>
+                 Text ="{Binding ChatHistory, Mode=TwoWay,UpdateSourceTrigger=Explicit}" TextWrapping="WrapWithOverflow" IsReadOnly="True" TextChanged="TxtChatPane_TextChanged" IsVisibleChanged="TxtChatPane_IsVisibleChanged" VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Bottom" HorizontalContentAlignment="Stretch" Padding="0,10,0,0"/>
         <TextBox Name="TxtEntryField"
                  Grid.Row="1"
                  Width="Auto"

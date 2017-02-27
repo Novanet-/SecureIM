@@ -80,26 +80,32 @@ namespace SecureIM.ChatBackend
 
                 if (decodedMessageText != null)
                 {
-                    byte[] currentPubKey = CryptoHandler.GetPublicKey();
-                    byte[] targetPubKeyBytes = null;
-                    byte[] senderPubKeyBytes = BackendHelper.DecodeToByteArrayBase64(messageComposite.Sender.PublicKey);
-                    byte[] receiverPubKeyBytes = BackendHelper.DecodeToByteArrayBase64(messageComposite.Receiver.PublicKey);
-
-                    if (currentPubKey.SequenceEqual(senderPubKeyBytes))
-                        targetPubKeyBytes = receiverPubKeyBytes;
-                    else if (currentPubKey.SequenceEqual(receiverPubKeyBytes))
-                        targetPubKeyBytes = senderPubKeyBytes;
-                    if (targetPubKeyBytes != null)
-                    {
-                        string plainText = CryptoHandler.Decrypt(decodedMessageText, targetPubKeyBytes);
-                        messageComposite = new MessageComposite(messageComposite.Sender, messageComposite.Receiver, plainText, messageComposite.Flags);
-                    }
+                    messageComposite = DecryptMessage(messageComposite, decodedMessageText);
                 }
             }
 
             if (DisplayMessageDelegate != null) DisplayMessageDelegate?.Invoke(messageComposite);
             else
                 throw new IMException(IMException.DisplayMessageDelegateError);
+        }
+
+        private MessageComposite DecryptMessage(MessageComposite messageComposite, string decodedMessageText)
+        {
+            byte[] currentPubKey = CryptoHandler.GetPublicKey();
+            byte[] targetPubKeyBytes = null;
+            byte[] senderPubKeyBytes = BackendHelper.DecodeToByteArrayBase64(messageComposite.Sender.PublicKey);
+            byte[] receiverPubKeyBytes = BackendHelper.DecodeToByteArrayBase64(messageComposite.Receiver.PublicKey);
+
+            if (currentPubKey.SequenceEqual(senderPubKeyBytes))
+                targetPubKeyBytes = receiverPubKeyBytes;
+            else if (currentPubKey.SequenceEqual(receiverPubKeyBytes))
+                targetPubKeyBytes = senderPubKeyBytes;
+            if (targetPubKeyBytes != null)
+            {
+                string plainText = CryptoHandler.Decrypt(decodedMessageText, targetPubKeyBytes);
+                messageComposite = new MessageComposite(messageComposite.Sender, messageComposite.Receiver, plainText, messageComposite.Flags);
+            }
+            return messageComposite;
         }
 
         /// <summary>

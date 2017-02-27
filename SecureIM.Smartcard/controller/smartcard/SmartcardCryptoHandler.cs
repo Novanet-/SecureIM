@@ -83,7 +83,8 @@ namespace SecureIM.Smartcard.controller.smartcard
                 e.ToString();
             }
 
-            return Encoding.ASCII.GetString(decryptedBytes);
+            decryptedBytes = TrimArray(decryptedBytes, 2);
+            return Encoding.Default.GetString(decryptedBytes);
         }
 
         private static void ErrorCheck(byte[] setGuestResponse, byte[] successSw, byte[] setGenSecretResponse, byte[] setGen3DESResponse,
@@ -108,7 +109,7 @@ namespace SecureIM.Smartcard.controller.smartcard
         /// <exception cref="SmartcardException">Condition.</exception>
         public string Encrypt([NotNull] string data, [NotNull] byte[] keyBytes)
         {
-            byte[] dataBytes = Encoding.ASCII.GetBytes(data);
+            byte[] dataBytes = Encoding.Default.GetBytes(data);
 
             byte[] setGuestResponse = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_SET_GUEST_PUB_KEY, 0x00, 0x00, keyBytes);
             byte[] setGenSecretResponse = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GEN_SECRET);
@@ -143,6 +144,7 @@ namespace SecureIM.Smartcard.controller.smartcard
                     throw new SmartcardException($"Decrypt failed with response: {ToHexString(encryptedBytes)}");
                 }
 
+            encryptedBytes = TrimArray(encryptedBytes, 2);
             return Encoding.Default.GetString(encryptedBytes);
         }
 
@@ -170,8 +172,7 @@ namespace SecureIM.Smartcard.controller.smartcard
         [NotNull]
         private static byte[] TrimSwFromResponse(byte[] responseBytes)
         {
-            if (responseBytes.Length > 2)
-                Array.Resize(ref responseBytes, responseBytes.Length - 2);
+            responseBytes = TrimArray(responseBytes, 2);
 
             return responseBytes;
         }

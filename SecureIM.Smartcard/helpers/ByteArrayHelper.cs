@@ -27,5 +27,12 @@ namespace SecureIM.Smartcard.helpers
 
             return s.ToString();
         }
+
+        internal static byte[] TrimArray(byte[] array, int trimByAmount)
+        {
+            if (array.Length > trimByAmount)
+                Array.Resize(ref array, array.Length - trimByAmount);
+            return array;
+        }
     }
 }
