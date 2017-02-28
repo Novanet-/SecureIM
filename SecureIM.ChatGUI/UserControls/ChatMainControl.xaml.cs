@@ -68,25 +68,31 @@ namespace SecureIM.ChatGUI.UserControls
             string friendAlias = TxtAlias.Text;
             string friendPubKey = TxtFriendPublicKey.Text;
             SendCommand($"addfriend:{friendAlias}:{friendPubKey}");
+            TxtAlias.Clear();
+            TxtFriendPublicKey.Clear();
+            TxtEntryField.Focus();
         }
 
         private void BtnGenKeyPair_Click(object sender, RoutedEventArgs e)
         {
             SendCommand("genkey:");
             SendCommand("regpub:");
+            TxtEntryField.Focus();
         }
 
         private void BtnGetPubKey_Click(object sender, RoutedEventArgs e)
         {
             SendCommand("getpub:");
             SendCommand("regpub:");
+            TxtEntryField.Focus();
         }
 
         private void BtnSetName_Click(object sender, RoutedEventArgs e)
         {
             string newName = TxtSetName.Text;
             SendCommand($"setname:{newName}");
-        }
+            TxtSetName.Clear();
+            TxtEntryField.Focus();        }
 
         private void ScrollToEnd()
         {
@@ -99,13 +105,9 @@ namespace SecureIM.ChatGUI.UserControls
 
         private void SendCommand(string commandString)
         {
-            //            var oldDelegate = Backend.DisplayMessageDelegate;
-            //            Backend.DisplayMessageDelegate = DisplayMessage;
-
             Backend.SendMessage(commandString);
             TxtEntryField.Clear();
-            //
-            //            if (oldDelegate != null) Backend.DisplayMessageDelegate = oldDelegate;
+            TxtEntryField.Focus();
         }
 
         private void TextBoxEntryField_OnKeyDown(object sender, KeyEventArgs e)

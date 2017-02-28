@@ -28,10 +28,7 @@ namespace SecureIM.ChatGUI.UserControls
             InitializeComponent();
             Backend = ChatBackend.ChatBackend.Instance;
             Backend.DisplayMessageDelegate = DisplayMessage;
-;           ScrollToEnd();
-
-            //            Task.Run(() => Backend.StartService());
-            //                Backend.StartService();
+            ScrollToEnd();
         }
 
         #endregion Public Constructors
@@ -62,7 +59,6 @@ namespace SecureIM.ChatGUI.UserControls
 
         #region Private Methods
 
-
         private void ScrollToEnd()
         {
             if (TxtChatPane == null) return;
@@ -76,14 +72,9 @@ namespace SecureIM.ChatGUI.UserControls
         {
             if (!(e.Key == Key.Return || e.Key == Key.Enter)) return;
 
-            //            var oldDelegate = Backend.DisplayMessageDelegate;
-            //            Backend.DisplayMessageDelegate = DisplayMessage;
-
             Backend.SendMessage(TxtEntryField.Text);
             TxtEntryField.Clear();
             TxtEntryField.Focus();
-
-            //            if (oldDelegate != null) Backend.DisplayMessageDelegate = oldDelegate;
         }
 
         private void TxtChatPane_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) => ScrollToEnd();

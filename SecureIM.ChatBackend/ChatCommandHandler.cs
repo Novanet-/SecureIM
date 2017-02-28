@@ -42,7 +42,8 @@ namespace SecureIM.ChatBackend
             chatBackend.FriendsList.Add(newFriend);
             string confirmMessage = $"Friend ({alias}) added with public key: {pubKeyB64}";
             User messageSender = chatBackend.CurrentUser;
-            sendMessageDelegate(messageSender, chatBackend.EventUser, confirmMessage);
+
+            sendMessageDelegate(chatBackend.EventUser, messageSender, confirmMessage);
         }
 
         internal void DecodeBase64(GroupCollection commandMatchGroups, SendMessageDelegate sendMessageDelegate)
@@ -52,21 +53,23 @@ namespace SecureIM.ChatBackend
             string cipherText = commandMatchGroups[2].Value;
             string commandData = Encoding.Default.DecodeBase64(cipherText);
             User messageSender = chatBackend.CurrentUser;
-            if (!string.IsNullOrEmpty(commandData)) sendMessageDelegate(messageSender, chatBackend.EventUser, commandData);
+
+            if (!string.IsNullOrEmpty(commandData)) sendMessageDelegate(chatBackend.EventUser, messageSender, commandData);
         }
 
-        internal void Decrypt(GroupCollection commandMatchGroups,  SendMessageDelegate sendMessageDelegate)
+        internal void Decrypt(GroupCollection commandMatchGroups, SendMessageDelegate sendMessageDelegate)
         {
             ChatBackend chatBackend = ChatBackend.Instance;
 
             string commandData = commandMatchGroups[2].Value;
             string[] commandDataSplit = commandData.Split(':');
-            var alias = commandDataSplit[0];
+            string alias = commandDataSplit[0];
             string cipherText = commandDataSplit[1];
             User targetUser = chatBackend.FriendsList.Find(x => x.Name.Equals(alias));
             string plainText = chatBackend.DecryptChatMessage(cipherText, BackendHelper.DecodeToByteArrayBase64(targetUser.PublicKey));
             plainText = Encoding.Default.EncodeBase64(plainText);
             User messageSender = chatBackend.CurrentUser;
+
             if (!string.IsNullOrEmpty(plainText)) sendMessageDelegate(messageSender, targetUser, plainText, MessageFlags.Encoded);
         }
 
@@ -77,7 +80,8 @@ namespace SecureIM.ChatBackend
             string commandData = commandMatchGroups[2].Value;
             string cipherText = Encoding.Default.EncodeBase64(commandData);
             User messageSender = chatBackend.CurrentUser;
-            if (!string.IsNullOrEmpty(cipherText)) sendMessageDelegate(messageSender, chatBackend.EventUser, cipherText, MessageFlags.Encoded);
+
+            if (!string.IsNullOrEmpty(cipherText)) sendMessageDelegate(chatBackend.EventUser, messageSender, cipherText, MessageFlags.Encoded);
         }
 
         internal string Encrypt(GroupCollection commandMatchGroups, SendMessageDelegate sendMessageDelegate)
@@ -108,29 +112,29 @@ namespace SecureIM.ChatBackend
             chatBackend.CryptoHandler.GenerateAsymmetricKeyPair();
 
             string pubKeyB64 = BackendHelper.EncodeFromByteArrayBase64(chatBackend.CryptoHandler.GetPublicKey());
-            User messageSender = null;
             if (!string.IsNullOrEmpty(pubKeyB64))
             {
-                messageSender = chatBackend.CurrentUser;
                 string messageText = pubKeyB64;
-                sendMessageDelegate(messageSender, messageSender, messageText, MessageFlags.Encoded);
+
+                sendMessageDelegate(chatBackend.EventUser, chatBackend.CurrentUser, messageText, MessageFlags.Encoded);
             }
-
-            string priKeyB64 = BackendHelper.EncodeFromByteArrayBase64(chatBackend.CryptoHandler.GetPrivateKey());
-
-            if (string.IsNullOrEmpty(priKeyB64)) return;
-
-            if (messageSender != null) sendMessageDelegate(messageSender, chatBackend.EventUser, priKeyB64, MessageFlags.Encoded);
+//             TODO: Remove this
+//            string priKeyB64 = BackendHelper.EncodeFromByteArrayBase64(chatBackend.CryptoHandler.GetPrivateKey());
+//
+//            if (string.IsNullOrEmpty(priKeyB64)) return;
+//
+//            if (messageSender != null) sendMessageDelegate(messageSender, chatBackend.EventUser, priKeyB64, MessageFlags.Encoded);
         }
 
-        internal void GetPublicKey( SendMessageDelegate sendMessageDelegate)
+        internal void GetPublicKey(SendMessageDelegate sendMessageDelegate)
         {
             ChatBackend chatBackend = ChatBackend.Instance;
 
             string pubKeyB64 = BackendHelper.EncodeFromByteArrayBase64(chatBackend.CryptoHandler.GetPublicKey());
-            User messageSender = chatBackend.CurrentUser;
             string messageText = pubKeyB64;
-            if (!string.IsNullOrEmpty(pubKeyB64)) sendMessageDelegate(messageSender, chatBackend.EventUser, messageText, MessageFlags.Encoded);
+
+            if (!string.IsNullOrEmpty(pubKeyB64))
+                sendMessageDelegate(chatBackend.EventUser, chatBackend.CurrentUser, messageText, MessageFlags.Encoded);
         }
 
         internal void RegisterPublicKey(SendMessageDelegate sendMessageDelegate)
@@ -140,9 +144,9 @@ namespace SecureIM.ChatBackend
             string pubKeyB64 = BackendHelper.EncodeFromByteArrayBase64(chatBackend.CryptoHandler.GetPublicKey());
             chatBackend.CurrentUser.PublicKey = pubKeyB64;
             chatBackend.FriendsList.Add(chatBackend.CurrentUser);
-            User messageSender = chatBackend.CurrentUser;
             string messageText = $"Registered: {pubKeyB64}";
-            sendMessageDelegate(messageSender, chatBackend.EventUser, messageText, MessageFlags.Encoded);
+
+            sendMessageDelegate(chatBackend.EventUser, chatBackend.CurrentUser, messageText, MessageFlags.Encoded);
         }
 
         internal void SetName(string text, string commandMatchString, SendMessageDelegate sendMessageDelegate)
@@ -152,6 +156,7 @@ namespace SecureIM.ChatBackend
             chatBackend.CurrentUser.Name = text.Substring(commandMatchString.Length).Trim();
             string nameSetString = "Setting your name to " + chatBackend.CurrentUser.Name;
             string messageText = nameSetString;
+
             sendMessageDelegate(chatBackend.EventUser, chatBackend.CurrentUser, messageText);
         }
 
