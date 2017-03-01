@@ -27,12 +27,22 @@ namespace SecureIM.ChatGUI.UserControls
         public ChatMainControl()
         {
             InitializeComponent();
-            Backend = ChatBackend.ChatBackend.Instance;
-            Backend.DisplayMessageDelegate = DisplayMessage;
             ScrollToEnd();
 
+            Backend = ChatBackend.ChatBackend.Instance;
+            Backend.DisplayMessageDelegate = DisplayMessage;
+
+            ToggleBaseControls(false);
+            ToggleRestrictedControls(false);
+
             if (!Backend.ServiceStarted)
-                Task.Run(() => Backend.StartService());
+                this.Dispatcher.InvokeAsync(() =>
+                {
+                    Backend.StartService();
+                    ToggleRestrictedControls(Backend.IsRegistered);
+                    LblCurrentName.Content = Backend.CurrentUser.Name;
+                    ToggleBaseControls(true);
+                });
         }
 
         #endregion Public Constructors
@@ -91,8 +101,10 @@ namespace SecureIM.ChatGUI.UserControls
         {
             string newName = TxtSetName.Text;
             SendCommand($"setname:{newName}");
+            LblCurrentName.Content = Backend.CurrentUser.Name;
             TxtSetName.Clear();
-            TxtEntryField.Focus();        }
+            TxtEntryField.Focus();
+        }
 
         private void ScrollToEnd()
         {
@@ -108,6 +120,8 @@ namespace SecureIM.ChatGUI.UserControls
             Backend.SendMessage(commandString);
             TxtEntryField.Clear();
             TxtEntryField.Focus();
+
+            ToggleRestrictedControls(Backend.IsRegistered);
         }
 
         private void TextBoxEntryField_OnKeyDown(object sender, KeyEventArgs e)
@@ -116,7 +130,7 @@ namespace SecureIM.ChatGUI.UserControls
 
             Dispatcher.InvokeAsync(() =>
             {
-                Backend.SendMessage(TxtEntryField.Text);
+                SendCommand(TxtEntryField.Text);
                 TxtEntryField.Clear();
             });
 
@@ -126,6 +140,23 @@ namespace SecureIM.ChatGUI.UserControls
         private void TxtChatPane_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) => ScrollToEnd();
 
         private void TxtChatPane_TextChanged(object sender, TextChangedEventArgs e) => ScrollToEnd();
+
+        private void ToggleBaseControls(bool enabled)
+        {
+            BtnSetName.IsEnabled = enabled;
+            TxtSetName.IsEnabled = enabled;
+            BtnGenKeyPair.IsEnabled = enabled;
+            BtnGetPubKey.IsEnabled = enabled;
+        }
+
+        private void ToggleRestrictedControls(bool enabled)
+        {
+            BtnAddFriend.IsEnabled = enabled;
+            TxtAlias.IsEnabled = enabled;
+            TxtFriendPublicKey.IsEnabled = enabled;
+            BtnStartChat.IsEnabled = enabled;
+            TxtStartChatFriendName.IsEnabled = enabled;
+        }
 
         #endregion Private Methods
     }

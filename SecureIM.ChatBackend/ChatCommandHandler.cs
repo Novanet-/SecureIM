@@ -145,6 +145,7 @@ namespace SecureIM.ChatBackend
             chatBackend.CurrentUser.PublicKey = pubKeyB64;
             chatBackend.FriendsList.Add(chatBackend.CurrentUser);
             string messageText = $"Registered: {pubKeyB64}";
+            chatBackend.IsRegistered = true;
 
             sendMessageDelegate(chatBackend.EventUser, chatBackend.CurrentUser, messageText, MessageFlags.Encoded);
         }

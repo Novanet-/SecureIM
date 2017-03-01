@@ -19,24 +19,30 @@ namespace SecureIM.ChatBackend
     {
         #region Public Properties
 
-        [ItemNotNull] public static Lazy<ChatBackend> Lazy { get; } = new Lazy<ChatBackend>(() => new ChatBackend());
+        [ItemNotNull]
+        public static Lazy<ChatBackend> Lazy { get; } = new Lazy<ChatBackend>(() => new ChatBackend());
 
         public User BroadcastUser { get; } = new User("Broadcast");
         public ChatCommandHandler ChatCommandHandler { get; }
         public Comms Comms { get; private set; }
 
-        [NotNull] public ICryptoHandler CryptoHandler { get; }
+        [NotNull]
+        public ICryptoHandler CryptoHandler { get; }
 
-        [NotNull] public User CurrentUser { get; }
+        [NotNull]
+        public User CurrentUser { get; }
 
-        [CanBeNull] public DisplayMessageDelegate DisplayMessageDelegate { get; set; }
+        [CanBeNull]
+        public DisplayMessageDelegate DisplayMessageDelegate { get; set; }
 
         public User EventUser { get; } = new User("Event", "event");
         public List<User> FriendsList { get; }
         public User InfoUser { get; } = new User("Info", "info");
 
-        [NotNull] public static ChatBackend Instance => Lazy.Value;
+        [NotNull]
+        public static ChatBackend Instance => Lazy.Value;
 
+        public bool IsRegistered { get; set; }
         public SendMessageDelegate SendMessageDelegate { get; }
 
         public bool ServiceStarted { get; set; }
@@ -52,6 +58,7 @@ namespace SecureIM.ChatBackend
             FriendsList = new List<User>();
             ChatCommandHandler = new ChatCommandHandler();
             SendMessageDelegate = SendMessageToChannel;
+            IsRegistered = isCurrentPubKeyInFriendsList();
         }
 
         #endregion Private Constructors
@@ -105,9 +112,7 @@ namespace SecureIM.ChatBackend
             GroupCollection commandMatchGroups = commandMatch.Groups;
             string commandMatchString = commandMatch.Success ? commandMatchGroups[1].Value.ToLower() : string.Empty;
 
-            bool registered = isCurrentPubKeyInFriendsList();
-
-            if (!registered)
+            if (!IsRegistered)
             {
                 BaseCommandSwitch(text, commandMatchString);
             }
@@ -173,7 +178,6 @@ namespace SecureIM.ChatBackend
                 case "setname:":
                     ChatCommandHandler.SetName(text, commandMatchString, SendMessageDelegate);
                     break;
-
                 case "genkey:":
                     ChatCommandHandler.GenerateKeyPair(SendMessageDelegate);
                     break;
