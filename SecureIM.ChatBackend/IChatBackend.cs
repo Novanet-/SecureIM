@@ -5,6 +5,7 @@ namespace SecureIM.ChatBackend
 {
     public delegate void DisplayMessageDelegate(MessageComposite data);
     public delegate void SendMessageDelegate(User sender, User reciever, string messageText, MessageFlags flags = MessageFlags.None);
+    public delegate void ProcessMessageDelegate(MessageComposite data, DisplayMessageDelegate dmd);
 
 
     [ServiceContract]

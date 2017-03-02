@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using SecureIM.ChatBackend.model;
+using SecureIM.ChatGUI.ViewModel.TabClasses;
 
 namespace SecureIM.ChatGUI.UserControls
 {
@@ -15,6 +16,7 @@ namespace SecureIM.ChatGUI.UserControls
         #region Public Properties
 
         public ChatBackend.ChatBackend Backend { get; }
+        public User TargetUser { get; set; }
 
         #endregion Public Properties
 
@@ -28,6 +30,11 @@ namespace SecureIM.ChatGUI.UserControls
             InitializeComponent();
             Backend = ChatBackend.ChatBackend.Instance;
             Backend.DisplayMessageDelegate = DisplayMessage;
+
+//            BindingExpression exp = LblTargetUser.GetBindingExpression(ContentProperty);
+//            exp?.UpdateSource();
+
+
             ScrollToEnd();
         }
 
@@ -71,6 +78,9 @@ namespace SecureIM.ChatGUI.UserControls
         private void TextBoxEntryField_OnKeyDown(object sender, KeyEventArgs e)
         {
             if (!(e.Key == Key.Return || e.Key == Key.Enter)) return;
+
+            var vm = (TabChatWindow) this.DataContext;
+            TargetUser = vm.TargetUser;
 
             Backend.SendMessage(TxtEntryField.Text);
             TxtEntryField.Clear();

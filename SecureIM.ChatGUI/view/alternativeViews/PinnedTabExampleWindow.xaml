@@ -37,7 +37,7 @@
     </Window.Resources>
     <Grid>
         <ct:ChromeTabControl x:Name="MyChromeTabControlWithPinnedTabs"
-                             AddTabCommand="{Binding AddTabCommand}"
+                             AddTabCommand="{Binding AddChatTabCommand}"
                              Background="AliceBlue"
                              CloseTabCommand="{Binding CloseTabCommand}"
                              ContainerItemPreparedForOverride="TabControl_ContainerItemPreparedForOverride"

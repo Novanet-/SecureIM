@@ -10,6 +10,7 @@ using System.Windows.Media.Imaging;
 using ChromeTabs;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using SecureIM.ChatBackend.model;
 using SecureIM.ChatGUI.Properties;
 using SecureIM.ChatGUI.ViewModel.TabClasses;
 
@@ -19,7 +20,7 @@ namespace SecureIM.ChatGUI.ViewModel
     {
         //since we don't know what kind of objects are bound, so the sorting happens outside with the ReorderTabsCommand.
         public RelayCommand<TabReorder> ReorderTabsCommand { get; set; }
-        public RelayCommand AddTabCommand { get; set; }
+        public virtual RelayCommand AddTabCommand { get; set; }
         public RelayCommand<TabBase> CloseTabCommand { get; set; }
         public ObservableCollection<TabBase> ItemCollection { get; set; }
 
@@ -109,11 +110,12 @@ namespace SecureIM.ChatGUI.ViewModel
             return tab;
         }
 
-        protected TabChatWindow CreateTabChatWindow()
+        protected TabChatWindow CreateTabChatWindow(User user)
         {
             var tab = new TabChatWindow()
             {
-                TabName = "Chat Window",
+                TargetUser = user,
+                TabName = user.Name,
                 ChatHistory = "",
             };
             return tab;
@@ -189,7 +191,7 @@ namespace SecureIM.ChatGUI.ViewModel
         private void CloseTabCommandAction(TabBase vm) => ItemCollection.Remove(vm);
 
         //Adds a random tab
-        private void AddTabCommandAction()
+        public virtual void AddTabCommandAction()
         {
             var r = new Random();
             int num = r.Next(1, 100);

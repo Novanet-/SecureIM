@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using SecureIM.ChatBackend.model;
+using SecureIM.ChatGUI.view.alternativeViews;
 
 namespace SecureIM.ChatGUI.UserControls
 {
@@ -86,14 +89,12 @@ namespace SecureIM.ChatGUI.UserControls
         private void BtnGenKeyPair_Click(object sender, RoutedEventArgs e)
         {
             SendCommand("genkey:");
-            SendCommand("regpub:");
             TxtEntryField.Focus();
         }
 
         private void BtnGetPubKey_Click(object sender, RoutedEventArgs e)
         {
             SendCommand("getpub:");
-            SendCommand("regpub:");
             TxtEntryField.Focus();
         }
 
@@ -159,5 +160,35 @@ namespace SecureIM.ChatGUI.UserControls
         }
 
         #endregion Private Methods
+
+        private void BtnRegPubKey_Click(object sender, RoutedEventArgs e)
+        {
+            SendCommand("regpub:");
+            TxtEntryField.Focus();
+        }
+
+        private void BtnStartChat_Click(object sender, RoutedEventArgs e)
+        {
+            IEnumerable<User> userMatches = Backend.FriendsList.Where(x => x.Name.Equals(TxtStartChatFriendName.Text));
+            var userMatchesList = userMatches as IList<User> ?? userMatches.ToList();
+            if (userMatchesList.Count() > 1)
+            {
+                var messageComposite = new MessageComposite(Backend.EventUser, Backend.CurrentUser, "Duplicate friends with this name found");
+                Backend.DisplayMessageDelegate?.Invoke(messageComposite);
+            }
+
+            else if (!userMatchesList.Any())
+            {
+                var messageComposite = new MessageComposite(Backend.EventUser, Backend.CurrentUser, "Friend not found");
+                Backend.DisplayMessageDelegate?.Invoke(messageComposite);
+            }
+            else
+            {
+                User user = userMatchesList.First();
+
+                var parent = Application.Current.MainWindow as PinnedTabExampleWindow;
+                parent?.MyChromeTabControlWithPinnedTabs.AddTabCommand.Execute(user);
+            }
+        }
     }
 }

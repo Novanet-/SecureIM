@@ -248,6 +248,19 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
+    <None Include="Properties\DataSources\SecureIM.ChatGUI.ViewModel.alternativeViews.ViewModelCustomStyleExampleWindow.datasource" />
+    <None Include="Properties\DataSources\SecureIM.ChatGUI.ViewModel.alternativeViews.ViewModelPinnedTabExampleWindow.datasource" />
+    <None Include="Properties\DataSources\SecureIM.ChatGUI.ViewModel.MainViewModel.datasource" />
+    <None Include="Properties\DataSources\SecureIM.ChatGUI.ViewModel.TabClasses.TabBase.datasource" />
+    <None Include="Properties\DataSources\SecureIM.ChatGUI.ViewModel.TabClasses.TabChatMain.datasource" />
+    <None Include="Properties\DataSources\SecureIM.ChatGUI.ViewModel.TabClasses.TabChatWindow.datasource" />
+    <None Include="Properties\DataSources\SecureIM.ChatGUI.ViewModel.TabClasses.TabClass1.datasource" />
+    <None Include="Properties\DataSources\SecureIM.ChatGUI.ViewModel.TabClasses.TabClass2.datasource" />
+    <None Include="Properties\DataSources\SecureIM.ChatGUI.ViewModel.TabClasses.TabClass3.datasource" />
+    <None Include="Properties\DataSources\SecureIM.ChatGUI.ViewModel.TabClasses.TabClass4.datasource" />
+    <None Include="Properties\DataSources\SecureIM.ChatGUI.ViewModel.ViewModelExampleBase.datasource" />
+    <None Include="Properties\DataSources\SecureIM.ChatGUI.ViewModel.ViewModelLocator.datasource" />
+    <None Include="Properties\DataSources\SecureIM.ChatGUI.ViewModel.ViewModelMainWindow.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using ChromeTabs;
+using GalaSoft.MvvmLight.Command;
 using SecureIM.ChatGUI.ViewModel.TabClasses;
 
 namespace SecureIM.ChatGUI.view.alternativeViews
@@ -9,14 +10,16 @@ namespace SecureIM.ChatGUI.view.alternativeViews
     /// </summary>
     public partial class PinnedTabExampleWindow : Window
     {
+
+
         public PinnedTabExampleWindow()
         {
             this.Dispatcher.InvokeAsync(InitializeComponent);
-
             var sCardStartupWindow = new SmartcardStartupWindow();
             sCardStartupWindow.Show();
             this.Hide();
         }
+
 
         private void TabControl_ContainerItemPreparedForOverride(object sender, ContainerOverrideEventArgs e)
         {

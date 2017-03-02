@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace SecureIM.ChatBackend.model
 {
     [Serializable]
-    internal class IMException : Exception
+    public class IMException : Exception
     {
         public static string DisplayMessageDelegateError { get; } = "No display message delegate has been set";
 

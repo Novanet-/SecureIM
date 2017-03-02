@@ -19,31 +19,27 @@ namespace SecureIM.ChatBackend
     {
         #region Public Properties
 
-        [ItemNotNull]
-        public static Lazy<ChatBackend> Lazy { get; } = new Lazy<ChatBackend>(() => new ChatBackend());
+        [ItemNotNull] public static Lazy<ChatBackend> Lazy { get; } = new Lazy<ChatBackend>(() => new ChatBackend());
 
         public User BroadcastUser { get; } = new User("Broadcast");
         public ChatCommandHandler ChatCommandHandler { get; }
         public Comms Comms { get; private set; }
 
-        [NotNull]
-        public ICryptoHandler CryptoHandler { get; }
+        [NotNull] public ICryptoHandler CryptoHandler { get; }
 
-        [NotNull]
-        public User CurrentUser { get; }
+        [NotNull] public User CurrentUser { get; }
 
-        [CanBeNull]
-        public DisplayMessageDelegate DisplayMessageDelegate { get; set; }
+        [CanBeNull] public DisplayMessageDelegate DisplayMessageDelegate { get; set; }
 
         public User EventUser { get; } = new User("Event", "event");
         public List<User> FriendsList { get; }
         public User InfoUser { get; } = new User("Info", "info");
 
-        [NotNull]
-        public static ChatBackend Instance => Lazy.Value;
+        [NotNull] public static ChatBackend Instance => Lazy.Value;
 
         public bool IsRegistered { get; set; }
         public SendMessageDelegate SendMessageDelegate { get; }
+        public ProcessMessageDelegate ProcessMessageDelegate { get; set; }
 
         public bool ServiceStarted { get; set; }
 
@@ -84,7 +80,8 @@ namespace SecureIM.ChatBackend
 
             string currentPubKeyB64 = BackendHelper.EncodeFromByteArrayBase64(CryptoHandler.GetPublicKey());
             bool isEventSender = messageComposite.Sender.PublicKey.Equals(EventUser.PublicKey);
-            bool isReceiverCurrentUser = !string.IsNullOrEmpty(messageComposite.Receiver.PublicKey) && messageComposite.Receiver.PublicKey.Equals(currentPubKeyB64);
+            bool isReceiverCurrentUser = !string.IsNullOrEmpty(messageComposite.Receiver.PublicKey) &&
+                                         messageComposite.Receiver.PublicKey.Equals(currentPubKeyB64);
             if (isEventSender || isReceiverCurrentUser)
             {
                 bool isEncodedMessage = messageComposite.Flags.HasFlag(MessageFlags.Encoded);
@@ -93,9 +90,14 @@ namespace SecureIM.ChatBackend
                 if (isEncodedMessage && isEncryptedMessage)
                     messageComposite = DecodeMessage(messageComposite);
 
-                if (DisplayMessageDelegate != null) DisplayMessageDelegate?.Invoke(messageComposite);
-                else
-                    throw new IMException(IMException.DisplayMessageDelegateError);
+                if (DisplayMessageDelegate != null)
+                {
+                    ProcessMessageDelegate.Invoke(messageComposite, DisplayMessageDelegate);
+
+//                    DisplayMessageDelegate?.Invoke(messageComposite);
+//                    else
+//                        throw new IMException(IMException.DisplayMessageDelegateError);
+                }
             }
         }
 

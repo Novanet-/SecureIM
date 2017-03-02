@@ -55,6 +55,7 @@
                    UseLayoutRounding="True" />
 
 
+
         <TextBox x:Name="TxtChatPane"
                  Grid.Row="5"
                  Width="Auto"
@@ -162,7 +163,7 @@
                 Width="156"
                 Grid.Row="4"
                 Grid.Column="0"
-                Click="BtnAddFriend_Click"
+                Click="BtnStartChat_Click"
                 Height="34"
                 UseLayoutRounding="True" />
         <xctk:WatermarkTextBox x:Name="TxtStartChatFriendName"
@@ -187,6 +188,16 @@
                VerticalContentAlignment="Center"
                FontSize="24"
                Grid.ColumnSpan="3" />
+        <Button x:Name="BtnRegPubKey"
+                Content="Register Key"
+                Margin="39,20,39,16"
+                Width="156"
+                Grid.Row="1"
+                Grid.Column="2"
+                Height="34"
+                UseLayoutRounding="True"
+                Click="BtnRegPubKey_Click" />
+
 
 
     </Grid>

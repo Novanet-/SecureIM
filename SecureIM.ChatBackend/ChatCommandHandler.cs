@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.RegularExpressions;
+using Castle.Core.Internal;
 using SecureIM.ChatBackend.helpers;
 using SecureIM.ChatBackend.model;
 using SecureIM.Smartcard.helpers;
@@ -141,13 +142,21 @@ namespace SecureIM.ChatBackend
         {
             ChatBackend chatBackend = ChatBackend.Instance;
 
-            string pubKeyB64 = BackendHelper.EncodeFromByteArrayBase64(chatBackend.CryptoHandler.GetPublicKey());
-            chatBackend.CurrentUser.PublicKey = pubKeyB64;
-            chatBackend.FriendsList.Add(chatBackend.CurrentUser);
-            string messageText = $"Registered: {pubKeyB64}";
-            chatBackend.IsRegistered = true;
+            byte[] publicKey = chatBackend.CryptoHandler.GetPublicKey();
+            if (!publicKey.IsNullOrEmpty())
+            {
+                string pubKeyB64 = BackendHelper.EncodeFromByteArrayBase64(publicKey);
+                chatBackend.CurrentUser.PublicKey = pubKeyB64;
+                chatBackend.FriendsList.Add(chatBackend.CurrentUser);
+                string messageText = $"Registered: {pubKeyB64}";
+                chatBackend.IsRegistered = true;
 
-            sendMessageDelegate(chatBackend.EventUser, chatBackend.CurrentUser, messageText, MessageFlags.Encoded);
+                sendMessageDelegate(chatBackend.EventUser, chatBackend.CurrentUser, messageText, MessageFlags.Encoded);
+            }
+            else
+            {
+                chatBackend.DisplayMessageDelegate?.Invoke(new MessageComposite(chatBackend.EventUser, chatBackend.CurrentUser, "You must generate a key before you can register one"));
+            }
         }
 
         internal void SetName(string text, string commandMatchString, SendMessageDelegate sendMessageDelegate)

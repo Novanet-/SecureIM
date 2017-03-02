@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows.Data;
 using GalaSoft.MvvmLight.Command;
+using SecureIM.ChatBackend.model;
 using SecureIM.ChatGUI.ViewModel.interfaces;
 using SecureIM.ChatGUI.ViewModel.TabClasses;
 
@@ -43,7 +44,7 @@ namespace SecureIM.ChatGUI.ViewModel
 //            ItemCollection.Add(CreateTab2());
 //            ItemCollection.Add(CreateTab3());
 //            ItemCollection.Add(CreateTabLoremIpsum());
-            ItemCollection.Add(CreateTabChatWindow());
+            ItemCollection.Add(CreateTabChatWindow(new User("")));
 
             SelectedTab = ItemCollection.FirstOrDefault();
             var view = CollectionViewSource.GetDefaultView(ItemCollection);
