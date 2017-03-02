@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
@@ -13,9 +14,15 @@ namespace SecureIM.ChatGUI.ViewModel.alternativeViews
 {
     public sealed class ViewModelPinnedTabExampleWindow : ViewModelExampleBase, IViewModelPinnedTabExampleWindow
     {
-        public RelayCommand<TabBase> PinTabCommand { get; set; }
+        #region Public Properties
+
         public RelayCommand<User> AddChatTabCommand { get; set; }
 
+        public RelayCommand<TabBase> PinTabCommand { get; set; }
+
+        #endregion Public Properties
+
+        #region Public Constructors
 
         public ViewModelPinnedTabExampleWindow()
         {
@@ -23,10 +30,10 @@ namespace SecureIM.ChatGUI.ViewModel.alternativeViews
             vm1.IsPinned = true;
             ItemCollection.Add(vm1);
             ItemCollection.Add(CreateTabChatWindow(new User("")));
-//            ItemCollection.Add(CreateTab3());
-//            ItemCollection.Add(CreateTabLoremIpsum());
+            //            ItemCollection.Add(CreateTab3());
+            //            ItemCollection.Add(CreateTabLoremIpsum());
             SelectedTab = ItemCollection.FirstOrDefault();
-            var view = CollectionViewSource.GetDefaultView(ItemCollection) as ICollectionView;
+            ICollectionView view = CollectionViewSource.GetDefaultView(ItemCollection);
             //This sort description is what keeps the source collection sorted, based on tab number.
             //You can also use the sort description to manually sort the tabs, based on your own criterias,
             //as show below by sorting both by tab number and Pinned status.
@@ -38,33 +45,98 @@ namespace SecureIM.ChatGUI.ViewModel.alternativeViews
             ChatBackend.ChatBackend.Instance.ProcessMessageDelegate = ProcessMessage;
         }
 
-        private void ProcessMessage(MessageComposite message, DisplayMessageDelegate dmd)
+        #endregion Public Constructors
+
+        #region Public Methods
+
+        //Adds a random tab
+        public void AddTabCommandAction(User user)
         {
-            //TODO: do stuff
+            TabChatWindow newTab = CreateTabChatWindow(user);
+
+            var bind = new Binding
+            {
+                Source = newTab,
+                Path = new PropertyPath("TargetUser")
+            };
+            newTab.TargetUser = user;
+            bind.Mode = BindingMode.TwoWay;
+            bind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+
+            ItemCollection.Add(newTab);
+        }
+
+        #endregion Public Methods
+
+        #region Private Methods
+
+        private static void AddMessageToChat(MessageComposite messageComposite, TabChatWindow chatTab)
+        {
+            string username = messageComposite.Sender.Name ?? "";
+            string message = messageComposite.Message.Text ?? "";
+
+            string newChatLog = $"{chatTab?.ChatHistory}{username}: {message}{Environment.NewLine}";
+            chatTab.ChatHistory = newChatLog;
+        }
+
+        private static void AddMessageToChat(MessageComposite messageComposite, TabChatMain chatMain)
+        {
+            string username = messageComposite.Sender.Name ?? "";
+            string message = messageComposite.Message.Text ?? "";
+
+            string newChatLog = $"{chatMain?.ChatHistory}{username}: {message}{Environment.NewLine}";
+            chatMain.ChatHistory = newChatLog;
+        }
+
+        private static bool MatchTabToTargetUser(MessageComposite messageComposite, TabBase tab)
+        {
+            if (tab.IsPinned)
+            {
+                return messageComposite.Sender.PublicKey.Equals("event") || messageComposite.Sender.PublicKey.Equals("info");
+            }
+
+            var chatTab = tab as TabChatWindow;
+            return chatTab != null && chatTab.TargetUser.PublicKey.Equals(messageComposite.Sender.PublicKey);
         }
 
         private void PinTabCommandAction(TabBase tab)
         {
             tab.IsPinned = !tab.IsPinned;
-            var view = CollectionViewSource.GetDefaultView(ItemCollection) as ICollectionView;
+            ICollectionView view = CollectionViewSource.GetDefaultView(ItemCollection);
             view.Refresh();
         }
 
-        //Adds a random tab
-        public void AddTabCommandAction(User user)
+        private void ProcessMessage(MessageComposite messageComposite, DisplayMessageDelegate dmd)
         {
-            var newTab = CreateTabChatWindow(user);
+            //TODO: do stuff
 
+            IEnumerable<TabBase> matchedTab = ItemCollection.Where(tab => MatchTabToTargetUser(messageComposite, tab));
 
-            Binding bind = new Binding();
-            bind.Source = newTab;
-            bind.Path = new PropertyPath("TargetUser");
-            newTab.TargetUser = user;
-            bind.Mode = BindingMode.TwoWay;
-            bind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            IEnumerable<TabBase> tabBases = matchedTab as TabBase[] ?? matchedTab.ToArray();
+            if (!tabBases.Any())
+            {
+                //TODO: create new tab
 
-
-            ItemCollection.Add(newTab);
+                TabChatWindow newChatTab = CreateTabChatWindow(messageComposite.Sender);
+                ItemCollection.Add(newChatTab);
+                AddMessageToChat(messageComposite, newChatTab);
+            }
+            else
+            {
+                //TODO: add to chat history of tab
+                if (tabBases.First().IsPinned)
+                {
+                    var matchedChatMain = tabBases.First() as TabChatMain;
+                    if (matchedChatMain != null) AddMessageToChat(messageComposite, matchedChatMain);
+                }
+                else
+                {
+                    var matchedChatTab = tabBases.First() as TabChatWindow;
+                    if (matchedChatTab != null) AddMessageToChat(messageComposite, matchedChatTab);
+                }
+            }
         }
+
+        #endregion Private Methods
     }
 }

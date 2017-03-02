@@ -62,7 +62,7 @@
                  Margin="10"
                  HorizontalAlignment="Stretch"
                  Grid.ColumnSpan="3"
-                 Text="{Binding ChatHistory, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
+                 Text="{Binding ChatHistory, Mode= TwoWay, UpdateSourceTrigger=  PropertyChanged}"
                  IsReadOnly="True"
                  TextWrapping="WrapWithOverflow"
                  TextChanged="TxtChatPane_TextChanged"
@@ -197,6 +197,13 @@
                 Height="34"
                 UseLayoutRounding="True"
                 Click="BtnRegPubKey_Click" />
+
+        <Label Name="LblTargetUser"
+               Content="{Binding TargetUser.Name, Mode=OneTime, UpdateSourceTrigger=Default}"
+               Grid.Column="0"
+               Grid.Row="0"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center" />
 
 
 

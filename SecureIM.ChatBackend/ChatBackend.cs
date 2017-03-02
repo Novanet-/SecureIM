@@ -79,7 +79,7 @@ namespace SecureIM.ChatBackend
             if (messageComposite == null) throw new ArgumentNullException(nameof(messageComposite));
 
             string currentPubKeyB64 = BackendHelper.EncodeFromByteArrayBase64(CryptoHandler.GetPublicKey());
-            bool isEventSender = messageComposite.Sender.PublicKey.Equals(EventUser.PublicKey);
+            bool isEventSender = messageComposite.Sender.PublicKey.Equals(EventUser.PublicKey) || messageComposite.Sender.PublicKey.Equals(InfoUser.PublicKey);
             bool isReceiverCurrentUser = !string.IsNullOrEmpty(messageComposite.Receiver.PublicKey) &&
                                          messageComposite.Receiver.PublicKey.Equals(currentPubKeyB64);
             if (isEventSender || isReceiverCurrentUser)
@@ -144,7 +144,7 @@ namespace SecureIM.ChatBackend
 
             // Information to display locally
             const string changeNamePrompt = "To change your name, type setname: NEW_NAME";
-            DisplayMessageDelegate?.Invoke(new MessageComposite(InfoUser, CurrentUser, changeNamePrompt, MessageFlags.Broadcast));
+            channel.DisplayMessage(new MessageComposite(InfoUser, CurrentUser, changeNamePrompt, MessageFlags.Broadcast));
         }
 
         #endregion Public Methods

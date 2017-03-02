@@ -55,7 +55,7 @@ namespace SecureIM.ChatGUI.UserControls
             string message = messageComposite.Message.Text ?? "";
             Dispatcher.InvokeAsync(() =>
             {
-                TxtChatPane.AppendText(username + ": " + message + Environment.NewLine);
+                TxtChatPane.AppendText($"{username}: {message}{Environment.NewLine}");
 
                 BindingExpression exp = TxtChatPane.GetBindingExpression(TextBox.TextProperty);
                 exp?.UpdateSource();
