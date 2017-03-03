@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using Castle.Core.Internal;
+using PostSharp.Patterns.Diagnostics;
 using SecureIM.ChatBackend.helpers;
 using SecureIM.ChatBackend.model;
 using SecureIM.Smartcard.helpers;
@@ -31,6 +32,7 @@ namespace SecureIM.ChatBackend
 
         #region Internal Methods
 
+        [Log("MyProf")]
         internal void AddFriend(GroupCollection commandMatchGroups, SendMessageDelegate sendMessageDelegate)
         {
             ChatBackend chatBackend = ChatBackend.Instance;
@@ -44,9 +46,10 @@ namespace SecureIM.ChatBackend
             string confirmMessage = $"Friend ({alias}) added with public key: {pubKeyB64}";
             User messageSender = chatBackend.CurrentUser;
 
-            sendMessageDelegate(chatBackend.EventUser, messageSender, confirmMessage);
+            sendMessageDelegate(chatBackend.EventUser, messageSender, confirmMessage, MessageFlags.Local);
         }
 
+        [Log("MyProf")]
         internal void DecodeBase64(GroupCollection commandMatchGroups, SendMessageDelegate sendMessageDelegate)
         {
             ChatBackend chatBackend = ChatBackend.Instance;
@@ -58,6 +61,7 @@ namespace SecureIM.ChatBackend
             if (!string.IsNullOrEmpty(commandData)) sendMessageDelegate(chatBackend.EventUser, messageSender, commandData);
         }
 
+        [Log("MyProf")]
         internal void Decrypt(GroupCollection commandMatchGroups, SendMessageDelegate sendMessageDelegate)
         {
             ChatBackend chatBackend = ChatBackend.Instance;
@@ -74,6 +78,7 @@ namespace SecureIM.ChatBackend
             if (!string.IsNullOrEmpty(plainText)) sendMessageDelegate(messageSender, targetUser, plainText, MessageFlags.Encoded);
         }
 
+        [Log("MyProf")]
         internal void EncodeBase64(GroupCollection commandMatchGroups, SendMessageDelegate sendMessageDelegate)
         {
             ChatBackend chatBackend = ChatBackend.Instance;
@@ -85,6 +90,7 @@ namespace SecureIM.ChatBackend
             if (!string.IsNullOrEmpty(cipherText)) sendMessageDelegate(chatBackend.EventUser, messageSender, cipherText, MessageFlags.Encoded);
         }
 
+        [Log("MyProf")]
         internal string Encrypt(GroupCollection commandMatchGroups, SendMessageDelegate sendMessageDelegate)
         {
             ChatBackend chatBackend = ChatBackend.Instance;
@@ -106,6 +112,7 @@ namespace SecureIM.ChatBackend
             return alias;
         }
 
+        [Log("MyProf")]
         internal void GenerateKeyPair(SendMessageDelegate sendMessageDelegate)
         {
             ChatBackend chatBackend = ChatBackend.Instance;
@@ -117,7 +124,7 @@ namespace SecureIM.ChatBackend
             {
                 string messageText = pubKeyB64;
 
-                sendMessageDelegate(chatBackend.EventUser, chatBackend.CurrentUser, messageText, MessageFlags.Encoded);
+                sendMessageDelegate(chatBackend.EventUser, chatBackend.CurrentUser, messageText, MessageFlags.Encoded | MessageFlags.Local);
             }
 //             TODO: Remove this
 //            string priKeyB64 = BackendHelper.EncodeFromByteArrayBase64(chatBackend.CryptoHandler.GetPrivateKey());
@@ -127,6 +134,7 @@ namespace SecureIM.ChatBackend
 //            if (messageSender != null) sendMessageDelegate(messageSender, chatBackend.EventUser, priKeyB64, MessageFlags.Encoded);
         }
 
+        [Log("MyProf")]
         internal void GetPublicKey(SendMessageDelegate sendMessageDelegate)
         {
             ChatBackend chatBackend = ChatBackend.Instance;
@@ -135,9 +143,10 @@ namespace SecureIM.ChatBackend
             string messageText = pubKeyB64;
 
             if (!string.IsNullOrEmpty(pubKeyB64))
-                sendMessageDelegate(chatBackend.EventUser, chatBackend.CurrentUser, messageText, MessageFlags.Encoded);
+                sendMessageDelegate(chatBackend.EventUser, chatBackend.CurrentUser, messageText, MessageFlags.Encoded | MessageFlags.Local);
         }
 
+        [Log("MyProf")]
         internal void RegisterPublicKey(SendMessageDelegate sendMessageDelegate)
         {
             ChatBackend chatBackend = ChatBackend.Instance;
@@ -151,14 +160,15 @@ namespace SecureIM.ChatBackend
                 string messageText = $"Registered: {pubKeyB64}";
                 chatBackend.IsRegistered = true;
 
-                sendMessageDelegate(chatBackend.EventUser, chatBackend.CurrentUser, messageText, MessageFlags.Encoded);
+                sendMessageDelegate(chatBackend.EventUser, chatBackend.CurrentUser, messageText, MessageFlags.Encoded | MessageFlags.Local);
             }
             else
             {
-                chatBackend.DisplayMessageDelegate?.Invoke(new MessageComposite(chatBackend.EventUser, chatBackend.CurrentUser, "You must generate a key before you can register one"));
+                chatBackend.DisplayMessageDelegate?.Invoke(new MessageComposite(chatBackend.EventUser, chatBackend.CurrentUser, "You must generate a key before you can register one", MessageFlags.Local));
             }
         }
 
+        [Log("MyProf")]
         internal void SetName(string text, string commandMatchString, SendMessageDelegate sendMessageDelegate)
         {
             ChatBackend chatBackend = ChatBackend.Instance;
@@ -167,7 +177,7 @@ namespace SecureIM.ChatBackend
             string nameSetString = "Setting your name to " + chatBackend.CurrentUser.Name;
             string messageText = nameSetString;
 
-            sendMessageDelegate(chatBackend.EventUser, chatBackend.CurrentUser, messageText);
+            sendMessageDelegate(chatBackend.EventUser, chatBackend.CurrentUser, messageText, MessageFlags.Local);
         }
 
         #endregion Internal Methods

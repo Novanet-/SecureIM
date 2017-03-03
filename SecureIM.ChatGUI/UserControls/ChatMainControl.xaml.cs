@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using PostSharp.Patterns.Diagnostics;
 using SecureIM.ChatBackend.model;
 using SecureIM.ChatGUI.view.alternativeViews;
 
@@ -27,6 +28,7 @@ namespace SecureIM.ChatGUI.UserControls
         /// <summary>
         ///     Initializes a new instance of the <see cref="ChatWindowControl" /> class.
         /// </summary>
+        [Log("MyProf")]
         public ChatMainControl()
         {
             InitializeComponent();

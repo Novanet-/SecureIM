@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using PostSharp.Patterns.Diagnostics;
 using SecureIM.ChatBackend.helpers;
 using SecureIM.ChatBackend.model;
 using SecureIM.Smartcard.controller.smartcard;
@@ -38,15 +39,25 @@ namespace SecureIM.ChatBackend
         [NotNull] public static ChatBackend Instance => Lazy.Value;
 
         public bool IsRegistered { get; set; }
-        public SendMessageDelegate SendMessageDelegate { get; }
         public ProcessMessageDelegate ProcessMessageDelegate { get; set; }
-
+        public SendMessageDelegate SendMessageDelegate { get; }
         public bool ServiceStarted { get; set; }
 
         #endregion Public Properties
 
+        #region Private Properties
+
+        private bool IsCurrentPubKeyInFriendsList => FriendsList.Where(x =>
+        {
+            string currentPubKeyB64 = BackendHelper.EncodeFromByteArrayBase64(CryptoHandler.GetPublicKey());
+            return x.PublicKey.Equals(currentPubKeyB64);
+        }).FirstOrDefault() != null;
+
+        #endregion Private Properties
+
         #region Private Constructors
 
+        [Log("MyProf")]
         private ChatBackend()
         {
             CurrentUser = new User();
@@ -54,7 +65,7 @@ namespace SecureIM.ChatBackend
             FriendsList = new List<User>();
             ChatCommandHandler = new ChatCommandHandler();
             SendMessageDelegate = SendMessageToChannel;
-            IsRegistered = isCurrentPubKeyInFriendsList();
+            IsRegistered = IsCurrentPubKeyInFriendsList;
         }
 
         #endregion Private Constructors
@@ -74,12 +85,14 @@ namespace SecureIM.ChatBackend
         /// <param name="messageComposite">The messageComposite.</param>
         /// <exception cref="System.ArgumentNullException">messageComposite</exception>
         /// <exception cref="Exception">A delegate callback throws an exception.</exception>
+        [Log("MyProf")]
         public void DisplayMessage([NotNull] MessageComposite messageComposite)
         {
             if (messageComposite == null) throw new ArgumentNullException(nameof(messageComposite));
 
             string currentPubKeyB64 = BackendHelper.EncodeFromByteArrayBase64(CryptoHandler.GetPublicKey());
-            bool isEventSender = messageComposite.Sender.PublicKey.Equals(EventUser.PublicKey) || messageComposite.Sender.PublicKey.Equals(InfoUser.PublicKey);
+            bool isEventSender = messageComposite.Sender.PublicKey.Equals(EventUser.PublicKey) ||
+                                 messageComposite.Sender.PublicKey.Equals(InfoUser.PublicKey);
             bool isReceiverCurrentUser = !string.IsNullOrEmpty(messageComposite.Receiver.PublicKey) &&
                                          messageComposite.Receiver.PublicKey.Equals(currentPubKeyB64);
             if (isEventSender || isReceiverCurrentUser)
@@ -91,13 +104,7 @@ namespace SecureIM.ChatBackend
                     messageComposite = DecodeMessage(messageComposite);
 
                 if (DisplayMessageDelegate != null)
-                {
                     ProcessMessageDelegate.Invoke(messageComposite, DisplayMessageDelegate);
-
-//                    DisplayMessageDelegate?.Invoke(messageComposite);
-//                    else
-//                        throw new IMException(IMException.DisplayMessageDelegateError);
-                }
             }
         }
 
@@ -107,26 +114,26 @@ namespace SecureIM.ChatBackend
         /// <param name="text">The text.</param>
         /// <exception cref="RegexMatchTimeoutException">A time-out occurred. For more information about time-outs, see the Remarks section.</exception>
         /// <exception cref="ArgumentException">A regular expression parsing error occurred. </exception>
-        public void SendMessage(string text)
+        [Log("MyProf")]
+        public void SendMessage([NotNull] string text)
         {
+            if (text == null) throw new ArgumentNullException(nameof(text));
+
             var commandRegEx = new Regex(@"^([\w]+:)\s*(.*)", RegexOptions.Multiline);
             Match commandMatch = commandRegEx.Match(text);
             GroupCollection commandMatchGroups = commandMatch.Groups;
             string commandMatchString = commandMatch.Success ? commandMatchGroups[1].Value.ToLower() : string.Empty;
 
             if (!IsRegistered)
-            {
                 BaseCommandSwitch(text, commandMatchString);
-            }
             else
-            {
                 RegisteredCommandSwitch(text, commandMatchString, commandMatchGroups);
-            }
         }
 
         /// <summary>
         ///     Starts the service.
         /// </summary>
+        [Log("MyProf")]
         public void StartService()
         {
             var channelFactory = new ChannelFactory<IChatBackend>("ChatEndpoint");
@@ -140,29 +147,41 @@ namespace SecureIM.ChatBackend
 
             // Information to send to the channel
             string userJoinedMessage = $"{CurrentUser.Name} has entered the conversation.";
-            channel.DisplayMessage(new MessageComposite(EventUser, CurrentUser, userJoinedMessage, MessageFlags.Broadcast));
+            DisplayMessage(new MessageComposite(EventUser, CurrentUser, userJoinedMessage, MessageFlags.Broadcast));
 
             // Information to display locally
             const string changeNamePrompt = "To change your name, type setname: NEW_NAME";
-            channel.DisplayMessage(new MessageComposite(InfoUser, CurrentUser, changeNamePrompt, MessageFlags.Broadcast));
+            DisplayMessage(new MessageComposite(InfoUser, CurrentUser, changeNamePrompt, MessageFlags.Broadcast));
         }
 
         #endregion Public Methods
 
         #region Internal Methods
 
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <see langword="null"/></exception>
+        /// <exception cref="ArgumentNullException"><paramref name="targetPubKey"/> is <see langword="null"/></exception>
         [NotNull]
-        internal string DecryptChatMessage([NotNull] string text, byte[] targetPubKey)
+        [Log("MyProf")]
+        internal string DecryptChatMessage([NotNull] string text, [NotNull] byte[] targetPubKey)
         {
+            if (text == null) throw new ArgumentNullException(nameof(text));
+            if (targetPubKey == null) throw new ArgumentNullException(nameof(targetPubKey));
+
             // TODO: Proper pub key
             //            targetPubKey = CryptoHandler.GetPublicKey();
             string plainText = CryptoHandler.Decrypt(text, targetPubKey);
             return plainText;
         }
 
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <see langword="null"/></exception>
+        /// <exception cref="ArgumentNullException"><paramref name="targetPubKey"/> is <see langword="null"/></exception>
         [NotNull]
-        internal string EncryptChatMessage([NotNull] string text, byte[] targetPubKey)
+        [Log("MyProf")]
+        internal string EncryptChatMessage([NotNull] string text, [NotNull] byte[] targetPubKey)
         {
+            if (text == null) throw new ArgumentNullException(nameof(text));
+            if (targetPubKey == null) throw new ArgumentNullException(nameof(targetPubKey));
+
             // TODO: Proper pub key
             //            targetPubKey = CryptoHandler.GetPublicKey();
             string cipherText = CryptoHandler.Encrypt(text, targetPubKey);
@@ -173,13 +192,18 @@ namespace SecureIM.ChatBackend
 
         #region Private Methods
 
-        private void BaseCommandSwitch(string text, string commandMatchString)
+        [Log("MyProf")]
+        private void BaseCommandSwitch([NotNull] string text, [NotNull] string commandMatchString)
         {
+            if (text == null) throw new ArgumentNullException(nameof(text));
+            if (commandMatchString == null) throw new ArgumentNullException(nameof(commandMatchString));
+
             switch (commandMatchString)
             {
                 case "setname:":
                     ChatCommandHandler.SetName(text, commandMatchString, SendMessageDelegate);
                     break;
+
                 case "genkey:":
                     ChatCommandHandler.GenerateKeyPair(SendMessageDelegate);
                     break;
@@ -198,8 +222,11 @@ namespace SecureIM.ChatBackend
             }
         }
 
-        private MessageComposite DecodeMessage(MessageComposite messageComposite)
+        [Log("MyProf")]
+        private MessageComposite DecodeMessage([NotNull] MessageComposite messageComposite)
         {
+            if (messageComposite == null) throw new ArgumentNullException(nameof(messageComposite));
+
             string decodedMessageText = Encoding.Default.DecodeBase64(messageComposite.Message.Text);
 
             if (decodedMessageText != null)
@@ -207,8 +234,12 @@ namespace SecureIM.ChatBackend
             return messageComposite;
         }
 
-        private MessageComposite DecryptMessage(MessageComposite messageComposite, string decodedMessageText)
+        [Log("MyProf")]
+        private MessageComposite DecryptMessage([NotNull] MessageComposite messageComposite, [NotNull] string decodedMessageText)
         {
+            if (messageComposite == null) throw new ArgumentNullException(nameof(messageComposite));
+            if (decodedMessageText == null) throw new ArgumentNullException(nameof(decodedMessageText));
+
             byte[] currentPubKey = CryptoHandler.GetPublicKey();
             byte[] targetPubKeyBytes = null;
             byte[] senderPubKeyBytes = BackendHelper.DecodeToByteArrayBase64(messageComposite.Sender.PublicKey);
@@ -226,17 +257,13 @@ namespace SecureIM.ChatBackend
             return messageComposite;
         }
 
-        private bool isCurrentPubKeyInFriendsList()
+        [Log("MyProf")]
+        private void RegisteredCommandSwitch([NotNull] string text, [NotNull] string commandMatchString, [NotNull] GroupCollection commandMatchGroups)
         {
-            return FriendsList.Where(x =>
-            {
-                string currentPubKeyB64 = BackendHelper.EncodeFromByteArrayBase64(CryptoHandler.GetPublicKey());
-                return x.PublicKey.Equals(currentPubKeyB64);
-            }).FirstOrDefault() != null;
-        }
+            if (text == null) throw new ArgumentNullException(nameof(text));
+            if (commandMatchString == null) throw new ArgumentNullException(nameof(commandMatchString));
+            if (commandMatchGroups == null) throw new ArgumentNullException(nameof(commandMatchGroups));
 
-        private void RegisteredCommandSwitch(string text, string commandMatchString, GroupCollection commandMatchGroups)
-        {
             switch (commandMatchString)
             {
                 case "setname:":
@@ -281,13 +308,21 @@ namespace SecureIM.ChatBackend
             }
         }
 
+        [Log("MyProf")]
         private void SendMessageToChannel([NotNull] User sender, [NotNull] User receiver, [NotNull] string messageText,
             MessageFlags messageFlags = MessageFlags.None)
         {
+            if (sender == null) throw new ArgumentNullException(nameof(sender));
+            if (receiver == null) throw new ArgumentNullException(nameof(receiver));
+            if (messageText == null) throw new ArgumentNullException(nameof(messageText));
+
             Task.Run(() =>
             {
+                IChatBackend messageDestination = messageFlags.HasFlag(MessageFlags.Local)
+                    ? this
+                    : new ChannelFactory<IChatBackend>("ChatEndpoint").CreateChannel();
                 var messageComposite = new MessageComposite(sender, receiver, messageText, messageFlags);
-                new ChannelFactory<IChatBackend>("ChatEndpoint").CreateChannel().DisplayMessage(messageComposite);
+                messageDestination.DisplayMessage(messageComposite);
             });
 
             //            var messageComposite = new MessageComposite(sender, receiver, messageText, messageFlags);
@@ -297,6 +332,7 @@ namespace SecureIM.ChatBackend
         /// <summary>
         ///     Stops the service.
         /// </summary>
+        [Log("MyProf")]
         private void StopService()
         {
             var channelFactory = new ChannelFactory<IChatBackend>("ChatEndpoint");

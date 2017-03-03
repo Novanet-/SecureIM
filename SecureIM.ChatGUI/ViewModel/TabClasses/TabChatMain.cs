@@ -21,7 +21,6 @@ namespace SecureIM.ChatGUI.ViewModel.TabClasses
         public string ChatEntry { get; set; }
 
         public string ChatHistory
-
         {
             get { return _chatHistory; }
             set

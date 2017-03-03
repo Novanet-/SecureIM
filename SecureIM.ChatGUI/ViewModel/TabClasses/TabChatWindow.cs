@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using SecureIM.ChatBackend.model;
+﻿using SecureIM.ChatBackend.model;
 
 namespace SecureIM.ChatGUI.ViewModel.TabClasses
 {
@@ -11,39 +10,25 @@ namespace SecureIM.ChatGUI.ViewModel.TabClasses
 
         #endregion Private Fields
 
-        #region Public Events
-
-        public new event PropertyChangedEventHandler PropertyChanged;
-
-        #endregion Public Events
-
         #region Public Properties
 
         public string ChatEntry { get; set; }
 
         public string ChatHistory
-
         {
             get { return _chatHistory; }
             set
             {
+                if (_chatHistory == value)
+                    return;
+
                 _chatHistory = value;
-                OnPropertyChanged("ChatHistory");
+                RaisePropertyChanged();
             }
         }
 
         public User TargetUser { get; set; }
 
         #endregion Public Properties
-
-        #region Protected Methods
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            handler?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        #endregion Protected Methods
     }
 }
