@@ -10,6 +10,7 @@ using System.Windows.Media.Imaging;
 using ChromeTabs;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using PostSharp.Patterns.Diagnostics;
 using SecureIM.ChatBackend.model;
 using SecureIM.ChatGUI.Properties;
 using SecureIM.ChatGUI.ViewModel.TabClasses;
@@ -110,6 +111,7 @@ namespace SecureIM.ChatGUI.ViewModel
             return tab;
         }
 
+        [Log("MyProf")]
         protected TabChatWindow CreateTabChatWindow(User user)
         {
             var tab = new TabChatWindow()
@@ -120,6 +122,7 @@ namespace SecureIM.ChatGUI.ViewModel
             };
             return tab;
         }
+        [Log("MyProf")]
         protected TabChatMain CreateTabChatMain()
         {
             var tab = new TabChatMain()

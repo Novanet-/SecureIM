@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using ChromeTabs;
 using GalaSoft.MvvmLight.Command;
+using PostSharp.Patterns.Diagnostics;
 using SecureIM.ChatGUI.ViewModel.TabClasses;
 
 namespace SecureIM.ChatGUI.view.alternativeViews
@@ -12,6 +13,7 @@ namespace SecureIM.ChatGUI.view.alternativeViews
     {
 
 
+        [Log("MyProf")]
         public PinnedTabExampleWindow()
         {
             this.Dispatcher.InvokeAsync(InitializeComponent);

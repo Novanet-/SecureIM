@@ -51,6 +51,7 @@ namespace SecureIM.ChatGUI.UserControls
         ///     The delegate method that tells the backend how to display messages recieved from other
         ///     users
         /// </param>
+        [Log("MyProf")]
         public void DisplayMessage(MessageComposite messageComposite)
         {
             string username = messageComposite.Sender.Name ?? "";
@@ -77,6 +78,7 @@ namespace SecureIM.ChatGUI.UserControls
             TxtEntryField.Focus();
         }
 
+        [Log("MyProf")]
         private void TextBoxEntryField_OnKeyDown(object sender, KeyEventArgs e)
         {
             if (!(e.Key == Key.Return || e.Key == Key.Enter)) return;

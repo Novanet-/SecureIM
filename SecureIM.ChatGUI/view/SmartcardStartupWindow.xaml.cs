@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using PostSharp.Patterns.Diagnostics;
 using SecureIM.Smartcard.controller.smartcard;
 
 namespace SecureIM.ChatGUI.view
@@ -19,6 +20,7 @@ namespace SecureIM.ChatGUI.view
 
         #region Public Constructors
 
+        [Log("MyProf")]
         public SmartcardStartupWindow()
         {
             InitializeComponent();
@@ -34,6 +36,7 @@ namespace SecureIM.ChatGUI.view
 
         #region Private Methods
 
+        [Log("MyProf")]
         private void lstChooseReader_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             {

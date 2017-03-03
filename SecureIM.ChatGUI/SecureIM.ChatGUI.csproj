@@ -283,6 +283,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <None Include="SecureIM.ChatGUI.psproj" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\images\kitten.jpg" />

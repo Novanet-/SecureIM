@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using GalaSoft.MvvmLight.Command;
+using PostSharp.Patterns.Diagnostics;
 using SecureIM.ChatBackend;
 using SecureIM.ChatBackend.model;
 using SecureIM.ChatGUI.ViewModel.interfaces;
@@ -24,6 +25,7 @@ namespace SecureIM.ChatGUI.ViewModel.alternativeViews
 
         #region Public Constructors
 
+        [Log("MyProf")]
         public ViewModelPinnedTabExampleWindow()
         {
             TabBase vm1 = CreateTabChatMain();
@@ -50,6 +52,7 @@ namespace SecureIM.ChatGUI.ViewModel.alternativeViews
         #region Public Methods
 
         //Adds a random tab
+        [Log("MyProf")]
         public void AddTabCommandAction(User user)
         {
             TabChatWindow newTab = CreateTabChatWindow(user);
@@ -70,6 +73,7 @@ namespace SecureIM.ChatGUI.ViewModel.alternativeViews
 
         #region Private Methods
 
+        [Log("MyProf")]
         private static void AddMessageToChat(MessageComposite messageComposite, TabChatWindow chatTab)
         {
             string username = messageComposite.Sender.Name ?? "";
@@ -79,6 +83,7 @@ namespace SecureIM.ChatGUI.ViewModel.alternativeViews
             chatTab.ChatHistory = newChatLog;
         }
 
+        [Log("MyProf")]
         private static void AddMessageToChat(MessageComposite messageComposite, TabChatMain chatMain)
         {
             string username = messageComposite.Sender.Name ?? "";
@@ -88,6 +93,7 @@ namespace SecureIM.ChatGUI.ViewModel.alternativeViews
             chatMain.ChatHistory = newChatLog;
         }
 
+        [Log("MyProf")]
         private static bool MatchTabToTargetUser(MessageComposite messageComposite, TabBase tab)
         {
             if (tab.IsPinned)
@@ -99,6 +105,7 @@ namespace SecureIM.ChatGUI.ViewModel.alternativeViews
             return chatTab != null && chatTab.TargetUser.PublicKey.Equals(messageComposite.Sender.PublicKey);
         }
 
+        [Log("MyProf")]
         private void PinTabCommandAction(TabBase tab)
         {
             tab.IsPinned = !tab.IsPinned;
@@ -106,6 +113,7 @@ namespace SecureIM.ChatGUI.ViewModel.alternativeViews
             view.Refresh();
         }
 
+        [Log("MyProf")]
         private void ProcessMessage(MessageComposite messageComposite, DisplayMessageDelegate dmd)
         {
             //TODO: do stuff

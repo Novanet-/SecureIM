@@ -9,6 +9,7 @@ using System.Windows.Input;
 using PostSharp.Patterns.Diagnostics;
 using SecureIM.ChatBackend.model;
 using SecureIM.ChatGUI.view.alternativeViews;
+using PostSharp.Extensibility;
 
 namespace SecureIM.ChatGUI.UserControls
 {
@@ -61,6 +62,7 @@ namespace SecureIM.ChatGUI.UserControls
         ///     The delegate method that tells the backend how to display messages received from other
         ///     users
         /// </param>
+        [Log("MyProf")]
         public void DisplayMessage(MessageComposite messageComposite)
         {
             string username = messageComposite.Sender.Name ?? "";
@@ -78,6 +80,7 @@ namespace SecureIM.ChatGUI.UserControls
 
         #region Private Methods
 
+        [Log("MyProf")]
         private void BtnAddFriend_Click(object sender, RoutedEventArgs e)
         {
             string friendAlias = TxtAlias.Text;
@@ -88,18 +91,21 @@ namespace SecureIM.ChatGUI.UserControls
             TxtEntryField.Focus();
         }
 
+        [Log("MyProf")]
         private void BtnGenKeyPair_Click(object sender, RoutedEventArgs e)
         {
             SendCommand("genkey:");
             TxtEntryField.Focus();
         }
 
+        [Log("MyProf")]
         private void BtnGetPubKey_Click(object sender, RoutedEventArgs e)
         {
             SendCommand("getpub:");
             TxtEntryField.Focus();
         }
 
+        [Log("MyProf")]
         private void BtnSetName_Click(object sender, RoutedEventArgs e)
         {
             string newName = TxtSetName.Text;
@@ -118,6 +124,7 @@ namespace SecureIM.ChatGUI.UserControls
             TxtEntryField.Focus();
         }
 
+        [Log("MyProf")]
         private void SendCommand(string commandString)
         {
             Backend.SendMessage(commandString);
@@ -127,6 +134,7 @@ namespace SecureIM.ChatGUI.UserControls
             ToggleRestrictedControls(Backend.IsRegistered);
         }
 
+        [Log("MyProf")]
         private void TextBoxEntryField_OnKeyDown(object sender, KeyEventArgs e)
         {
             if (!(e.Key == Key.Return || e.Key == Key.Enter)) return;
@@ -144,6 +152,7 @@ namespace SecureIM.ChatGUI.UserControls
 
         private void TxtChatPane_TextChanged(object sender, TextChangedEventArgs e) => ScrollToEnd();
 
+        [Log("MyProf")]
         private void ToggleBaseControls(bool enabled)
         {
             BtnSetName.IsEnabled = enabled;
@@ -152,6 +161,7 @@ namespace SecureIM.ChatGUI.UserControls
             BtnGetPubKey.IsEnabled = enabled;
         }
 
+        [Log("MyProf")]
         private void ToggleRestrictedControls(bool enabled)
         {
             BtnAddFriend.IsEnabled = enabled;
@@ -163,12 +173,14 @@ namespace SecureIM.ChatGUI.UserControls
 
         #endregion Private Methods
 
+        [Log("MyProf")]
         private void BtnRegPubKey_Click(object sender, RoutedEventArgs e)
         {
             SendCommand("regpub:");
             TxtEntryField.Focus();
         }
 
+        [Log("MyProf")]
         private void BtnStartChat_Click(object sender, RoutedEventArgs e)
         {
             IEnumerable<User> userMatches = Backend.FriendsList.Where(x => x.Name.Equals(TxtStartChatFriendName.Text));
