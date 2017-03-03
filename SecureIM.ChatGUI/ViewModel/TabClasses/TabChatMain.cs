@@ -13,7 +13,6 @@ namespace SecureIM.ChatGUI.ViewModel.TabClasses
 
         #region Public Events
 
-        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion Public Events
 
@@ -27,8 +26,11 @@ namespace SecureIM.ChatGUI.ViewModel.TabClasses
             get { return _chatHistory; }
             set
             {
+                if (_chatHistory == value)
+                    return;
+
                 _chatHistory = value;
-                OnPropertyChanged("ChatHistory");
+                RaisePropertyChanged();
             }
         }
 
@@ -37,8 +39,6 @@ namespace SecureIM.ChatGUI.ViewModel.TabClasses
         #endregion Public Properties
 
         #region Protected Methods
-
-        protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
         #endregion Protected Methods
     }
