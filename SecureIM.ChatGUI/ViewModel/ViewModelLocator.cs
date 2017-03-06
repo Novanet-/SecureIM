@@ -55,6 +55,12 @@ namespace SecureIM.ChatGUI.ViewModel
 
         }
 
+        /// <summary>
+        /// Gets the vie w model custom style example window.
+        /// </summary>
+        /// <value>
+        /// The vie w model custom style example window.
+        /// </value>
         public IViewModelCustomStyleExampleWindow VieWModelCustomStyleExampleWindow
         {
              get
@@ -63,6 +69,12 @@ namespace SecureIM.ChatGUI.ViewModel
             }
         }
 
+        /// <summary>
+        /// Gets the view model main window.
+        /// </summary>
+        /// <value>
+        /// The view model main window.
+        /// </value>
         public IViewModelMainWindow ViewModelMainWindow
         {
             get
@@ -71,6 +83,12 @@ namespace SecureIM.ChatGUI.ViewModel
             }
         }
 
+        /// <summary>
+        /// Gets the view model pinned tab example window.
+        /// </summary>
+        /// <value>
+        /// The view model pinned tab example window.
+        /// </value>
         public IViewModelPinnedTabExampleWindow ViewModelPinnedTabExampleWindow
         {
             get

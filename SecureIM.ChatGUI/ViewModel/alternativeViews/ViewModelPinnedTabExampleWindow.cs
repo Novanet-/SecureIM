@@ -25,6 +25,9 @@ namespace SecureIM.ChatGUI.ViewModel.alternativeViews
 
         #region Public Constructors
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ViewModelPinnedTabExampleWindow"/> class.
+        /// </summary>
         [Log("MyProf")]
         public ViewModelPinnedTabExampleWindow()
         {
@@ -52,6 +55,10 @@ namespace SecureIM.ChatGUI.ViewModel.alternativeViews
         #region Public Methods
 
         //Adds a random tab
+        /// <summary>
+        /// Adds the tab command action.
+        /// </summary>
+        /// <param name="user">The user.</param>
         [Log("MyProf")]
         public void AddTabCommandAction(User user)
         {
@@ -73,6 +80,11 @@ namespace SecureIM.ChatGUI.ViewModel.alternativeViews
 
         #region Private Methods
 
+        /// <summary>
+        /// Adds the message to chat.
+        /// </summary>
+        /// <param name="messageComposite">The message composite.</param>
+        /// <param name="chatTab">The chat tab.</param>
         [Log("MyProf")]
         private static void AddMessageToChat(MessageComposite messageComposite, TabChatWindow chatTab)
         {
@@ -83,6 +95,11 @@ namespace SecureIM.ChatGUI.ViewModel.alternativeViews
             chatTab.ChatHistory = newChatLog;
         }
 
+        /// <summary>
+        /// Adds the message to chat.
+        /// </summary>
+        /// <param name="messageComposite">The message composite.</param>
+        /// <param name="chatMain">The chat main.</param>
         [Log("MyProf")]
         private static void AddMessageToChat(MessageComposite messageComposite, TabChatMain chatMain)
         {
@@ -93,6 +110,12 @@ namespace SecureIM.ChatGUI.ViewModel.alternativeViews
             chatMain.ChatHistory = newChatLog;
         }
 
+        /// <summary>
+        /// Matches the tab to target user.
+        /// </summary>
+        /// <param name="messageComposite">The message composite.</param>
+        /// <param name="tab">The tab.</param>
+        /// <returns></returns>
         [Log("MyProf")]
         private static bool MatchTabToTargetUser(MessageComposite messageComposite, TabBase tab)
         {
@@ -105,6 +128,10 @@ namespace SecureIM.ChatGUI.ViewModel.alternativeViews
             return chatTab != null && chatTab.TargetUser.PublicKey.Equals(messageComposite.Sender.PublicKey);
         }
 
+        /// <summary>
+        /// Pins the tab command action.
+        /// </summary>
+        /// <param name="tab">The tab.</param>
         [Log("MyProf")]
         private void PinTabCommandAction(TabBase tab)
         {
@@ -113,6 +140,11 @@ namespace SecureIM.ChatGUI.ViewModel.alternativeViews
             view.Refresh();
         }
 
+        /// <summary>
+        /// Processes the message.
+        /// </summary>
+        /// <param name="messageComposite">The message composite.</param>
+        /// <param name="dmd">The DMD.</param>
         [Log("MyProf")]
         private void ProcessMessage(MessageComposite messageComposite, DisplayMessageDelegate dmd)
         {

@@ -29,19 +29,13 @@ namespace SecureIM.ChatBackend
         public User BroadcastUser { get; } = new User("Broadcast");
         public ChatCommandHandler ChatCommandHandler { get; }
         public Comms Comms { get; private set; }
-
         [NotNull] public ICryptoHandler CryptoHandler { get; }
-
         [NotNull] public User CurrentUser { get; }
-
         [CanBeNull] public DisplayMessageDelegate DisplayMessageDelegate { get; set; }
-
         public User EventUser { get; } = new User("Event", "event");
         public List<User> FriendsList { get; }
         public User InfoUser { get; } = new User("Info", "info");
-
         [NotNull] public static ChatBackend Instance => Lazy.Value;
-
         public bool IsRegistered { get; set; }
         public ProcessMessageDelegate ProcessMessageDelegate { get; set; }
         public SendMessageDelegate SendMessageDelegate { get; }

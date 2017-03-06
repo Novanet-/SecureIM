@@ -7,6 +7,12 @@ namespace SecureIM.ChatGUI.ViewModel.TabClasses
     {
         private int _tabNumber;
 
+        /// <summary>
+        /// Gets or sets the tab number.
+        /// </summary>
+        /// <value>
+        /// The tab number.
+        /// </value>
         public int TabNumber
         {
             get { return _tabNumber; }
@@ -18,6 +24,12 @@ namespace SecureIM.ChatGUI.ViewModel.TabClasses
 
         private string _tabName;
 
+        /// <summary>
+        /// Gets or sets the name of the tab.
+        /// </summary>
+        /// <value>
+        /// The name of the tab.
+        /// </value>
         public string TabName
         {
             get { return _tabName; }
@@ -30,6 +42,12 @@ namespace SecureIM.ChatGUI.ViewModel.TabClasses
 
         private bool _isPinned;
 
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is pinned.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is pinned; otherwise, <c>false</c>.
+        /// </value>
         public bool IsPinned
         {
             get { return _isPinned; }
@@ -42,6 +60,12 @@ namespace SecureIM.ChatGUI.ViewModel.TabClasses
 
         private ImageSource _tabIcon;
 
+        /// <summary>
+        /// Gets or sets the tab icon.
+        /// </summary>
+        /// <value>
+        /// The tab icon.
+        /// </value>
         public ImageSource TabIcon
         {
             get { return _tabIcon; }

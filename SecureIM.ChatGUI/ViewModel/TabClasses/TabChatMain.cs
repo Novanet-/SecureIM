@@ -18,8 +18,20 @@ namespace SecureIM.ChatGUI.ViewModel.TabClasses
 
         #region Public Properties
 
+        /// <summary>
+        /// Gets or sets the chat entry.
+        /// </summary>
+        /// <value>
+        /// The chat entry.
+        /// </value>
         public string ChatEntry { get; set; }
 
+        /// <summary>
+        /// Gets or sets the chat history.
+        /// </summary>
+        /// <value>
+        /// The chat history.
+        /// </value>
         public string ChatHistory
         {
             get { return _chatHistory; }
@@ -33,6 +45,12 @@ namespace SecureIM.ChatGUI.ViewModel.TabClasses
             }
         }
 
+        /// <summary>
+        /// Gets or sets the target user.
+        /// </summary>
+        /// <value>
+        /// The target user.
+        /// </value>
         public User TargetUser { get; set; }
 
         #endregion Public Properties

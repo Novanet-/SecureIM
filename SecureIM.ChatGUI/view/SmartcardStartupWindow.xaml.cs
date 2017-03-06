@@ -20,6 +20,9 @@ namespace SecureIM.ChatGUI.view
 
         #region Public Constructors
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SmartcardStartupWindow"/> class.
+        /// </summary>
         [Log("MyProf")]
         public SmartcardStartupWindow()
         {
@@ -36,6 +39,11 @@ namespace SecureIM.ChatGUI.view
 
         #region Private Methods
 
+        /// <summary>
+        /// Handles the SelectionChanged event of the lstChooseReader control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="SelectionChangedEventArgs"/> instance containing the event data.</param>
         [Log("MyProf")]
         private void lstChooseReader_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -48,6 +56,10 @@ namespace SecureIM.ChatGUI.view
             }
         }
 
+        /// <summary>
+        /// Raises the <see cref="E:System.Windows.Window.Closing" /> event.
+        /// </summary>
+        /// <param name="e">A <see cref="T:System.ComponentModel.CancelEventArgs" /> that contains the event data.</param>
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
             //do my stuff before closing

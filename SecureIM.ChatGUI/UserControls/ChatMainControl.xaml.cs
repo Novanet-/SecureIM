@@ -27,7 +27,7 @@ namespace SecureIM.ChatGUI.UserControls
         #region Public Constructors
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="ChatWindowControl" /> class.
+        /// Initializes a new instance of the <see cref="ChatWindowControl" /> class.
         /// </summary>
         [Log("MyProf")]
         public ChatMainControl()
@@ -80,6 +80,11 @@ namespace SecureIM.ChatGUI.UserControls
 
         #region Private Methods
 
+        /// <summary>
+        /// Handles the Click event of the BtnAddFriend control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         [Log("MyProf")]
         private void BtnAddFriend_Click(object sender, RoutedEventArgs e)
         {
@@ -91,6 +96,11 @@ namespace SecureIM.ChatGUI.UserControls
             TxtEntryField.Focus();
         }
 
+        /// <summary>
+        /// Handles the Click event of the BtnGenKeyPair control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         [Log("MyProf")]
         private void BtnGenKeyPair_Click(object sender, RoutedEventArgs e)
         {
@@ -98,6 +108,11 @@ namespace SecureIM.ChatGUI.UserControls
             TxtEntryField.Focus();
         }
 
+        /// <summary>
+        /// Handles the Click event of the BtnGetPubKey control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         [Log("MyProf")]
         private void BtnGetPubKey_Click(object sender, RoutedEventArgs e)
         {
@@ -105,6 +120,11 @@ namespace SecureIM.ChatGUI.UserControls
             TxtEntryField.Focus();
         }
 
+        /// <summary>
+        /// Handles the Click event of the BtnSetName control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         [Log("MyProf")]
         private void BtnSetName_Click(object sender, RoutedEventArgs e)
         {
@@ -115,6 +135,9 @@ namespace SecureIM.ChatGUI.UserControls
             TxtEntryField.Focus();
         }
 
+        /// <summary>
+        /// Scrolls to end.
+        /// </summary>
         private void ScrollToEnd()
         {
             if (TxtChatPane == null) return;
@@ -124,6 +147,10 @@ namespace SecureIM.ChatGUI.UserControls
             TxtEntryField.Focus();
         }
 
+        /// <summary>
+        /// Sends the command.
+        /// </summary>
+        /// <param name="commandString">The command string.</param>
         [Log("MyProf")]
         private void SendCommand(string commandString)
         {
@@ -134,6 +161,11 @@ namespace SecureIM.ChatGUI.UserControls
             ToggleRestrictedControls(Backend.IsRegistered);
         }
 
+        /// <summary>
+        /// Handles the OnKeyDown event of the TextBoxEntryField control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="KeyEventArgs"/> instance containing the event data.</param>
         [Log("MyProf")]
         private void TextBoxEntryField_OnKeyDown(object sender, KeyEventArgs e)
         {
@@ -148,10 +180,24 @@ namespace SecureIM.ChatGUI.UserControls
             TxtEntryField.Focus();
         }
 
+        /// <summary>
+        /// Handles the IsVisibleChanged event of the TxtChatPane control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
         private void TxtChatPane_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) => ScrollToEnd();
 
+        /// <summary>
+        /// Handles the TextChanged event of the TxtChatPane control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="TextChangedEventArgs"/> instance containing the event data.</param>
         private void TxtChatPane_TextChanged(object sender, TextChangedEventArgs e) => ScrollToEnd();
 
+        /// <summary>
+        /// Toggles the base controls.
+        /// </summary>
+        /// <param name="enabled">if set to <c>true</c> [enabled].</param>
         [Log("MyProf")]
         private void ToggleBaseControls(bool enabled)
         {
@@ -161,6 +207,10 @@ namespace SecureIM.ChatGUI.UserControls
             BtnGetPubKey.IsEnabled = enabled;
         }
 
+        /// <summary>
+        /// Toggles the restricted controls.
+        /// </summary>
+        /// <param name="enabled">if set to <c>true</c> [enabled].</param>
         [Log("MyProf")]
         private void ToggleRestrictedControls(bool enabled)
         {
@@ -173,6 +223,11 @@ namespace SecureIM.ChatGUI.UserControls
 
         #endregion Private Methods
 
+        /// <summary>
+        /// Handles the Click event of the BtnRegPubKey control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
         [Log("MyProf")]
         private void BtnRegPubKey_Click(object sender, RoutedEventArgs e)
         {
@@ -180,6 +235,11 @@ namespace SecureIM.ChatGUI.UserControls
             TxtEntryField.Focus();
         }
 
+        /// <summary>
+        /// Handles the Click event of the BtnStartChat control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         [Log("MyProf")]
         private void BtnStartChat_Click(object sender, RoutedEventArgs e)
         {

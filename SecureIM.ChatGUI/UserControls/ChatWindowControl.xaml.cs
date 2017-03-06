@@ -24,7 +24,7 @@ namespace SecureIM.ChatGUI.UserControls
         #region Public Constructors
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="ChatWindowControl" /> class.
+        /// Initializes a new instance of the <see cref="ChatWindowControl" /> class.
         /// </summary>
         [Log("MyProf")]
         public ChatWindowControl()
@@ -45,12 +45,10 @@ namespace SecureIM.ChatGUI.UserControls
         #region Public Methods
 
         /// <summary>
-        ///     Displays the given message in the user's gui
+        /// Displays the given message in the user's gui
         /// </summary>
-        /// <param name="messageComposite">
-        ///     The delegate method that tells the backend how to display messages recieved from other
-        ///     users
-        /// </param>
+        /// <param name="messageComposite">The delegate method that tells the backend how to display messages recieved from other
+        /// users</param>
         [Log("MyProf")]
         public void DisplayMessage(MessageComposite messageComposite)
         {
@@ -69,6 +67,9 @@ namespace SecureIM.ChatGUI.UserControls
 
         #region Private Methods
 
+        /// <summary>
+        /// Scrolls to end.
+        /// </summary>
         private void ScrollToEnd()
         {
             if (TxtChatPane == null) return;
@@ -78,6 +79,11 @@ namespace SecureIM.ChatGUI.UserControls
             TxtEntryField.Focus();
         }
 
+        /// <summary>
+        /// Handles the OnKeyDown event of the TextBoxEntryField control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="KeyEventArgs"/> instance containing the event data.</param>
         [Log("MyProf")]
         private void TextBoxEntryField_OnKeyDown(object sender, KeyEventArgs e)
         {
@@ -91,8 +97,18 @@ namespace SecureIM.ChatGUI.UserControls
             TxtEntryField.Focus();
         }
 
+        /// <summary>
+        /// Handles the IsVisibleChanged event of the TxtChatPane control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
         private void TxtChatPane_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) => ScrollToEnd();
 
+        /// <summary>
+        /// Handles the TextChanged event of the TxtChatPane control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="TextChangedEventArgs"/> instance containing the event data.</param>
         private void TxtChatPane_TextChanged(object sender, TextChangedEventArgs e) => ScrollToEnd();
 
         #endregion Private Methods

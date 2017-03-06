@@ -13,6 +13,9 @@ namespace SecureIM.ChatGUI.view.alternativeViews
     {
 
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PinnedTabExampleWindow"/> class.
+        /// </summary>
         [Log("MyProf")]
         public PinnedTabExampleWindow()
         {
@@ -23,6 +26,11 @@ namespace SecureIM.ChatGUI.view.alternativeViews
         }
 
 
+        /// <summary>
+        /// Handles the ContainerItemPreparedForOverride event of the TabControl control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="ContainerOverrideEventArgs"/> instance containing the event data.</param>
         private void TabControl_ContainerItemPreparedForOverride(object sender, ContainerOverrideEventArgs e)
         {
             e.Handled = true;
