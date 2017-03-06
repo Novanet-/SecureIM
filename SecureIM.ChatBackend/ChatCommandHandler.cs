@@ -8,6 +8,9 @@ using SecureIM.Smartcard.helpers;
 
 namespace SecureIM.ChatBackend
 {
+    /// <summary>
+    /// ChatCommandHandlerd
+    /// </summary>
     public sealed class ChatCommandHandler
     {
         #region Public Properties
@@ -20,6 +23,11 @@ namespace SecureIM.ChatBackend
 
         #region Public Methods
 
+        /// <summary>
+        /// Plains the message send.
+        /// </summary>
+        /// <param name="text">The text.</param>
+        /// <param name="sendMessageDelegate">The send message delegate.</param>
         public void PlainMessageSend(string text, SendMessageDelegate sendMessageDelegate)
         {
             ChatBackend chatBackend = ChatBackend.Instance;
@@ -32,6 +40,11 @@ namespace SecureIM.ChatBackend
 
         #region Internal Methods
 
+        /// <summary>
+        /// Adds the friend.
+        /// </summary>
+        /// <param name="commandMatchGroups">The command match groups.</param>
+        /// <param name="sendMessageDelegate">The send message delegate.</param>
         [Log("MyProf")]
         internal void AddFriend(GroupCollection commandMatchGroups, SendMessageDelegate sendMessageDelegate)
         {
@@ -49,6 +62,11 @@ namespace SecureIM.ChatBackend
             sendMessageDelegate(chatBackend.EventUser, messageSender, confirmMessage, MessageFlags.Local);
         }
 
+        /// <summary>
+        /// Decodes the base64.
+        /// </summary>
+        /// <param name="commandMatchGroups">The command match groups.</param>
+        /// <param name="sendMessageDelegate">The send message delegate.</param>
         [Log("MyProf")]
         internal void DecodeBase64(GroupCollection commandMatchGroups, SendMessageDelegate sendMessageDelegate)
         {
@@ -61,6 +79,11 @@ namespace SecureIM.ChatBackend
             if (!string.IsNullOrEmpty(commandData)) sendMessageDelegate(chatBackend.EventUser, messageSender, commandData);
         }
 
+        /// <summary>
+        /// Decrypts the specified command match groups.
+        /// </summary>
+        /// <param name="commandMatchGroups">The command match groups.</param>
+        /// <param name="sendMessageDelegate">The send message delegate.</param>
         [Log("MyProf")]
         internal void Decrypt(GroupCollection commandMatchGroups, SendMessageDelegate sendMessageDelegate)
         {
@@ -78,6 +101,11 @@ namespace SecureIM.ChatBackend
             if (!string.IsNullOrEmpty(plainText)) sendMessageDelegate(messageSender, targetUser, plainText, MessageFlags.Encoded);
         }
 
+        /// <summary>
+        /// Encodes the base64.
+        /// </summary>
+        /// <param name="commandMatchGroups">The command match groups.</param>
+        /// <param name="sendMessageDelegate">The send message delegate.</param>
         [Log("MyProf")]
         internal void EncodeBase64(GroupCollection commandMatchGroups, SendMessageDelegate sendMessageDelegate)
         {
@@ -90,6 +118,12 @@ namespace SecureIM.ChatBackend
             if (!string.IsNullOrEmpty(cipherText)) sendMessageDelegate(chatBackend.EventUser, messageSender, cipherText, MessageFlags.Encoded);
         }
 
+        /// <summary>
+        /// Encrypts the specified command match groups.
+        /// </summary>
+        /// <param name="commandMatchGroups">The command match groups.</param>
+        /// <param name="sendMessageDelegate">The send message delegate.</param>
+        /// <returns></returns>
         [Log("MyProf")]
         internal string Encrypt(GroupCollection commandMatchGroups, SendMessageDelegate sendMessageDelegate)
         {
@@ -112,6 +146,10 @@ namespace SecureIM.ChatBackend
             return alias;
         }
 
+        /// <summary>
+        /// Generates the key pair.
+        /// </summary>
+        /// <param name="sendMessageDelegate">The send message delegate.</param>
         [Log("MyProf")]
         internal void GenerateKeyPair(SendMessageDelegate sendMessageDelegate)
         {
@@ -134,6 +172,10 @@ namespace SecureIM.ChatBackend
 //            if (messageSender != null) sendMessageDelegate(messageSender, chatBackend.EventUser, priKeyB64, MessageFlags.Encoded);
         }
 
+        /// <summary>
+        /// Gets the public key.
+        /// </summary>
+        /// <param name="sendMessageDelegate">The send message delegate.</param>
         [Log("MyProf")]
         internal void GetPublicKey(SendMessageDelegate sendMessageDelegate)
         {
@@ -146,6 +188,10 @@ namespace SecureIM.ChatBackend
                 sendMessageDelegate(chatBackend.EventUser, chatBackend.CurrentUser, messageText, MessageFlags.Encoded | MessageFlags.Local);
         }
 
+        /// <summary>
+        /// Registers the public key.
+        /// </summary>
+        /// <param name="sendMessageDelegate">The send message delegate.</param>
         [Log("MyProf")]
         internal void RegisterPublicKey(SendMessageDelegate sendMessageDelegate)
         {
@@ -168,6 +214,12 @@ namespace SecureIM.ChatBackend
             }
         }
 
+        /// <summary>
+        /// Sets the name.
+        /// </summary>
+        /// <param name="text">The text.</param>
+        /// <param name="commandMatchString">The command match string.</param>
+        /// <param name="sendMessageDelegate">The send message delegate.</param>
         [Log("MyProf")]
         internal void SetName(string text, string commandMatchString, SendMessageDelegate sendMessageDelegate)
         {

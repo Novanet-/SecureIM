@@ -2,6 +2,9 @@
 
 namespace SecureIM.ChatBackend.model
 {
+    /// <summary>
+    /// MessageFlags
+    /// </summary>
     [Flags]
     public enum MessageFlags
     {

@@ -11,9 +11,11 @@
         Title="SecureIM"
         Width="700"
         Height="600"
+        MinWidth="730"
+        MinHeight="630"
         DataContext="{Binding Source={StaticResource Locator},
                               Path=ViewModelPinnedTabExampleWindow}"
-        SizeToContent="WidthAndHeight" MinWidth="730" MinHeight="630">
+        SizeToContent="WidthAndHeight">
     <!--  This example shows how you implement pinned tab functionality  -->
     <Window.Resources>
         <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
@@ -37,6 +39,8 @@
     </Window.Resources>
     <Grid>
         <ct:ChromeTabControl x:Name="MyChromeTabControlWithPinnedTabs"
+                             MinWidth="700"
+                             MinHeight="600"
                              AddTabCommand="{Binding AddChatTabCommand}"
                              Background="AliceBlue"
                              CloseTabCommand="{Binding CloseTabCommand}"
@@ -47,7 +51,7 @@
                              PinTabCommand="{Binding PinTabCommand}"
                              PinnedTabWidth="50"
                              ReorderTabsCommand="{Binding ReorderTabsCommand}"
-                             SelectedItem="{Binding SelectedTab}" MinWidth="700" MinHeight="600">
+                             SelectedItem="{Binding SelectedTab}">
             <!--  We override the control template here to show how you can modify the properties of tab panel and content presenter  -->
             <ct:ChromeTabControl.Template>
                 <ControlTemplate TargetType="{x:Type ct:ChromeTabControl}">
@@ -84,33 +88,29 @@
                         <!--  We can implement a context menu for the header here. The ChromeTabItems expose for convenience the following commands, "CloseTabCommand: close the current tab, "CloseAllTabsCommand", and "CloseOtherTabsCommand", which closes all tabs except the current.  -->
                         <Grid.ContextMenu>
                             <ContextMenu>
-                                <MenuItem
-                                    Command="{Binding Path=PlacementTarget.Tag.CloseTabCommand,
+                                <MenuItem Command="{Binding Path=PlacementTarget.Tag.CloseTabCommand,
                                                             RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-                                    CommandTarget="{Binding Mode=OneWay,
+                                          CommandTarget="{Binding Mode=OneWay,
                                                                   RelativeSource={RelativeSource TemplatedParent}}"
-                                    Header="Close" />
-                                <MenuItem
-                                    Command="{Binding Path=PlacementTarget.Tag.CloseAllTabsCommand,
+                                          Header="Close" />
+                                <MenuItem Command="{Binding Path=PlacementTarget.Tag.CloseAllTabsCommand,
                                                             RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-                                    CommandTarget="{Binding Mode=OneWay,
+                                          CommandTarget="{Binding Mode=OneWay,
                                                                   RelativeSource={RelativeSource TemplatedParent}}"
-                                    Header="Close all" />
-                                <MenuItem
-                                    Command="{Binding Path=PlacementTarget.Tag.CloseOtherTabsCommand,
+                                          Header="Close all" />
+                                <MenuItem Command="{Binding Path=PlacementTarget.Tag.CloseOtherTabsCommand,
                                                             RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-                                    CommandParameter="{Binding}"
-                                    CommandTarget="{Binding Mode=OneWay,
+                                          CommandParameter="{Binding}"
+                                          CommandTarget="{Binding Mode=OneWay,
                                                                   RelativeSource={RelativeSource TemplatedParent}}"
-                                    Header="Close other tabs" />
+                                          Header="Close other tabs" />
                                 <Separator />
-                                <MenuItem
-                                    Command="{Binding Path=PlacementTarget.Tag.PinTabCommand,
+                                <MenuItem Command="{Binding Path=PlacementTarget.Tag.PinTabCommand,
                                                             RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-                                    CommandParameter="{Binding}"
-                                    CommandTarget="{Binding Mode=OneWay,
+                                          CommandParameter="{Binding}"
+                                          CommandTarget="{Binding Mode=OneWay,
                                                                   RelativeSource={RelativeSource TemplatedParent}}"
-                                    Header="{Binding IsPinned,
+                                          Header="{Binding IsPinned,
                                                            Converter={StaticResource BooleanToPinTabTextConverter}}" />
                             </ContextMenu>
                         </Grid.ContextMenu>

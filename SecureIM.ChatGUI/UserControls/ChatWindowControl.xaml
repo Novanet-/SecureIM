@@ -5,16 +5,16 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:tabClasses="clr-namespace:SecureIM.ChatGUI.ViewModel.TabClasses"
              xmlns:viewModel1="clr-namespace:SecureIM.ChatGUI.ViewModel"
+             MinWidth="700"
+             MinHeight="498"
              d:DataContext="{d:DesignInstance tabClasses:TabChatWindow}"
              d:DesignHeight="500"
              d:DesignWidth="700"
-             mc:Ignorable="d"
-             MinWidth="700"
-             MinHeight="498">
+             mc:Ignorable="d">
 
-<!--    <UserControl.DataContext>-->
-<!--        <tabClasses:TabChatWindow />-->
-<!--    </UserControl.DataContext>-->
+    <!--    <UserControl.DataContext>-->
+    <!--        <tabClasses:TabChatWindow />-->
+    <!--    </UserControl.DataContext>-->
 
     <Grid>
         <Grid.RowDefinitions>
@@ -28,15 +28,25 @@
                  Margin="10"
                  HorizontalAlignment="Stretch"
                  VerticalAlignment="Stretch"
-                 Text="{Binding ChatHistory, Mode=TwoWay,UpdateSourceTrigger=Explicit}"
-                 TextWrapping="WrapWithOverflow"
-                 IsReadOnly="True"
-                 TextChanged="TxtChatPane_TextChanged"
-                 IsVisibleChanged="TxtChatPane_IsVisibleChanged"
-                 VerticalScrollBarVisibility="Auto"
-                 VerticalContentAlignment="Bottom"
                  HorizontalContentAlignment="Stretch"
-                 Padding="0,10,0,0" />
+                 VerticalContentAlignment="Bottom"
+                 IsReadOnly="True"
+                 IsVisibleChanged="TxtChatPane_IsVisibleChanged"
+                 Padding="0,10,0,0"
+                 Text="{Binding ChatHistory,
+                                Mode=TwoWay,
+                                UpdateSourceTrigger=Explicit}"
+                 TextChanged="TxtChatPane_TextChanged"
+                 TextWrapping="WrapWithOverflow"
+                 VerticalScrollBarVisibility="Auto" />
+        <Label Name="LblTargetUser"
+               Grid.Row="0"
+               Grid.Column="0"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"
+               Content="{Binding TargetUser.Name,
+                                 Mode=OneTime,
+                                 UpdateSourceTrigger=Default}" />
         <TextBox Name="TxtEntryField"
                  Grid.Row="1"
                  Width="Auto"
@@ -44,16 +54,11 @@
                  Margin="10"
                  HorizontalAlignment="Stretch"
                  VerticalAlignment="Stretch"
-                 KeyDown="TextBoxEntryField_OnKeyDown"
-                 Text="{Binding ChatEntry, Mode=TwoWay}"
-                 VerticalContentAlignment="Center"
                  HorizontalContentAlignment="Stretch"
-                 ScrollViewer.CanContentScroll="True" />
-        <Label Name="LblTargetUser"
-               Content="{Binding TargetUser.Name, Mode=OneTime, UpdateSourceTrigger=Default}"
-               Grid.Column="0"
-               Grid.Row="0"
-               HorizontalAlignment="Center"
-               VerticalAlignment="Center" />
+                 VerticalContentAlignment="Center"
+                 KeyDown="TextBoxEntryField_OnKeyDown"
+                 ScrollViewer.CanContentScroll="True"
+                 Text="{Binding ChatEntry,
+                                Mode=TwoWay}" />
     </Grid>
 </UserControl>
