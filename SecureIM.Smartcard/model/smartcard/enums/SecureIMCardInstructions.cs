@@ -1,5 +1,8 @@
 ﻿namespace SecureIM.Smartcard.model.smartcard.enums
 {
+    /// <summary>
+    /// SecureIMCardInstructions
+    /// </summary>
     public enum SecureIMCardInstructions
     {
         INS_ECC_GEN_KEYPAIR,

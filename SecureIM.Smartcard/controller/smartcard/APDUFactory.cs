@@ -7,6 +7,9 @@ using PCSC.Iso7816;
 
 namespace SecureIM.Smartcard.controller.smartcard
 {
+    /// <summary>
+    /// APDUFactory
+    /// </summary>
     internal static class APDUFactory
     {
         public static SCardProtocol SCardProtocol { get; } = SCardProtocol.T0;
@@ -16,9 +19,8 @@ namespace SecureIM.Smartcard.controller.smartcard
 
 
         /// <summary>
-        ///     Selects the specified applet.
+        /// Selects the specified applet.
         /// </summary>
-        /// <param name="scardProtocol">The scard protocol.</param>
         /// <param name="appletAID">The applet aid.</param>
         /// <returns></returns>
         /// <exception cref="System.Exception">Invalid APDU</exception>

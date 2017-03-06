@@ -3,7 +3,7 @@
 namespace SecureIM.Smartcard.model.smartcard
 {
     /// <summary>
-    /// 
+    /// SCIM_INS_CODES
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public static class SCIM_INS_CODES

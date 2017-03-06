@@ -28,6 +28,12 @@ namespace SecureIM.Smartcard.helpers
             return s.ToString();
         }
 
+        /// <summary>
+        /// Trims the array.
+        /// </summary>
+        /// <param name="array">The array.</param>
+        /// <param name="trimByAmount">The trim by amount.</param>
+        /// <returns></returns>
         internal static byte[] TrimArray(byte[] array, int trimByAmount)
         {
             if (array.Length > trimByAmount)

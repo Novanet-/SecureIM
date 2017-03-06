@@ -10,6 +10,9 @@ using SecureIM.Smartcard.model.smartcard.enums;
 
 namespace SecureIM.Smartcard.controller.smartcard
 {
+    /// <summary>
+    /// SmartcardController
+    /// </summary>
     public class SmartcardController
     {
         #region Public Properties
@@ -36,8 +39,18 @@ namespace SecureIM.Smartcard.controller.smartcard
             CardContext = new SCardContext();
         }
 
+        /// <summary>
+        /// Gets the s card readers.
+        /// </summary>
+        /// <returns></returns>
         public string[] GetSCardReaders() => ScControllerBuilder.GetSmartcardReaders(CardContext);
 
+        /// <summary>
+        /// Connects to s card reader.
+        /// </summary>
+        /// <param name="readerName">Name of the reader.</param>
+        /// <returns></returns>
+        /// <exception cref="System.ArgumentOutOfRangeException"></exception>
         public SCardReader ConnectToSCardReader(string readerName)
         {
             CardReader = ScControllerBuilder.ConnectToReader(CardContext, readerName);
@@ -89,9 +102,9 @@ namespace SecureIM.Smartcard.controller.smartcard
         /// <param name="data">The data.</param>
         /// <param name="le">The le.</param>
         /// <returns></returns>
+        /// <exception cref="SmartcardException">Condition.</exception>
         /// <exception cref="System.ArgumentOutOfRangeException">command - null</exception>
         /// <exception cref="OverflowException">The array is multidimensional and contains more than <see cref="F:System.Int32.MaxValue" /> elements.</exception>
-        /// <exception cref="SmartcardException">Condition.</exception>
         [NotNull]
         public byte[] SendCommand(SecureIMCardInstructions command, byte p1 = 0x00, byte p2 = 0x00, [CanBeNull] byte[] data = null, byte le = 0x00)
         {
@@ -122,6 +135,7 @@ namespace SecureIM.Smartcard.controller.smartcard
         /// Checks the error.
         /// </summary>
         /// <param name="err">The error.</param>
+        /// <exception cref="PCSC.PCSCException"></exception>
         /// <exception cref="PCSCException"></exception>
         private static void CheckErr(SCardError err)
         {
@@ -134,8 +148,6 @@ namespace SecureIM.Smartcard.controller.smartcard
         /// <param name="command">The command.</param>
         /// <param name="data">The data.</param>
         /// <param name="le">The le.</param>
-        ///
-        ///
         /// <returns></returns>
         /// <exception cref="System.ArgumentOutOfRangeException">command - null</exception>
         [NotNull]
