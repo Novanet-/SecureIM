@@ -16,9 +16,11 @@ using SecureIM.Smartcard.model.abstractions;
 namespace SecureIM.ChatBackend
 {
     /// <summary>
-    /// ChatBackend
+    /// THe main class that functions as the backend for the chat system, controls methods for
+    /// sending and displaying messages, as well as dispatching command messages to the ChatCommandHandler
     /// </summary>
-    /// <seealso cref="IChatBackend" />
+    /// <seealso cref="IChatBackend"/>
+    ///
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public sealed class ChatBackend : IChatBackend
     {
@@ -29,13 +31,19 @@ namespace SecureIM.ChatBackend
         public User BroadcastUser { get; } = new User("Broadcast");
         public ChatCommandHandler ChatCommandHandler { get; }
         public Comms Comms { get; private set; }
+
         [NotNull] public ICryptoHandler CryptoHandler { get; }
+
         [NotNull] public User CurrentUser { get; }
+
         [CanBeNull] public DisplayMessageDelegate DisplayMessageDelegate { get; set; }
+
         public User EventUser { get; } = new User("Event", "event");
         public List<User> FriendsList { get; }
         public User InfoUser { get; } = new User("Info", "info");
+
         [NotNull] public static ChatBackend Instance => Lazy.Value;
+
         public bool IsRegistered { get; set; }
         public ProcessMessageDelegate ProcessMessageDelegate { get; set; }
         public SendMessageDelegate SendMessageDelegate { get; }
@@ -43,24 +51,22 @@ namespace SecureIM.ChatBackend
 
         #endregion Public Properties
 
-
         #region Private Properties
 
         private bool IsCurrentPubKeyInFriendsList => FriendsList.Where(x =>
-                                                                       {
-                                                                           string currentPubKeyB64 =
-                                                                                   BackendHelper.EncodeFromByteArrayBase64(
-                                                                                                                           CryptoHandler.GetPublicKey());
-                                                                           return x.PublicKey.Equals(currentPubKeyB64);
-                                                                       }).FirstOrDefault() != null;
+        {
+            string currentPubKeyB64 =
+                BackendHelper.EncodeFromByteArrayBase64(
+                    CryptoHandler.GetPublicKey());
+            return x.PublicKey.Equals(currentPubKeyB64);
+        }).FirstOrDefault() != null;
 
         #endregion Private Properties
-
 
         #region Private Constructors
 
         /// <summary>
-        /// Prevents a default instance of the <see cref="ChatBackend"/> class from being created.
+        /// Constructor for ChatBackend invoked via lazy initialization
         /// </summary>
         [Log("MyProf")]
         private ChatBackend()
@@ -75,15 +81,23 @@ namespace SecureIM.ChatBackend
 
         #endregion Private Constructors
 
-
         #region Public Methods
 
         /// <summary>
-        /// The default constructor is only here for testing purposes.
+        /// Displays a MessageComposite to a user, user is validated against intended message
+        /// receiver, or the sender being the event user. <br/> The flags of the message are checked,
+        /// and the message is decoded and decrypted. <br/> The display message delegate is then
+        /// invoked, which contains logic for rendering the message in the user's view.
         /// </summary>
-        /// <param name="messageComposite">The messageComposite.</param>
-        /// <exception cref="System.ArgumentNullException">messageComposite</exception>
-        /// <exception cref="Exception">A delegate callback throws an exception.</exception>
+        /// <param name="messageComposite">
+        /// The message to be displayed, contained withina MessageComposite
+        /// </param>
+        /// <exception cref="System.ArgumentNullException">
+        /// messageComposite
+        /// </exception>
+        /// <exception cref="Exception">
+        /// A delegate callback throws an exception.
+        /// </exception>
         [Log("MyProf")]
         public void DisplayMessage([NotNull] MessageComposite messageComposite)
         {
@@ -106,28 +120,38 @@ namespace SecureIM.ChatBackend
         }
 
         /// <summary>
-        /// The front-end calls the SendMessage method in order to broadcast a message to our friends
+        /// The front-end calls the SendMessage method in order to broadcast a message to our
+        /// friends. This will either be a command message, in which case it is dispatched to the
+        /// ChatCommandHandler, or a normal message, where it will be handled by a SendMessageDelegate
         /// </summary>
-        /// <param name="text">The text.</param>
-        /// <exception cref="System.ArgumentNullException">text</exception>
-        /// <exception cref="RegexMatchTimeoutException">A time-out occurred. For more information about time-outs, see the Remarks section.</exception>
-        /// <exception cref="ArgumentException">A regular expression parsing error occurred.</exception>
+        /// <param name="text">
+        /// The text of the message to be sent
+        /// </param>
+        /// <exception cref="System.ArgumentNullException">
+        /// text
+        /// </exception>
+        /// <exception cref="RegexMatchTimeoutException">
+        /// A time-out occurred. For more information about time-outs, see the Remarks section.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// A regular expression parsing error occurred.
+        /// </exception>
         [Log("MyProf")]
         public void SendMessage([NotNull] string text)
         {
             if (text == null) throw new ArgumentNullException(nameof(text));
 
-            var commandRegEx = new Regex(@"^([\w]+:)\s*(.*)", RegexOptions.Multiline);
+            var commandRegEx = new Regex(@"^([\w]+:)\s*(.*)", RegexOptions.Multiline); //Matches against command messages ( "cmd:data" )
             Match commandMatch = commandRegEx.Match(text);
             GroupCollection commandMatchGroups = commandMatch.Groups;
             string commandMatchString = commandMatch.Success ? commandMatchGroups[1].Value.ToLower() : string.Empty;
 
-            if (!IsRegistered) BaseCommandSwitch(text, commandMatchString);
-            else RegisteredCommandSwitch(text, commandMatchString, commandMatchGroups);
+            if (!IsRegistered) BaseCommandSwitch(text, commandMatchString); //Handles commands that any user can access
+            else RegisteredCommandSwitch(text, commandMatchString, commandMatchGroups); //Handles commands that require a registered public key
         }
 
         /// <summary>
-        /// Starts the service.
+        /// Starts the WCF service. Displays messages to the channel indicating name change options and the fact that the user has entered the channel
         /// </summary>
         [Log("MyProf")]
         public void StartService()
@@ -141,33 +165,37 @@ namespace SecureIM.ChatBackend
 
             ServiceStarted = true;
 
-            // Information to send to the channel
             string userJoinedMessage = $"{CurrentUser.Name} has entered the conversation.";
             DisplayMessage(new MessageComposite(EventUser, CurrentUser, userJoinedMessage, MessageFlags.Broadcast));
 
-            // Information to display locally
             const string changeNamePrompt = "To change your name, type setname: NEW_NAME";
             DisplayMessage(new MessageComposite(InfoUser, CurrentUser, changeNamePrompt, MessageFlags.Broadcast));
         }
 
         #endregion Public Methods
 
-
         #region Internal Methods
 
         /// <summary>
-        /// Decrypts the chat message.
+        /// Decrypts a chat message using the CryptoHandler created in the ChatBackend constructor.
         /// </summary>
-        /// <param name="text">The text.</param>
-        /// <param name="targetPubKey">The target pub key.</param>
-        /// <returns></returns>
+        /// <param name="text">
+        /// The text to decrypt
+        /// </param>
+        /// <param name="targetPubKey">
+        /// The public key to use in the decryption process
+        /// </param>
+        /// <returns>
+        /// </returns>
         /// <exception cref="System.ArgumentNullException">
-        /// text
-        /// or
-        /// targetPubKey
+        /// text or targetPubKey
         /// </exception>
-        /// <exception cref="ArgumentNullException"><paramref name="text" /> is <see langword="null" /></exception>
-        /// <exception cref="ArgumentNullException"><paramref name="text" /> is <see langword="null" /></exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="text"/> is <see langword="null"/>
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="text"/> is <see langword="null"/>
+        /// </exception>
         [NotNull]
         [Log("MyProf")]
         internal string DecryptChatMessage([NotNull] string text, [NotNull] byte[] targetPubKey)
@@ -175,25 +203,31 @@ namespace SecureIM.ChatBackend
             if (text == null) throw new ArgumentNullException(nameof(text));
             if (targetPubKey == null) throw new ArgumentNullException(nameof(targetPubKey));
 
-            // TODO: Proper pub key
-            //            targetPubKey = CryptoHandler.GetPublicKey();
+            // TODO: Proper pub key targetPubKey = CryptoHandler.GetPublicKey();
             string plainText = CryptoHandler.Decrypt(text, targetPubKey);
             return plainText;
         }
 
         /// <summary>
-        /// Encrypts the chat message.
+        /// Decrypts a chat message using the CryptoHandler created in the ChatBackend constructor.
         /// </summary>
-        /// <param name="text">The text.</param>
-        /// <param name="targetPubKey">The target pub key.</param>
-        /// <returns></returns>
+        /// <param name="text">
+        /// The text to encrypt
+        /// </param>
+        /// <param name="targetPubKey">
+        /// Encrypts a chat message using the CryptoHandler created in the ChatBackend constructor.
+        /// </param>
+        /// <returns>
+        /// </returns>
         /// <exception cref="System.ArgumentNullException">
-        /// text
-        /// or
-        /// targetPubKey
+        /// text or targetPubKey
         /// </exception>
-        /// <exception cref="ArgumentNullException"><paramref name="text" /> is <see langword="null" /></exception>
-        /// <exception cref="ArgumentNullException"><paramref name="text" /> is <see langword="null" /></exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="text"/> is <see langword="null"/>
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="text"/> is <see langword="null"/>
+        /// </exception>
         [NotNull]
         [Log("MyProf")]
         internal string EncryptChatMessage([NotNull] string text, [NotNull] byte[] targetPubKey)
@@ -201,26 +235,26 @@ namespace SecureIM.ChatBackend
             if (text == null) throw new ArgumentNullException(nameof(text));
             if (targetPubKey == null) throw new ArgumentNullException(nameof(targetPubKey));
 
-            // TODO: Proper pub key
-            //            targetPubKey = CryptoHandler.GetPublicKey();
+            // TODO: Proper pub key targetPubKey = CryptoHandler.GetPublicKey();
             string cipherText = CryptoHandler.Encrypt(text, targetPubKey);
             return cipherText;
         }
 
         #endregion Internal Methods
 
-
         #region Private Methods
 
         /// <summary>
-        /// Bases the command switch.
+        /// Checks which command has been given in the command message, only matches commands that unregistered users can access
         /// </summary>
-        /// <param name="text">The text.</param>
-        /// <param name="commandMatchString">The command match string.</param>
+        /// <param name="text">
+        /// The full command message
+        /// </param>
+        /// <param name="commandMatchString">
+        /// String containing command message data
+        /// </param>
         /// <exception cref="System.ArgumentNullException">
-        /// text
-        /// or
-        /// commandMatchString
+        /// text or commandMatchString
         /// </exception>
         [Log("MyProf")]
         private void BaseCommandSwitch([NotNull] string text, [NotNull] string commandMatchString)
@@ -255,9 +289,14 @@ namespace SecureIM.ChatBackend
         /// <summary>
         /// Decodes the message.
         /// </summary>
-        /// <param name="messageComposite">The message composite.</param>
-        /// <returns></returns>
-        /// <exception cref="System.ArgumentNullException">messageComposite</exception>
+        /// <param name="messageComposite">
+        /// The message composite.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// messageComposite
+        /// </exception>
         [Log("MyProf")]
         private MessageComposite DecodeMessage([NotNull] MessageComposite messageComposite)
         {
@@ -272,13 +311,16 @@ namespace SecureIM.ChatBackend
         /// <summary>
         /// Decrypts the message.
         /// </summary>
-        /// <param name="messageComposite">The message composite.</param>
-        /// <param name="decodedMessageText">The decoded message text.</param>
-        /// <returns></returns>
+        /// <param name="messageComposite">
+        /// The message composite.
+        /// </param>
+        /// <param name="decodedMessageText">
+        /// The decoded message text.
+        /// </param>
+        /// <returns>
+        /// </returns>
         /// <exception cref="System.ArgumentNullException">
-        /// messageComposite
-        /// or
-        /// decodedMessageText
+        /// messageComposite or decodedMessageText
         /// </exception>
         [Log("MyProf")]
         private MessageComposite DecryptMessage([NotNull] MessageComposite messageComposite, [NotNull] string decodedMessageText)
@@ -302,17 +344,20 @@ namespace SecureIM.ChatBackend
         }
 
         /// <summary>
-        /// Registereds the command switch.
+        /// Checks which command has been given in the command message, allows matching to commands that require a registered public key
+        ///
         /// </summary>
-        /// <param name="text">The text.</param>
-        /// <param name="commandMatchString">The command match string.</param>
-        /// <param name="commandMatchGroups">The command match groups.</param>
+        /// <param name="text">
+        /// The full command message text.
+        /// </param>
+        /// <param name="commandMatchString">
+        /// Command message data
+        /// </param>
+        /// <param name="commandMatchGroups">
+        /// The command match groups.
+        /// </param>
         /// <exception cref="System.ArgumentNullException">
-        /// text
-        /// or
-        /// commandMatchString
-        /// or
-        /// commandMatchGroups
+        /// text or commandMatchString or commandMatchGroups
         /// </exception>
         [Log("MyProf")]
         private void RegisteredCommandSwitch([NotNull] string text, [NotNull] string commandMatchString, [NotNull] GroupCollection commandMatchGroups)
@@ -368,36 +413,40 @@ namespace SecureIM.ChatBackend
         /// <summary>
         /// Sends the message to channel.
         /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="receiver">The receiver.</param>
-        /// <param name="messageText">The message text.</param>
-        /// <param name="messageFlags">The message flags.</param>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="receiver">
+        /// The receiver.
+        /// </param>
+        /// <param name="messageText">
+        /// The message text.
+        /// </param>
+        /// <param name="messageFlags">
+        /// The message flags.
+        /// </param>
         /// <exception cref="System.ArgumentNullException">
-        /// sender
-        /// or
-        /// receiver
-        /// or
-        /// messageText
+        /// sender or receiver or messageText
         /// </exception>
         [Log("MyProf")]
         private void SendMessageToChannel([NotNull] User sender, [NotNull] User receiver, [NotNull] string messageText,
-                                          MessageFlags messageFlags = MessageFlags.None)
+            MessageFlags messageFlags = MessageFlags.None)
         {
             if (sender == null) throw new ArgumentNullException(nameof(sender));
             if (receiver == null) throw new ArgumentNullException(nameof(receiver));
             if (messageText == null) throw new ArgumentNullException(nameof(messageText));
 
             Task.Run(() =>
-                     {
-                         IChatBackend messageDestination = messageFlags.HasFlag(MessageFlags.Local)
-                                                               ? this
-                                                               : new ChannelFactory<IChatBackend>("ChatEndpoint").CreateChannel();
-                         var messageComposite = new MessageComposite(sender, receiver, messageText, messageFlags);
-                         messageDestination.DisplayMessage(messageComposite);
-                     });
+            {
+                IChatBackend messageDestination = messageFlags.HasFlag(MessageFlags.Local)
+                    ? this
+                    : new ChannelFactory<IChatBackend>("ChatEndpoint").CreateChannel();
+                var messageComposite = new MessageComposite(sender, receiver, messageText, messageFlags);
+                messageDestination.DisplayMessage(messageComposite);
+            });
 
-            //            var messageComposite = new MessageComposite(sender, receiver, messageText, messageFlags);
-            //            new ChannelFactory<IChatBackend>("ChatEndpoint").CreateChannel().DisplayMessage(messageComposite);
+            // var messageComposite = new MessageComposite(sender, receiver, messageText,
+            // messageFlags); new ChannelFactory<IChatBackend>("ChatEndpoint").CreateChannel().DisplayMessage(messageComposite);
         }
 
         /// <summary>
