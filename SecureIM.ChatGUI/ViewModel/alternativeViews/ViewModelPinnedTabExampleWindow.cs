@@ -117,15 +117,15 @@ namespace SecureIM.ChatGUI.ViewModel.alternativeViews
         /// <param name="tab">The tab.</param>
         /// <returns></returns>
         [Log("MyProf")]
-        private static bool MatchTabToTargetUser(MessageComposite messageComposite, TabBase tab)
+        private static bool MatchTabToTargetUser(User targetUser, TabBase tab)
         {
             if (tab.IsPinned)
             {
-                return messageComposite.Sender.PublicKey.Equals("event") || messageComposite.Sender.PublicKey.Equals("info");
+                return targetUser.PublicKey.Equals("event") || targetUser.PublicKey.Equals("info");
             }
 
             var chatTab = tab as TabChatWindow;
-            return chatTab != null && chatTab.TargetUser.PublicKey.Equals(messageComposite.Sender.PublicKey);
+            return chatTab != null && chatTab.TargetUser.PublicKey.Equals(targetUser.PublicKey);
         }
 
         /// <summary>
@@ -145,12 +145,13 @@ namespace SecureIM.ChatGUI.ViewModel.alternativeViews
         /// </summary>
         /// <param name="messageComposite">The message composite.</param>
         /// <param name="dmd">The DMD.</param>
+        /// <param name="targetUserForDisplay"></param>
         [Log("MyProf")]
-        private void ProcessMessage(MessageComposite messageComposite, DisplayMessageDelegate dmd)
+        private void ProcessMessage(MessageComposite messageComposite, DisplayMessageDelegate dmd, User targetUserForDisplay)
         {
             //TODO: do stuff
 
-            IEnumerable<TabBase> matchedTab = ItemCollection.Where(tab => MatchTabToTargetUser(messageComposite, tab));
+            IEnumerable<TabBase> matchedTab = ItemCollection.Where(tab => MatchTabToTargetUser(targetUserForDisplay, tab));
 
             IEnumerable<TabBase> tabBases = matchedTab as TabBase[] ?? matchedTab.ToArray();
             if (!tabBases.Any())

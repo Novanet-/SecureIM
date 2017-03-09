@@ -153,6 +153,7 @@ namespace SecureIM.ChatGUI.ViewModel
             {
                 TabName = "Control Panel",
                 ChatHistory = "",
+                TargetUser = new User("Event", "event"),
                 IsPinned = true
             };
             return tab;

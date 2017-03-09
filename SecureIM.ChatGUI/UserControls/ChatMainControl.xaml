@@ -31,6 +31,14 @@
         </Grid.RowDefinitions>
 
 
+        <Rectangle Grid.Row="2"
+                   Grid.ColumnSpan="3"
+                   Width="699"
+                   Margin="5,0"
+                   Fill="#FF959595"
+                   UseLayoutRounding="True" />
+
+
         <Rectangle Grid.RowSpan="2"
                    Grid.ColumnSpan="3"
                    Width="699"
@@ -47,14 +55,12 @@
                 Content="Set Name"
                 UseLayoutRounding="True" />
 
-        <Label Name="LblTargetUser"
-               Grid.Row="0"
-               Grid.Column="0"
+        <Label x:Name="LblTargetUser"
+               Grid.Row="2"
+               Grid.Column="2"
                HorizontalAlignment="Center"
                VerticalAlignment="Center"
-               Content="{Binding TargetUser.Name,
-                                 Mode=OneTime,
-                                 UpdateSourceTrigger=Default}" />
+               Content="{Binding TargetUser.Name, Mode=OneTime, UpdateSourceTrigger=Default}" />
         <xctk:WatermarkTextBox x:Name="TxtSetName"
                                Grid.Row="0"
                                Grid.Column="1"
@@ -104,13 +110,6 @@
                 Click="BtnRegPubKey_Click"
                 Content="Register Key"
                 UseLayoutRounding="True" />
-
-        <Rectangle Grid.Row="2"
-                   Grid.ColumnSpan="3"
-                   Width="699"
-                   Margin="5,0"
-                   Fill="#FF959595"
-                   UseLayoutRounding="True" />
 
 
         <Rectangle Grid.Row="3"
@@ -189,9 +188,7 @@
                  IsVisibleChanged="TxtChatPane_IsVisibleChanged"
                  Padding="0,10,0,0"
                  ScrollViewer.CanContentScroll="True"
-                 Text="{Binding ChatHistory,
-                                Mode=TwoWay,
-                                UpdateSourceTrigger=PropertyChanged}"
+                 Text="{Binding ChatHistory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  TextChanged="TxtChatPane_TextChanged"
                  TextWrapping="WrapWithOverflow"
                  UseLayoutRounding="True"
@@ -206,9 +203,10 @@
                  VerticalAlignment="Stretch"
                  VerticalContentAlignment="Center"
                  KeyDown="TextBoxEntryField_OnKeyDown"
-                 Text="{Binding ChatEntry,
-                                Mode=TwoWay}"
+                 Text="{Binding ChatEntry, Mode=TwoWay}"
                  UseLayoutRounding="True" />
+
+
 
 
 

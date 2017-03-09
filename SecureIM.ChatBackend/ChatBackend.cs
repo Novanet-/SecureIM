@@ -12,6 +12,7 @@ using SecureIM.ChatBackend.model;
 using SecureIM.Smartcard.controller.smartcard;
 using SecureIM.Smartcard.helpers;
 using SecureIM.Smartcard.model.abstractions;
+using static System.String;
 
 namespace SecureIM.ChatBackend
 {
@@ -104,19 +105,28 @@ namespace SecureIM.ChatBackend
             if (messageComposite == null) throw new ArgumentNullException(nameof(messageComposite));
 
             string currentPubKeyB64 = BackendHelper.EncodeFromByteArrayBase64(CryptoHandler.GetPublicKey());
-            bool isEventSender = messageComposite.Sender.PublicKey.Equals(EventUser.PublicKey) ||
-                                 messageComposite.Sender.PublicKey.Equals(InfoUser.PublicKey);
-            bool isReceiverCurrentUser = !string.IsNullOrEmpty(messageComposite.Receiver.PublicKey) &&
-                                         messageComposite.Receiver.PublicKey.Equals(currentPubKeyB64);
-            if (isEventSender || isReceiverCurrentUser)
-            {
-                bool isEncodedMessage = messageComposite.Flags.HasFlag(MessageFlags.Encoded);
-                bool isEncryptedMessage = messageComposite.Flags.HasFlag(MessageFlags.Encrypted);
 
-                if (isEncodedMessage && isEncryptedMessage) messageComposite = DecodeMessage(messageComposite);
+            bool isValidRecipient = IsValidRecipient(messageComposite, currentPubKeyB64);
 
-                if (DisplayMessageDelegate != null) ProcessMessageDelegate.Invoke(messageComposite, DisplayMessageDelegate);
-            }
+            if (messageComposite.Flags.HasFlag(MessageFlags.Local))
+                DisplayMessageDelegate?.Invoke(messageComposite);
+            else if (IsEncodedEncrypted(messageComposite))
+                messageComposite = DecodeMessage(messageComposite);
+
+            if (DisplayMessageDelegate == null || !isValidRecipient) return;
+
+            User targetUserForTabDisplay = null;
+
+            if (IsSenderEventOrInfoUser(messageComposite))
+                targetUserForTabDisplay = EventUser;
+            else if (IsSenderCurrentUser(messageComposite, currentPubKeyB64))
+                targetUserForTabDisplay = messageComposite.Receiver;
+            else if (IsReceiverCurrentUser(messageComposite, currentPubKeyB64))
+                targetUserForTabDisplay = messageComposite.Sender;
+
+            if (targetUserForTabDisplay == null) return;
+
+            if (DisplayMessageDelegate != null) ProcessMessageDelegate.Invoke(messageComposite, DisplayMessageDelegate, targetUserForTabDisplay);
         }
 
         /// <summary>
@@ -144,7 +154,7 @@ namespace SecureIM.ChatBackend
             var commandRegEx = new Regex(@"^([\w]+:)\s*(.*)", RegexOptions.Multiline); //Matches against command messages ( "cmd:data" )
             Match commandMatch = commandRegEx.Match(text);
             GroupCollection commandMatchGroups = commandMatch.Groups;
-            string commandMatchString = commandMatch.Success ? commandMatchGroups[1].Value.ToLower() : string.Empty;
+            string commandMatchString = commandMatch.Success ? commandMatchGroups[1].Value.ToLower() : Empty;
 
             if (!IsRegistered) BaseCommandSwitch(text, commandMatchString); //Handles commands that any user can access
             else RegisteredCommandSwitch(text, commandMatchString, commandMatchGroups); //Handles commands that require a registered public key
@@ -244,6 +254,31 @@ namespace SecureIM.ChatBackend
 
         #region Private Methods
 
+        private static bool IsEncodedEncrypted(MessageComposite messageComposite)
+        {
+            bool isEncodedMessage = messageComposite.Flags.HasFlag(MessageFlags.Encoded);
+            bool isEncryptedMessage = messageComposite.Flags.HasFlag(MessageFlags.Encrypted);
+
+            bool isEncodedEncrypted = isEncodedMessage && isEncryptedMessage;
+            return isEncodedEncrypted;
+        }
+
+        private static bool IsReceiverCurrentUser(MessageComposite messageComposite, string currentPubKeyB64)
+        {
+            var isReceiverCurrentUser = false;
+            if (!IsNullOrEmpty(messageComposite.Receiver.PublicKey))
+                isReceiverCurrentUser = messageComposite.Receiver.PublicKey.Equals(currentPubKeyB64);
+            return isReceiverCurrentUser;
+        }
+
+        private static bool IsSenderCurrentUser(MessageComposite messageComposite, string currentPubKeyB64)
+        {
+            var isSenderCurrentUser = false;
+            if (!IsNullOrEmpty(messageComposite.Sender.PublicKey))
+                isSenderCurrentUser = messageComposite.Sender.PublicKey.Equals(currentPubKeyB64);
+            return isSenderCurrentUser;
+        }
+
         /// <summary>
         /// Checks which command has been given in the command message, only matches commands that unregistered users can access
         /// </summary>
@@ -281,7 +316,7 @@ namespace SecureIM.ChatBackend
                     break;
 
                 default:
-                    SendMessageToChannel(EventUser, CurrentUser, "You must register before you can use this command");
+                    SendMessageToChannel(EventUser, CurrentUser, "You must register before you can use this command", MessageFlags.Local);
                     break;
             }
         }
@@ -341,6 +376,35 @@ namespace SecureIM.ChatBackend
                 messageComposite = new MessageComposite(messageComposite.Sender, messageComposite.Receiver, plainText, messageComposite.Flags);
             }
             return messageComposite;
+        }
+
+        private bool IsSenderEventOrInfoUser(MessageComposite messageComposite)
+        {
+            bool isSenderEventOrInfoUser = messageComposite.Sender.PublicKey.Equals(EventUser.PublicKey) ||
+                                           messageComposite.Sender.PublicKey.Equals(InfoUser.PublicKey);
+            return isSenderEventOrInfoUser;
+        }
+
+        private bool IsValidRecipient(MessageComposite messageComposite, string currentPubKeyB64)
+        {
+            var isSenderCurrentUser = false;
+            var isReceiverCurrentUser = false;
+
+            bool isValidRecipient;
+
+            bool isSenderEventOrInfoUser = IsSenderEventOrInfoUser(messageComposite);
+
+            isSenderCurrentUser = IsSenderCurrentUser(messageComposite, currentPubKeyB64);
+            isReceiverCurrentUser = IsReceiverCurrentUser(messageComposite, currentPubKeyB64);
+
+            if (messageComposite.Flags.HasFlag(MessageFlags.Local))
+                isValidRecipient = isSenderEventOrInfoUser && isReceiverCurrentUser;
+            else
+                isValidRecipient = messageComposite.Flags.HasFlag(MessageFlags.Broadcast)
+                    ? isSenderEventOrInfoUser
+                    : isSenderCurrentUser || isReceiverCurrentUser;
+
+            return isValidRecipient;
         }
 
         /// <summary>

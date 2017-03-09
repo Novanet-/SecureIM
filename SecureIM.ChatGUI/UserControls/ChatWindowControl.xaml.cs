@@ -92,7 +92,9 @@ namespace SecureIM.ChatGUI.UserControls
             var vm = (TabChatWindow) this.DataContext;
             TargetUser = vm.TargetUser;
 
-            Backend.SendMessage(TxtEntryField.Text);
+//            Backend.SendMessage(TxtEntryField.Text);
+            SendCommand($"encrypt:{LblTargetUser.Content}:{TxtEntryField.Text}");
+
             TxtEntryField.Clear();
             TxtEntryField.Focus();
         }
@@ -110,6 +112,19 @@ namespace SecureIM.ChatGUI.UserControls
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="TextChangedEventArgs"/> instance containing the event data.</param>
         private void TxtChatPane_TextChanged(object sender, TextChangedEventArgs e) => ScrollToEnd();
+
+        /// <summary>
+        /// Sends the command.
+        /// </summary>
+        /// <param name="commandString">The command string.</param>
+        [Log("MyProf")]
+        private void SendCommand(string commandString)
+        {
+            Backend.SendMessage(commandString);
+            TxtEntryField.Clear();
+            TxtEntryField.Focus();
+        }
+
 
         #endregion Private Methods
     }
