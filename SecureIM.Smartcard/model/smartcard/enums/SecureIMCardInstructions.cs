@@ -3,7 +3,7 @@
     /// <summary>
     /// SecureIMCardInstructions
     /// </summary>
-    public enum SecureIMCardInstructions
+    internal enum SecureIMCardInstructions
     {
         INS_ECC_GEN_KEYPAIR,
         INS_ECC_GET_PRI_KEY,

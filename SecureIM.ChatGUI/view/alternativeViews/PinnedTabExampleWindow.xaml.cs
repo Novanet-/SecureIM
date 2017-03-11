@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 using ChromeTabs;
-using GalaSoft.MvvmLight.Command;
+using JetBrains.Annotations;
 using PostSharp.Patterns.Diagnostics;
 using SecureIM.ChatGUI.ViewModel.TabClasses;
 
@@ -31,7 +31,7 @@ namespace SecureIM.ChatGUI.view.alternativeViews
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="ContainerOverrideEventArgs"/> instance containing the event data.</param>
-        private void TabControl_ContainerItemPreparedForOverride(object sender, ContainerOverrideEventArgs e)
+        private void TabControl_ContainerItemPreparedForOverride([NotNull] object sender, [NotNull] ContainerOverrideEventArgs e)
         {
             e.Handled = true;
             var viewModel = e.Model as TabBase;

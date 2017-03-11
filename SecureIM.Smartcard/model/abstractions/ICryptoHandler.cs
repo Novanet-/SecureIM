@@ -16,7 +16,7 @@ namespace SecureIM.Smartcard.model.abstractions
         /// <param name="keyBytes">The key bytes.</param>
         /// <returns></returns>
         [NotNull]
-        string Decrypt(string data, byte[] keyBytes = null);
+        string Decrypt(string data, byte[] keyBytes);
 
         /// <summary>
         /// Encrypts the specified data.
@@ -38,12 +38,6 @@ namespace SecureIM.Smartcard.model.abstractions
         /// <returns></returns>
         [NotNull]
         byte[] GetPublicKey();
-
-        /// <summary>
-        /// Gets the private key.
-        /// </summary>
-        /// <returns></returns>
-        byte[] GetPrivateKey();
 
         #endregion Public Methods
     }

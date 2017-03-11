@@ -48,70 +48,35 @@ namespace SecureIM.Smartcard.controller.smartcard
         /// <param name="keyBytes">The key bytes.</param>
         /// <returns></returns>
         /// <exception cref="SmartcardException">Condition.</exception>
-        public string Decrypt([NotNull] string data, [CanBeNull] byte[] keyBytes = null)
+        public string Decrypt([NotNull] string data, [NotNull] byte[] keyBytes)
         {
             byte[] dataBytes = Encoding.Default.GetBytes(data);
-            byte[] decryptedBytes = { };
+            byte[] decryptedBytes = {};
+            byte le = 8;
             try
             {
-                byte[] setGuestResponse = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_SET_GUEST_PUB_KEY, 0x00, 0x00, keyBytes);
-                byte[] setGenSecretResponse = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GEN_SECRET);
-                byte[] setGen3DESResponse = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GEN_3DES_KEY);
-                byte[] setInputResponse = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_SET_INPUT_TEXT, 0x00, 0x00, dataBytes);
 
-                var successSw = new byte[] { 0x90, 0x00 };
+                InitializeCipherOperation(keyBytes, dataBytes, out byte[] setGuestResponse, out byte[] setGenSecretResponse, out byte[] setGen3DESResponse,
+                    out byte[] setInputResponse);
 
-                ErrorCheck(setGuestResponse, successSw, setGenSecretResponse, setGen3DESResponse, setInputResponse);
+                var successSw = new byte[] {0x90, 0x00};
+
+                InitializationErrorCheck(setGuestResponse, successSw, setGenSecretResponse, setGen3DESResponse, setInputResponse);
 
                 decryptedBytes = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_DO_DES_CIPHER_DECRYPT, 0x01);
 
                 if (decryptedBytes.Length <= 2)
-                    if (decryptedBytes[0].Equals(0x6C))
-                    {
-                        byte le = decryptedBytes[1];
-                        decryptedBytes = SmartcardController.SendCommand(
-                            SecureIMCardInstructions.INS_ECC_DO_DES_CIPHER_DECRYPT_GET_RESPONSE,
-                            0,
-                            0,
-                            null,
-                            le);
-                        decryptedBytes = TrimSwFromResponse(decryptedBytes);
-                    }
-                    else
-                    {
-                        throw new SmartcardException($"Decrypt failed with response: {ToHexString(decryptedBytes)}");
-                    }
+                {
+                    le = decryptedBytes[1];
+                    decryptedBytes = GetResponseData(decryptedBytes, SecureIMCardInstructions.INS_ECC_DO_DES_CIPHER_DECRYPT_GET_RESPONSE, le);
+                }
             }
             catch (OverflowException e)
             {
                 e.ToString();
             }
 
-            decryptedBytes = TrimArray(decryptedBytes, 2);
-            return Encoding.Default.GetString(decryptedBytes);
-        }
-
-        /// <summary>
-        /// Errors the check.
-        /// </summary>
-        /// <param name="setGuestResponse">The set guest response.</param>
-        /// <param name="successSw">The success sw.</param>
-        /// <param name="setGenSecretResponse">The set gen secret response.</param>
-        /// <param name="setGen3DESResponse">The set gen3 DES response.</param>
-        /// <param name="setInputResponse">The set input response.</param>
-        /// <exception cref="SmartcardException">
-        /// </exception>
-        private static void ErrorCheck(byte[] setGuestResponse, byte[] successSw, byte[] setGenSecretResponse, byte[] setGen3DESResponse,
-            byte[] setInputResponse)
-        {
-            if (!setGuestResponse.SequenceEqual(successSw))
-                throw new SmartcardException($"Set Guest Pub Key failed with response: {ToHexString(setGuestResponse)}");
-            if (setGenSecretResponse.Length <= 2 && !setGenSecretResponse[0].Equals(0x6C))
-                throw new SmartcardException($"Gen secret failed with response: {ToHexString(setGenSecretResponse)}");
-            if (setGen3DESResponse.Length <= 2 && !setGen3DESResponse[0].Equals(0x6C))
-                throw new SmartcardException($"Gen 3DES failed with response: {ToHexString(setGen3DESResponse)}");
-            if (!setInputResponse.SequenceEqual(successSw))
-                throw new SmartcardException($"Set input text failed with response: {ToHexString(setInputResponse)}");
+            return TrimToValidString(decryptedBytes, le);
         }
 
         /// <summary>
@@ -125,53 +90,31 @@ namespace SecureIM.Smartcard.controller.smartcard
         {
             byte[] dataBytes = Encoding.Default.GetBytes(data);
 
-            byte[] setGuestResponse = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_SET_GUEST_PUB_KEY, 0x00, 0x00, keyBytes);
-            byte[] setGenSecretResponse = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GEN_SECRET);
-            byte[] setGen3DESResponse = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GEN_3DES_KEY);
-            byte[] setInputResponse = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_SET_INPUT_TEXT, 0x00, 0x00, dataBytes);
+            byte le = 8;
 
-            var successSw = new byte[] { 0x90, 0x00 };
+            InitializeCipherOperation(keyBytes, dataBytes, out byte[] setGuestResponse, out byte[] setGenSecretResponse, out byte[] setGen3DESResponse,
+                out byte[] setInputResponse);
 
-            ErrorCheck(setGuestResponse, successSw, setGenSecretResponse, setGen3DESResponse, setInputResponse);
+            var successSw = new byte[] {0x90, 0x00};
 
-            //            if (!setGuestResponse.SequenceEqual(successSw))
-            //                throw new SmartcardException($"Set Guest Pub Key failed with response: {ToHexString(setGuestResponse)}");
-            //            if (setGenSecretResponse.Length <= 2 && !setGenSecretResponse[0].Equals(0x6C))
-            //                throw new SmartcardException($"Gen secret failed with response: {ToHexString(setGenSecretResponse)}");
-            //            if (setGen3DESResponse.Length <= 2 && !setGen3DESResponse[0].Equals(0x6C))
-            //                throw new SmartcardException($"Gen 3DES failed with response: {ToHexString(setGen3DESResponse)}");
-            //            if (!setInputResponse.SequenceEqual(successSw))
-            //                throw new SmartcardException($"Set input text failed with response: {ToHexString(setInputResponse)}");
+            InitializationErrorCheck(setGuestResponse, successSw, setGenSecretResponse, setGen3DESResponse, setInputResponse);
 
             byte[] encryptedBytes = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_DO_DES_CIPHER_ENCRYPT);
 
             if (encryptedBytes.Length <= 2)
-                if (encryptedBytes[0].Equals(0x6C))
-                {
-                    byte le = encryptedBytes[1];
-                    encryptedBytes = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_DO_DES_CIPHER_ENCRYPT_GET_RESPONSE, 0, 0, null,
-                        le);
-                    encryptedBytes = TrimSwFromResponse(encryptedBytes);
-                }
-                else
-                {
-                    throw new SmartcardException($"Decrypt failed with response: {ToHexString(encryptedBytes)}");
-                }
+            {
+                le = encryptedBytes[1];
+                encryptedBytes = GetResponseData(encryptedBytes, SecureIMCardInstructions.INS_ECC_DO_DES_CIPHER_ENCRYPT_GET_RESPONSE,
+                    le);
+            }
 
-            encryptedBytes = TrimArray(encryptedBytes, 2);
-            return Encoding.Default.GetString(encryptedBytes);
+            return TrimToValidString(encryptedBytes, le);
         }
 
         /// <summary>
         /// Generates the asymmetric key pair.
         /// </summary>
         public void GenerateAsymmetricKeyPair() => SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GEN_KEYPAIR);
-
-        /// <summary>
-        /// Gets the private key.
-        /// </summary>
-        /// <returns></returns>
-        public byte[] GetPrivateKey() => TrimSwFromResponse(SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GET_PRI_KEY));
 
         /// <summary>
         /// Gets the public key.
@@ -184,6 +127,33 @@ namespace SecureIM.Smartcard.controller.smartcard
         #region Private Methods
 
         /// <summary>
+        /// Errors the check.
+        /// </summary>
+        /// <param name="setGuestResponse">The set guest response.</param>
+        /// <param name="successSw">The success sw.</param>
+        /// <param name="setGenSecretResponse">The set gen secret response.</param>
+        /// <param name="setGen3DESResponse">The set gen3 DES response.</param>
+        /// <param name="setInputResponse">The set input response.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="SmartcardException">
+        /// </exception>
+        private static void InitializationErrorCheck([NotNull] byte[] setGuestResponse, [NotNull] byte[] successSw,
+            [NotNull] byte[] setGenSecretResponse, [NotNull] byte[] setGen3DESResponse,
+            [NotNull] byte[] setInputResponse)
+        {
+            if (successSw == null) throw new ArgumentNullException(nameof(successSw));
+
+            if (!setGuestResponse.SequenceEqual(successSw))
+                throw new SmartcardException($"Set Guest Pub Key failed with response: {ToHexString(setGuestResponse)}");
+            if (setGenSecretResponse.Length <= 2 && !setGenSecretResponse[0].Equals(0x6C))
+                throw new SmartcardException($"Gen secret failed with response: {ToHexString(setGenSecretResponse)}");
+            if (setGen3DESResponse.Length <= 2 && !setGen3DESResponse[0].Equals(0x6C))
+                throw new SmartcardException($"Gen 3DES failed with response: {ToHexString(setGen3DESResponse)}");
+            if (!setInputResponse.SequenceEqual(successSw))
+                throw new SmartcardException($"Set input text failed with response: {ToHexString(setInputResponse)}");
+        }
+
+        /// <summary>
         /// Trims the sw from response.
         /// </summary>
         /// <param name="responseBytes">The response bytes.</param>
@@ -194,6 +164,43 @@ namespace SecureIM.Smartcard.controller.smartcard
             responseBytes = TrimArray(responseBytes, 2);
 
             return responseBytes;
+        }
+
+        [NotNull]
+        private static string TrimToValidString(byte[] byteArray, int validSizeFactor)
+        {
+            int overflow = byteArray.Length % validSizeFactor;
+            if (overflow == 0) return Encoding.Default.GetString(byteArray);
+
+            byteArray = TrimArray(byteArray, overflow);
+            return Encoding.Default.GetString(byteArray);
+        }
+
+        [NotNull]
+        private byte[] GetResponseData([NotNull] byte[] hasResponseBytes, SecureIMCardInstructions getResponseInstruction, byte le)
+        {
+            byte[] responseBytes;
+            if (hasResponseBytes[0].Equals(0x6C))
+            {
+                responseBytes = SmartcardController.SendCommand(getResponseInstruction, 0, 0, null, le);
+                responseBytes = TrimSwFromResponse(responseBytes);
+            }
+            else
+            {
+                throw new SmartcardException($"Decrypt failed with response: {ToHexString(hasResponseBytes)}");
+            }
+
+            return responseBytes;
+        }
+
+        private void InitializeCipherOperation([NotNull] byte[] keyBytes, [NotNull] byte[] dataBytes, [NotNull] out byte[] setGuestResponse,
+            [NotNull] out byte[] setGenSecretResponse,
+            [NotNull] out byte[] setGen3DESResponse, [NotNull] out byte[] setInputResponse)
+        {
+            setGuestResponse = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_SET_GUEST_PUB_KEY, 0x00, 0x00, keyBytes);
+            setGenSecretResponse = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GEN_SECRET);
+            setGen3DESResponse = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GEN_3DES_KEY);
+            setInputResponse = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_SET_INPUT_TEXT, 0x00, 0x00, dataBytes);
         }
 
         #endregion Private Methods

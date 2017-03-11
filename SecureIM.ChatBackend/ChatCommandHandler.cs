@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using Castle.Core.Internal;
+using JetBrains.Annotations;
 using PostSharp.Patterns.Diagnostics;
 using SecureIM.ChatBackend.helpers;
 using SecureIM.ChatBackend.model;
@@ -11,33 +12,8 @@ namespace SecureIM.ChatBackend
     /// <summary>
     /// ChatCommandHandlerd
     /// </summary>
-    public sealed class ChatCommandHandler
+    internal static class ChatCommandHandler
     {
-        #region Public Properties
-
-        #endregion Public Properties
-
-        #region Public Constructors
-
-        #endregion Public Constructors
-
-        #region Public Methods
-
-        /// <summary>
-        /// Plains the message send.
-        /// </summary>
-        /// <param name="text">The text.</param>
-        /// <param name="sendMessageDelegate">The send message delegate.</param>
-        public void PlainMessageSend(string text, SendMessageDelegate sendMessageDelegate)
-        {
-            ChatBackend chatBackend = ChatBackend.Instance;
-
-            User messageSender = chatBackend.CurrentUser;
-            sendMessageDelegate(messageSender, messageSender, text);
-        }
-
-        #endregion Public Methods
-
         #region Internal Methods
 
         /// <summary>
@@ -46,7 +22,7 @@ namespace SecureIM.ChatBackend
         /// <param name="commandMatchGroups">The command match groups.</param>
         /// <param name="sendMessageDelegate">The send message delegate.</param>
         [Log("MyProf")]
-        internal void AddFriend(GroupCollection commandMatchGroups, SendMessageDelegate sendMessageDelegate)
+        internal static void AddFriend([NotNull] GroupCollection commandMatchGroups, [NotNull] SendMessageDelegate sendMessageDelegate)
         {
             ChatBackend chatBackend = ChatBackend.Instance;
 
@@ -68,7 +44,7 @@ namespace SecureIM.ChatBackend
         /// <param name="commandMatchGroups">The command match groups.</param>
         /// <param name="sendMessageDelegate">The send message delegate.</param>
         [Log("MyProf")]
-        internal void DecodeBase64(GroupCollection commandMatchGroups, SendMessageDelegate sendMessageDelegate)
+        internal static void DecodeBase64([NotNull] GroupCollection commandMatchGroups, [NotNull] SendMessageDelegate sendMessageDelegate)
         {
             ChatBackend chatBackend = ChatBackend.Instance;
 
@@ -85,7 +61,7 @@ namespace SecureIM.ChatBackend
         /// <param name="commandMatchGroups">The command match groups.</param>
         /// <param name="sendMessageDelegate">The send message delegate.</param>
         [Log("MyProf")]
-        internal void Decrypt(GroupCollection commandMatchGroups, SendMessageDelegate sendMessageDelegate)
+        internal static void Decrypt([NotNull] GroupCollection commandMatchGroups, [NotNull] SendMessageDelegate sendMessageDelegate)
         {
             ChatBackend chatBackend = ChatBackend.Instance;
 
@@ -107,7 +83,7 @@ namespace SecureIM.ChatBackend
         /// <param name="commandMatchGroups">The command match groups.</param>
         /// <param name="sendMessageDelegate">The send message delegate.</param>
         [Log("MyProf")]
-        internal void EncodeBase64(GroupCollection commandMatchGroups, SendMessageDelegate sendMessageDelegate)
+        internal static void EncodeBase64([NotNull] GroupCollection commandMatchGroups, [NotNull] SendMessageDelegate sendMessageDelegate)
         {
             ChatBackend chatBackend = ChatBackend.Instance;
 
@@ -124,8 +100,9 @@ namespace SecureIM.ChatBackend
         /// <param name="commandMatchGroups">The command match groups.</param>
         /// <param name="sendMessageDelegate">The send message delegate.</param>
         /// <returns></returns>
+        [NotNull]
         [Log("MyProf")]
-        internal string Encrypt(GroupCollection commandMatchGroups, SendMessageDelegate sendMessageDelegate)
+        internal static string Encrypt([NotNull] GroupCollection commandMatchGroups, [NotNull] SendMessageDelegate sendMessageDelegate)
         {
             ChatBackend chatBackend = ChatBackend.Instance;
 
@@ -151,7 +128,7 @@ namespace SecureIM.ChatBackend
         /// </summary>
         /// <param name="sendMessageDelegate">The send message delegate.</param>
         [Log("MyProf")]
-        internal void GenerateKeyPair(SendMessageDelegate sendMessageDelegate)
+        internal static void GenerateKeyPair([NotNull] SendMessageDelegate sendMessageDelegate)
         {
             ChatBackend chatBackend = ChatBackend.Instance;
 
@@ -164,12 +141,12 @@ namespace SecureIM.ChatBackend
 
                 sendMessageDelegate(chatBackend.EventUser, chatBackend.CurrentUser, messageText, MessageFlags.Encoded | MessageFlags.Local);
             }
-//             TODO: Remove this
-//            string priKeyB64 = BackendHelper.EncodeFromByteArrayBase64(chatBackend.CryptoHandler.GetPrivateKey());
-//
-//            if (string.IsNullOrEmpty(priKeyB64)) return;
-//
-//            if (messageSender != null) sendMessageDelegate(messageSender, chatBackend.EventUser, priKeyB64, MessageFlags.Encoded);
+            //             TODO: Remove this
+            //            string priKeyB64 = BackendHelper.EncodeFromByteArrayBase64(chatBackend.CryptoHandler.GetPrivateKey());
+            //
+            //            if (string.IsNullOrEmpty(priKeyB64)) return;
+            //
+            //            if (messageSender != null) sendMessageDelegate(messageSender, chatBackend.EventUser, priKeyB64, MessageFlags.Encoded);
         }
 
         /// <summary>
@@ -177,7 +154,7 @@ namespace SecureIM.ChatBackend
         /// </summary>
         /// <param name="sendMessageDelegate">The send message delegate.</param>
         [Log("MyProf")]
-        internal void GetPublicKey(SendMessageDelegate sendMessageDelegate)
+        internal static void GetPublicKey([NotNull] SendMessageDelegate sendMessageDelegate)
         {
             ChatBackend chatBackend = ChatBackend.Instance;
 
@@ -189,11 +166,24 @@ namespace SecureIM.ChatBackend
         }
 
         /// <summary>
+        /// Plains the message send.
+        /// </summary>
+        /// <param name="text">The text.</param>
+        /// <param name="sendMessageDelegate">The send message delegate.</param>
+        internal static void PlainMessageSend([NotNull] string text, [NotNull] SendMessageDelegate sendMessageDelegate)
+        {
+            ChatBackend chatBackend = ChatBackend.Instance;
+
+            User messageSender = chatBackend.CurrentUser;
+            sendMessageDelegate(messageSender, messageSender, text);
+        }
+
+        /// <summary>
         /// Registers the public key.
         /// </summary>
         /// <param name="sendMessageDelegate">The send message delegate.</param>
         [Log("MyProf")]
-        internal void RegisterPublicKey(SendMessageDelegate sendMessageDelegate)
+        internal static void RegisterPublicKey([NotNull] SendMessageDelegate sendMessageDelegate)
         {
             ChatBackend chatBackend = ChatBackend.Instance;
 
@@ -210,7 +200,8 @@ namespace SecureIM.ChatBackend
             }
             else
             {
-                chatBackend.DisplayMessageDelegate?.Invoke(new MessageComposite(chatBackend.EventUser, chatBackend.CurrentUser, "You must generate a key before you can register one", MessageFlags.Local));
+                chatBackend.DisplayMessageDelegate?.Invoke(new MessageComposite(chatBackend.EventUser, chatBackend.CurrentUser,
+                    "You must generate a key before you can register one", MessageFlags.Local));
             }
         }
 
@@ -221,13 +212,12 @@ namespace SecureIM.ChatBackend
         /// <param name="commandMatchString">The command match string.</param>
         /// <param name="sendMessageDelegate">The send message delegate.</param>
         [Log("MyProf")]
-        internal void SetName(string text, string commandMatchString, SendMessageDelegate sendMessageDelegate)
+        internal static void SetName([NotNull] string text, [NotNull] string commandMatchString, [NotNull] SendMessageDelegate sendMessageDelegate)
         {
             ChatBackend chatBackend = ChatBackend.Instance;
 
             chatBackend.CurrentUser.Name = text.Substring(commandMatchString.Length).Trim();
-            string nameSetString = "Setting your name to " + chatBackend.CurrentUser.Name;
-            string messageText = nameSetString;
+            string messageText = $"Setting your name to {chatBackend.CurrentUser.Name}";
 
             sendMessageDelegate(chatBackend.EventUser, chatBackend.CurrentUser, messageText, MessageFlags.Local);
         }

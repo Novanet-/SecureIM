@@ -10,6 +10,7 @@ using System.Windows.Media.Imaging;
 using ChromeTabs;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using JetBrains.Annotations;
 using PostSharp.Patterns.Diagnostics;
 using SecureIM.ChatBackend.model;
 using SecureIM.ChatGUI.Properties;
@@ -34,7 +35,7 @@ namespace SecureIM.ChatGUI.ViewModel
         /// <value>
         /// The selected tab.
         /// </value>
-        public TabBase SelectedTab
+        [NotNull] public TabBase SelectedTab
         {
             get { return _selectedTab; }
             set { if (_selectedTab != value) Set(() => SelectedTab, ref _selectedTab, value); }
@@ -74,6 +75,7 @@ namespace SecureIM.ChatGUI.ViewModel
             CanAddTabs = true;
         }
 
+        [NotNull]
         protected TabClass1 CreateTab1()
         {
             const int i = 0;
@@ -89,6 +91,7 @@ namespace SecureIM.ChatGUI.ViewModel
             return tab;
         }
 
+        [NotNull]
         protected TabClass2 CreateTab2()
         {
             var tab = new TabClass2
@@ -102,6 +105,7 @@ namespace SecureIM.ChatGUI.ViewModel
             return tab;
         }
 
+        [NotNull]
         protected TabClass3 CreateTab3()
         {
             var tab = new TabClass3
@@ -115,6 +119,7 @@ namespace SecureIM.ChatGUI.ViewModel
             return tab;
         }
 
+        [NotNull]
         protected TabClass4 CreateTab4()
         {
             var tab = new TabClass4
@@ -131,8 +136,9 @@ namespace SecureIM.ChatGUI.ViewModel
         /// </summary>
         /// <param name="user">The user.</param>
         /// <returns></returns>
+        [NotNull]
         [Log("MyProf")]
-        protected TabChatWindow CreateTabChatWindow(User user)
+        protected TabChatWindow CreateTabChatWindow([NotNull] User user)
         {
             var tab = new TabChatWindow()
             {
@@ -146,6 +152,7 @@ namespace SecureIM.ChatGUI.ViewModel
         /// Creates the tab chat main.
         /// </summary>
         /// <returns></returns>
+        [NotNull]
         [Log("MyProf")]
         protected TabChatMain CreateTabChatMain()
         {
@@ -159,6 +166,7 @@ namespace SecureIM.ChatGUI.ViewModel
             return tab;
         }
 
+        [NotNull]
         protected TabClass1 CreateTabLoremIpsum()
         {
             var tab = new TabClass1()
@@ -174,7 +182,7 @@ namespace SecureIM.ChatGUI.ViewModel
         /// Reorder the tabs and refresh collection sorting.
         /// </summary>
         /// <param name="reorder">The reorder.</param>
-        protected virtual void ReorderTabsCommandAction(TabReorder reorder)
+        protected virtual void ReorderTabsCommandAction([NotNull] TabReorder reorder)
         {
             var view = CollectionViewSource.GetDefaultView(ItemCollection) as ICollectionView;
             int from = reorder.FromIndex;
@@ -205,7 +213,7 @@ namespace SecureIM.ChatGUI.ViewModel
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="NotifyCollectionChangedEventArgs"/> instance containing the event data.</param>
-        private void ItemCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void ItemCollection_CollectionChanged([NotNull] object sender, [NotNull] NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
@@ -225,7 +233,7 @@ namespace SecureIM.ChatGUI.ViewModel
         /// Closes the tab command action.
         /// </summary>
         /// <param name="vm">The vm.</param>
-        private void CloseTabCommandAction(TabBase vm) => ItemCollection.Remove(vm);
+        private void CloseTabCommandAction([NotNull] TabBase vm) => ItemCollection.Remove(vm);
 
         //Adds a random tab
         /// <summary>

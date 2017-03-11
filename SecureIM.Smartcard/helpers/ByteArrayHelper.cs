@@ -1,25 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using JetBrains.Annotations;
 
 namespace SecureIM.Smartcard.helpers
 {
-    class ByteArrayHelper
+    static class ByteArrayHelper
     {
         /// <summary>
         /// To the hexadecimal string.
         /// </summary>
         /// <param name="hex">The hexadecimal.</param>
         /// <returns></returns>
-        [ItemNotNull]
         [Pure]
         [NotNull]
         public static string ToHexString([NotNull] byte[] hex)
         {
-            if (hex.Length == 0) return String.Empty;
+            if (hex.Length == 0) return string.Empty;
 
             var s = new StringBuilder();
             foreach (byte b in hex)
@@ -34,6 +30,7 @@ namespace SecureIM.Smartcard.helpers
         /// <param name="array">The array.</param>
         /// <param name="trimByAmount">The trim by amount.</param>
         /// <returns></returns>
+        [NotNull]
         internal static byte[] TrimArray(byte[] array, int trimByAmount)
         {
             if (array.Length > trimByAmount)

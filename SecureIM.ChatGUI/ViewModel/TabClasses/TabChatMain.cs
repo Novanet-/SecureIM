@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+﻿using JetBrains.Annotations;
 using SecureIM.ChatBackend.model;
 
 namespace SecureIM.ChatGUI.ViewModel.TabClasses
@@ -32,7 +32,7 @@ namespace SecureIM.ChatGUI.ViewModel.TabClasses
         /// <value>
         /// The chat history.
         /// </value>
-        public string ChatHistory
+        [NotNull] public string ChatHistory
         {
             get { return _chatHistory; }
             set

@@ -18,7 +18,7 @@ namespace SecureIM.ChatBackend
 {
     /// <summary>
     /// THe main class that functions as the backend for the chat system, controls methods for
-    /// sending and displaying messages, as well as dispatching command messages to the ChatCommandHandler
+    /// sending and displaying messages, as well as dispatching command messages to th5e ChatCommandHandler
     /// </summary>
     /// <seealso cref="IChatBackend"/>
     ///
@@ -27,32 +27,24 @@ namespace SecureIM.ChatBackend
     {
         #region Public Properties
 
-        [ItemNotNull] public static Lazy<ChatBackend> Lazy { get; } = new Lazy<ChatBackend>(() => new ChatBackend());
-
-        public User BroadcastUser { get; } = new User("Broadcast");
-        public ChatCommandHandler ChatCommandHandler { get; }
-        public Comms Comms { get; private set; }
-
+        [NotNull] public static ChatBackend Instance => Lazy.Value;
         [NotNull] public ICryptoHandler CryptoHandler { get; }
-
         [NotNull] public User CurrentUser { get; }
-
         [CanBeNull] public DisplayMessageDelegate DisplayMessageDelegate { get; set; }
-
         public User EventUser { get; } = new User("Event", "event");
         public List<User> FriendsList { get; }
-        public User InfoUser { get; } = new User("Info", "info");
-
-        [NotNull] public static ChatBackend Instance => Lazy.Value;
-
-        public bool IsRegistered { get; set; }
-        public ProcessMessageDelegate ProcessMessageDelegate { get; set; }
-        public SendMessageDelegate SendMessageDelegate { get; }
-        public bool ServiceStarted { get; set; }
+        public bool IsRegistered { get; internal set; }
+        public ProcessMessageDelegate ProcessMessageDelegate { private get; set; }
+        public bool ServiceStarted { get; private set; }
 
         #endregion Public Properties
 
         #region Private Properties
+
+        [ItemNotNull] private static Lazy<ChatBackend> Lazy { get; } = new Lazy<ChatBackend>(() => new ChatBackend());
+        private User BroadcastUser { get; } = new User("Broadcast");
+        private Comms Comms { get; set; }
+        private User InfoUser { get; } = new User("Info", "info");
 
         private bool IsCurrentPubKeyInFriendsList => FriendsList.Where(x =>
         {
@@ -61,6 +53,8 @@ namespace SecureIM.ChatBackend
                     CryptoHandler.GetPublicKey());
             return x.PublicKey.Equals(currentPubKeyB64);
         }).FirstOrDefault() != null;
+
+        private SendMessageDelegate SendMessageDelegate { get; }
 
         #endregion Private Properties
 
@@ -75,7 +69,6 @@ namespace SecureIM.ChatBackend
             CurrentUser = new User();
             CryptoHandler = new SmartcardCryptoHandler();
             FriendsList = new List<User>();
-            ChatCommandHandler = new ChatCommandHandler();
             SendMessageDelegate = SendMessageToChannel;
             IsRegistered = IsCurrentPubKeyInFriendsList;
         }
@@ -111,7 +104,7 @@ namespace SecureIM.ChatBackend
             if (messageComposite.Flags.HasFlag(MessageFlags.Local))
                 DisplayMessageDelegate?.Invoke(messageComposite);
             else if (IsEncodedEncrypted(messageComposite))
-                messageComposite = DecodeMessage(messageComposite);
+                messageComposite = DecodeandDecryptMessage(messageComposite);
 
             if (DisplayMessageDelegate == null || !isValidRecipient) return;
 
@@ -254,7 +247,7 @@ namespace SecureIM.ChatBackend
 
         #region Private Methods
 
-        private static bool IsEncodedEncrypted(MessageComposite messageComposite)
+        private static bool IsEncodedEncrypted([NotNull] MessageComposite messageComposite)
         {
             bool isEncodedMessage = messageComposite.Flags.HasFlag(MessageFlags.Encoded);
             bool isEncryptedMessage = messageComposite.Flags.HasFlag(MessageFlags.Encrypted);
@@ -263,7 +256,7 @@ namespace SecureIM.ChatBackend
             return isEncodedEncrypted;
         }
 
-        private static bool IsReceiverCurrentUser(MessageComposite messageComposite, string currentPubKeyB64)
+        private static bool IsReceiverCurrentUser([NotNull] MessageComposite messageComposite, [NotNull] string currentPubKeyB64)
         {
             var isReceiverCurrentUser = false;
             if (!IsNullOrEmpty(messageComposite.Receiver.PublicKey))
@@ -271,7 +264,7 @@ namespace SecureIM.ChatBackend
             return isReceiverCurrentUser;
         }
 
-        private static bool IsSenderCurrentUser(MessageComposite messageComposite, string currentPubKeyB64)
+        private static bool IsSenderCurrentUser([NotNull] MessageComposite messageComposite, [NotNull] string currentPubKeyB64)
         {
             var isSenderCurrentUser = false;
             if (!IsNullOrEmpty(messageComposite.Sender.PublicKey))
@@ -332,8 +325,9 @@ namespace SecureIM.ChatBackend
         /// <exception cref="System.ArgumentNullException">
         /// messageComposite
         /// </exception>
+        [NotNull]
         [Log("MyProf")]
-        private MessageComposite DecodeMessage([NotNull] MessageComposite messageComposite)
+        private MessageComposite DecodeandDecryptMessage([NotNull] MessageComposite messageComposite)
         {
             if (messageComposite == null) throw new ArgumentNullException(nameof(messageComposite));
 
@@ -357,6 +351,7 @@ namespace SecureIM.ChatBackend
         /// <exception cref="System.ArgumentNullException">
         /// messageComposite or decodedMessageText
         /// </exception>
+        [NotNull]
         [Log("MyProf")]
         private MessageComposite DecryptMessage([NotNull] MessageComposite messageComposite, [NotNull] string decodedMessageText)
         {
@@ -368,8 +363,15 @@ namespace SecureIM.ChatBackend
             byte[] senderPubKeyBytes = BackendHelper.DecodeToByteArrayBase64(messageComposite.Sender.PublicKey);
             byte[] receiverPubKeyBytes = BackendHelper.DecodeToByteArrayBase64(messageComposite.Receiver.PublicKey);
 
-            if (currentPubKey.SequenceEqual(senderPubKeyBytes)) targetPubKeyBytes = receiverPubKeyBytes;
-            else if (currentPubKey.SequenceEqual(receiverPubKeyBytes)) targetPubKeyBytes = senderPubKeyBytes;
+            if (currentPubKey.SequenceEqual(senderPubKeyBytes))
+            {
+                targetPubKeyBytes = receiverPubKeyBytes;
+            }
+            else if (currentPubKey.SequenceEqual(receiverPubKeyBytes))
+            {
+                targetPubKeyBytes = senderPubKeyBytes;
+            }
+
             if (targetPubKeyBytes != null)
             {
                 string plainText = CryptoHandler.Decrypt(decodedMessageText, targetPubKeyBytes);
@@ -378,31 +380,28 @@ namespace SecureIM.ChatBackend
             return messageComposite;
         }
 
-        private bool IsSenderEventOrInfoUser(MessageComposite messageComposite)
-        {
-            bool isSenderEventOrInfoUser = messageComposite.Sender.PublicKey.Equals(EventUser.PublicKey) ||
-                                           messageComposite.Sender.PublicKey.Equals(InfoUser.PublicKey);
-            return isSenderEventOrInfoUser;
-        }
+        private bool IsSenderEventOrInfoUser([NotNull] MessageComposite messageComposite)
+            => messageComposite.Sender.PublicKey.Equals(EventUser.PublicKey) || messageComposite.Sender.PublicKey.Equals(InfoUser.PublicKey);
 
-        private bool IsValidRecipient(MessageComposite messageComposite, string currentPubKeyB64)
+        private bool IsValidRecipient([NotNull] MessageComposite messageComposite, [NotNull] string currentPubKeyB64)
         {
-            var isSenderCurrentUser = false;
-            var isReceiverCurrentUser = false;
-
             bool isValidRecipient;
 
             bool isSenderEventOrInfoUser = IsSenderEventOrInfoUser(messageComposite);
 
-            isSenderCurrentUser = IsSenderCurrentUser(messageComposite, currentPubKeyB64);
-            isReceiverCurrentUser = IsReceiverCurrentUser(messageComposite, currentPubKeyB64);
+            bool isSenderCurrentUser = IsSenderCurrentUser(messageComposite, currentPubKeyB64);
+            bool isReceiverCurrentUser = IsReceiverCurrentUser(messageComposite, currentPubKeyB64);
 
             if (messageComposite.Flags.HasFlag(MessageFlags.Local))
+            {
                 isValidRecipient = isSenderEventOrInfoUser && isReceiverCurrentUser;
+            }
             else
+            {
                 isValidRecipient = messageComposite.Flags.HasFlag(MessageFlags.Broadcast)
                     ? isSenderEventOrInfoUser
                     : isSenderCurrentUser || isReceiverCurrentUser;
+            }
 
             return isValidRecipient;
         }

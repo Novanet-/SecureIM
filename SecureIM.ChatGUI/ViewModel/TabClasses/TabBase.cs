@@ -1,5 +1,6 @@
 ﻿using System.Windows.Media;
 using GalaSoft.MvvmLight;
+using JetBrains.Annotations;
 
 namespace SecureIM.ChatGUI.ViewModel.TabClasses
 {
@@ -30,7 +31,7 @@ namespace SecureIM.ChatGUI.ViewModel.TabClasses
         /// <value>
         /// The name of the tab.
         /// </value>
-        public string TabName
+        [NotNull] public string TabName
         {
             get { return _tabName; }
             set
@@ -66,7 +67,7 @@ namespace SecureIM.ChatGUI.ViewModel.TabClasses
         /// <value>
         /// The tab icon.
         /// </value>
-        public ImageSource TabIcon
+        [NotNull] public ImageSource TabIcon
         {
             get { return _tabIcon; }
             set

@@ -10,15 +10,11 @@ namespace SecureIM.ChatBackend.model
         #region Public Properties
 
         [DataMember] public MessageFlags Flags { get; set; }
-
         [DataMember] public Message Message { get; set; }
-
         [DataMember] public User Receiver { get; set; }
-
         [DataMember] public User Sender { get; set; }
 
         #endregion Public Properties
-
 
         #region Public Constructors
 

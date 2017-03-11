@@ -6,12 +6,12 @@ namespace SecureIM.ChatBackend.model
     /// <summary>
     /// Comms
     /// </summary>
-    public class Comms
+    internal class Comms
     {
         #region Public Properties
 
-        public ChannelFactory<IChatBackend> ChannelFactory { get; }
-        public IChatBackend ChatChannel { get; }
+        private ChannelFactory<IChatBackend> ChannelFactory { get; }
+        private IChatBackend ChatChannel { get; }
         public ServiceHost Host { get; }
 
         #endregion Public Properties

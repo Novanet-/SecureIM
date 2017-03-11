@@ -1,26 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using JetBrains.Annotations;
 using PostSharp.Patterns.Diagnostics;
 using SecureIM.ChatBackend.model;
 using SecureIM.ChatGUI.view.alternativeViews;
-using PostSharp.Extensibility;
 
 namespace SecureIM.ChatGUI.UserControls
 {
     /// <summary>
     ///     Interaction logic for ChatWindowControl.xaml
     /// </summary>
-    public partial class ChatMainControl
+    internal partial class ChatMainControl
     {
         #region Public Properties
 
-        public ChatBackend.ChatBackend Backend { get; }
+        private ChatBackend.ChatBackend Backend { get; }
 
         #endregion Public Properties
 
@@ -42,7 +41,7 @@ namespace SecureIM.ChatGUI.UserControls
             ToggleRestrictedControls(false);
 
             if (!Backend.ServiceStarted)
-                this.Dispatcher.InvokeAsync(() =>
+                Dispatcher.InvokeAsync(() =>
                 {
                     Backend.StartService();
                     ToggleRestrictedControls(Backend.IsRegistered);
@@ -53,31 +52,6 @@ namespace SecureIM.ChatGUI.UserControls
 
         #endregion Public Constructors
 
-        #region Public Methods
-
-        /// <summary>
-        ///     Displays the given message in the user's gui
-        /// </summary>
-        /// <param name="messageComposite">
-        ///     The delegate method that tells the backend how to display messages received from other
-        ///     users
-        /// </param>
-        [Log("MyProf")]
-        public void DisplayMessage(MessageComposite messageComposite)
-        {
-            string username = messageComposite.Sender.Name ?? "";
-            string message = messageComposite.Message.Text ?? "";
-            Dispatcher.InvokeAsync(() =>
-            {
-                TxtChatPane.AppendText(username + ": " + message + Environment.NewLine);
-
-                BindingExpression exp = TxtChatPane.GetBindingExpression(TextBox.TextProperty);
-                exp?.UpdateSource();
-            });
-        }
-
-        #endregion Public Methods
-
         #region Private Methods
 
         /// <summary>
@@ -86,7 +60,7 @@ namespace SecureIM.ChatGUI.UserControls
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         [Log("MyProf")]
-        private void BtnAddFriend_Click(object sender, RoutedEventArgs e)
+        private void BtnAddFriend_Click([NotNull] object sender, [NotNull] RoutedEventArgs e)
         {
             string friendAlias = TxtAlias.Text;
             string friendPubKey = TxtFriendPublicKey.Text;
@@ -102,7 +76,7 @@ namespace SecureIM.ChatGUI.UserControls
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         [Log("MyProf")]
-        private void BtnGenKeyPair_Click(object sender, RoutedEventArgs e)
+        private void BtnGenKeyPair_Click([NotNull] object sender, [NotNull] RoutedEventArgs e)
         {
             SendCommand("genkey:");
             TxtEntryField.Focus();
@@ -114,9 +88,21 @@ namespace SecureIM.ChatGUI.UserControls
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         [Log("MyProf")]
-        private void BtnGetPubKey_Click(object sender, RoutedEventArgs e)
+        private void BtnGetPubKey_Click([NotNull] object sender, [NotNull] RoutedEventArgs e)
         {
             SendCommand("getpub:");
+            TxtEntryField.Focus();
+        }
+
+        /// <summary>
+        /// Handles the Click event of the BtnRegPubKey control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
+        [Log("MyProf")]
+        private void BtnRegPubKey_Click([NotNull] object sender, [NotNull] RoutedEventArgs e)
+        {
+            SendCommand("regpub:");
             TxtEntryField.Focus();
         }
 
@@ -126,13 +112,63 @@ namespace SecureIM.ChatGUI.UserControls
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         [Log("MyProf")]
-        private void BtnSetName_Click(object sender, RoutedEventArgs e)
+        private void BtnSetName_Click([NotNull] object sender, [NotNull] RoutedEventArgs e)
         {
             string newName = TxtSetName.Text;
             SendCommand($"setname:{newName}");
             LblCurrentName.Content = Backend.CurrentUser.Name;
             TxtSetName.Clear();
             TxtEntryField.Focus();
+        }
+
+        /// <summary>
+        /// Handles the Click event of the BtnStartChat control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
+        [Log("MyProf")]
+        private void BtnStartChat_Click([NotNull] object sender, [NotNull] RoutedEventArgs e)
+        {
+            IEnumerable<User> userMatches = Backend.FriendsList.Where(x => x.Name.Equals(TxtStartChatFriendName.Text));
+            IList<User> userMatchesList = userMatches as IList<User> ?? userMatches.ToList();
+            if (userMatchesList.Count > 1)
+            {
+                var messageComposite = new MessageComposite(Backend.EventUser, Backend.CurrentUser, "Duplicate friends with this name found");
+                Backend.DisplayMessageDelegate?.Invoke(messageComposite);
+            }
+            else if (!userMatchesList.Any())
+            {
+                var messageComposite = new MessageComposite(Backend.EventUser, Backend.CurrentUser, "Friend not found");
+                Backend.DisplayMessageDelegate?.Invoke(messageComposite);
+            }
+            else
+            {
+                User user = userMatchesList.First();
+
+                var parent = Application.Current.MainWindow as PinnedTabExampleWindow;
+                parent?.MyChromeTabControlWithPinnedTabs.AddTabCommand.Execute(user);
+            }
+        }
+
+        /// <summary>
+        ///     Displays the given message in the user's gui
+        /// </summary>
+        /// <param name="messageComposite">
+        ///     The delegate method that tells the backend how to display messages received from other
+        ///     users
+        /// </param>
+        [Log("MyProf")]
+        private void DisplayMessage([NotNull] MessageComposite messageComposite)
+        {
+            string username = messageComposite.Sender.Name;
+            string message = messageComposite.Message.Text;
+            Dispatcher.InvokeAsync(() =>
+            {
+                TxtChatPane.AppendText(username + ": " + message + Environment.NewLine);
+
+                BindingExpression exp = TxtChatPane.GetBindingExpression(TextBox.TextProperty);
+                exp?.UpdateSource();
+            });
         }
 
         /// <summary>
@@ -152,7 +188,7 @@ namespace SecureIM.ChatGUI.UserControls
         /// </summary>
         /// <param name="commandString">The command string.</param>
         [Log("MyProf")]
-        private void SendCommand(string commandString)
+        private void SendCommand([NotNull] string commandString)
         {
             Backend.SendMessage(commandString);
             TxtEntryField.Clear();
@@ -167,7 +203,7 @@ namespace SecureIM.ChatGUI.UserControls
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="KeyEventArgs"/> instance containing the event data.</param>
         [Log("MyProf")]
-        private void TextBoxEntryField_OnKeyDown(object sender, KeyEventArgs e)
+        private void TextBoxEntryField_OnKeyDown([NotNull] object sender, [NotNull] KeyEventArgs e)
         {
             if (!(e.Key == Key.Return || e.Key == Key.Enter)) return;
 
@@ -179,20 +215,6 @@ namespace SecureIM.ChatGUI.UserControls
 
             TxtEntryField.Focus();
         }
-
-        /// <summary>
-        /// Handles the IsVisibleChanged event of the TxtChatPane control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
-        private void TxtChatPane_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) => ScrollToEnd();
-
-        /// <summary>
-        /// Handles the TextChanged event of the TxtChatPane control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="TextChangedEventArgs"/> instance containing the event data.</param>
-        private void TxtChatPane_TextChanged(object sender, TextChangedEventArgs e) => ScrollToEnd();
 
         /// <summary>
         /// Toggles the base controls.
@@ -221,48 +243,20 @@ namespace SecureIM.ChatGUI.UserControls
             TxtStartChatFriendName.IsEnabled = enabled;
         }
 
+        /// <summary>
+        /// Handles the IsVisibleChanged event of the TxtChatPane control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        private void TxtChatPane_IsVisibleChanged([NotNull] object sender, DependencyPropertyChangedEventArgs e) => ScrollToEnd();
+
+        /// <summary>
+        /// Handles the TextChanged event of the TxtChatPane control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="TextChangedEventArgs"/> instance containing the event data.</param>
+        private void TxtChatPane_TextChanged([NotNull] object sender, [NotNull] TextChangedEventArgs e) => ScrollToEnd();
+
         #endregion Private Methods
-
-        /// <summary>
-        /// Handles the Click event of the BtnRegPubKey control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="RoutedEventArgs" /> instance containing the event data.</param>
-        [Log("MyProf")]
-        private void BtnRegPubKey_Click(object sender, RoutedEventArgs e)
-        {
-            SendCommand("regpub:");
-            TxtEntryField.Focus();
-        }
-
-        /// <summary>
-        /// Handles the Click event of the BtnStartChat control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-        [Log("MyProf")]
-        private void BtnStartChat_Click(object sender, RoutedEventArgs e)
-        {
-            IEnumerable<User> userMatches = Backend.FriendsList.Where(x => x.Name.Equals(TxtStartChatFriendName.Text));
-            var userMatchesList = userMatches as IList<User> ?? userMatches.ToList();
-            if (userMatchesList.Count() > 1)
-            {
-                var messageComposite = new MessageComposite(Backend.EventUser, Backend.CurrentUser, "Duplicate friends with this name found");
-                Backend.DisplayMessageDelegate?.Invoke(messageComposite);
-            }
-
-            else if (!userMatchesList.Any())
-            {
-                var messageComposite = new MessageComposite(Backend.EventUser, Backend.CurrentUser, "Friend not found");
-                Backend.DisplayMessageDelegate?.Invoke(messageComposite);
-            }
-            else
-            {
-                User user = userMatchesList.First();
-
-                var parent = Application.Current.MainWindow as PinnedTabExampleWindow;
-                parent?.MyChromeTabControlWithPinnedTabs.AddTabCommand.Execute(user);
-            }
-        }
     }
 }
