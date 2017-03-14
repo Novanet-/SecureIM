@@ -67,7 +67,6 @@ namespace SecureIM.Smartcard.controller.smartcard
 
                 if (decryptedBytes.Length <= 2)
                 {
-                    le = decryptedBytes[1];
                     decryptedBytes = GetResponseData(decryptedBytes, SecureIMCardInstructions.INS_ECC_DO_DES_CIPHER_DECRYPT_GET_RESPONSE, le);
                 }
             }
@@ -76,7 +75,8 @@ namespace SecureIM.Smartcard.controller.smartcard
                 e.ToString();
             }
 
-            return TrimToValidString(decryptedBytes, le);
+//            return TrimSwFromResponse(decryptedBytes);
+            return Encoding.Default.GetString(TrimSwFromResponse(decryptedBytes));
         }
 
         /// <summary>
