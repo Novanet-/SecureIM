@@ -161,7 +161,7 @@ namespace SecureIM.Smartcard.controller.smartcard
         [NotNull]
         private static byte[] TrimSwFromResponse(byte[] responseBytes)
         {
-            responseBytes = TrimArray(responseBytes, 2);
+            if (responseBytes[responseBytes.Length - 1] == 0x00) responseBytes = TrimArray(responseBytes, 2);
 
             return responseBytes;
         }
