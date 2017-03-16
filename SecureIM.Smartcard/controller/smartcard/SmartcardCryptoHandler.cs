@@ -131,8 +131,8 @@ namespace SecureIM.Smartcard.controller.smartcard
         {
             byte[] getPubKeyResponse = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GET_PUB_KEY);
 
-            if (!getPubKeyResponse.SequenceEqual(_successSw))
-                throw new SmartcardException($"Gen Key pair failed with response: {ToHexString(getPubKeyResponse)}");
+            if (getPubKeyResponse.Length < 49)
+                throw new SmartcardException($"Get pub key failed with response: {ToHexString(getPubKeyResponse)}");
 
             return TrimSwFromResponse(getPubKeyResponse);
         }

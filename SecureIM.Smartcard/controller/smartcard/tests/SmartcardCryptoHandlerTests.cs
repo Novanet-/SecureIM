@@ -32,14 +32,11 @@ namespace SecureIM.Smartcard.controller.smartcard.tests
 
             CheckSCHForNull();
 
-            Assert.DoesNotThrow(() => _smartcardCryptoHandler.GenerateAsymmetricKeyPair());
+            _smartcardCryptoHandler.GenerateAsymmetricKeyPair();
         }
 
         [Test, Order(1)]
-        public void TestSCHConstructor()
-        {
-            CheckSCHForNull();
-        }
+        public void TestSCHConstructor() => CheckSCHForNull();
 
         [Test, Order(2)]
         public void TestSCHKeygen()
@@ -81,5 +78,24 @@ namespace SecureIM.Smartcard.controller.smartcard.tests
         #region Private Methods
 
         #endregion Private Methods
+    }
+}
+
+namespace SecureIM.Smartcard.controller.smartcard.tests
+{
+    [SetUpFixture]
+    public class MySetUpClass
+    {
+        [SetUp]
+        void RunBeforeAnyTests()
+        {
+            // ...
+        }
+
+        [TearDown]
+        void RunAfterAnyTests()
+        {
+            // ...
+        }
     }
 }
