@@ -38,6 +38,7 @@ namespace SecureIM.ChatGUI.UserControls
             //            exp?.UpdateSource();
 
             ScrollToEnd();
+            TxtEntryField.Focus();
         }
 
         #endregion Public Constructors

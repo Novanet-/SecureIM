@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using JetBrains.Annotations;
 using SecureIM.ChatGUI.ViewModel;
 using SecureIM.ChatGUI.ViewModel.interfaces;
 using SecureIM.ChatGUI.ViewModel.TabClasses;
@@ -13,7 +14,7 @@ namespace SecureIM.ChatGUI.SampleData
 
         private ObservableCollection<TabBase> _itemCollection;
 
-        public new ObservableCollection<TabBase> ItemCollection
+        [NotNull] public new ObservableCollection<TabBase> ItemCollection
         {
             get
             {
@@ -29,7 +30,7 @@ namespace SecureIM.ChatGUI.SampleData
         }
 
 
-        public new TabBase SelectedTab
+        [CanBeNull] public new TabBase SelectedTab
         {
             get { return ItemCollection.FirstOrDefault(); }
             set { throw new NotImplementedException(); }

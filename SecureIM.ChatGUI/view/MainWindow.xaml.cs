@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using ChromeTabs;
+using JetBrains.Annotations;
 using SecureIM.ChatGUI.Utilities;
 using SecureIM.ChatGUI.view.alternativeViews;
 using SecureIM.ChatGUI.ViewModel;
@@ -45,7 +46,7 @@ namespace SecureIM.ChatGUI.view
 
         #region Private Methods
 
-        private static bool CanInsertTabItem(FrameworkElement element)
+        private static bool CanInsertTabItem([NotNull] FrameworkElement element)
         {
             if (element is ChromeTabItem) return true;
             if (element is ChromeTabPanel) return true;
@@ -78,7 +79,8 @@ namespace SecureIM.ChatGUI.view
         /// <param name="source"></param>
         /// <param name="screenPoint"></param>
         /// <returns></returns>
-        private static Window FindWindowUnderThisAt(Window source, Point screenPoint)
+        [CanBeNull]
+        private static Window FindWindowUnderThisAt([NotNull] Window source, Point screenPoint)
                 // WPF units (96dpi), not device units
         {
             IEnumerable<Window> allWindows = SortWindowsTopToBottom(Application.Current.Windows.OfType<Window>());
@@ -97,7 +99,8 @@ namespace SecureIM.ChatGUI.view
         /// </summary>
         /// <param name="unsorted"></param>
         /// <returns></returns>
-        private static IEnumerable<Window> SortWindowsTopToBottom(IEnumerable<Window> unsorted)
+        [ItemNotNull]
+        private static IEnumerable<Window> SortWindowsTopToBottom([NotNull] IEnumerable<Window> unsorted)
         {
             var byHandle = new Dictionary<IntPtr, Window>();
             foreach (Window window1 in unsorted)
@@ -114,13 +117,13 @@ namespace SecureIM.ChatGUI.view
             }
         }
 
-        private void BnOpenCustomStyleExample_Click(object sender, RoutedEventArgs e)
+        private void BnOpenCustomStyleExample_Click([NotNull] object sender, [NotNull] RoutedEventArgs e)
         {
             var newWindow = new CustomStyleExampleWindow();
             newWindow.Show();
         }
 
-        private void BnOpenPinnedTabExample_Click(object sender, RoutedEventArgs e)
+        private void BnOpenPinnedTabExample_Click([NotNull] object sender, [NotNull] RoutedEventArgs e)
         {
             var newWindow = new PinnedTabExampleWindow();
             newWindow.Show();
@@ -132,7 +135,7 @@ namespace SecureIM.ChatGUI.view
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ChromeTabControl_TabDraggedOutsideBonds(object sender, TabDragEventArgs e)
+        private void ChromeTabControl_TabDraggedOutsideBonds([NotNull] object sender, [NotNull] TabDragEventArgs e)
         {
             var draggedTab = e.Tab as TabBase;
             if (draggedTab is TabClass3) return; //As an example, we don't want out TabClass3 to form new windows, so we stop it here.
@@ -165,7 +168,7 @@ namespace SecureIM.ChatGUI.view
             Debug.WriteLine(e.CursorPosition);
         }
 
-        private void MoveWindow(Window win, Point pt)
+        private void MoveWindow([NotNull] Window win, Point pt)
         {
             //Use a BeginInvoke to delay the execution slightly, else we can have problems grabbing the newly opened window.
             Dispatcher.BeginInvoke(new Action(() =>
@@ -182,15 +185,15 @@ namespace SecureIM.ChatGUI.view
             }));
         }
 
-        private void MyChromeTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e) { }
+        private void MyChromeTabControl_SelectionChanged([NotNull] object sender, [NotNull] SelectionChangedEventArgs e) { }
         //remove the window from the open windows collection when it is closed.
-        private void win_Closed(object sender, EventArgs e)
+        private void win_Closed([NotNull] object sender, [NotNull] EventArgs e)
         {
             OpenWindows.Remove(sender as DockingWindow);
             Debug.WriteLine(DateTime.Now.ToShortTimeString() + " closed window");
         }
 
-        private void win_Loaded(object sender, RoutedEventArgs e)
+        private void win_Loaded([NotNull] object sender, [NotNull] RoutedEventArgs e)
         {
             var win = (Window) sender;
             win.Loaded -= win_Loaded;
@@ -199,7 +202,7 @@ namespace SecureIM.ChatGUI.view
         }
 
         //We use this to keep track of where the window is on the screen, so we can dock it later
-        private void win_LocationChanged(object sender, EventArgs e)
+        private void win_LocationChanged([NotNull] object sender, [NotNull] EventArgs e)
         {
             var win = (Window) sender;
             if (!win.IsLoaded) return;

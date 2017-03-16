@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using GalaSoft.MvvmLight.Command;
+using JetBrains.Annotations;
 using PostSharp.Patterns.Diagnostics;
 using SecureIM.ChatBackend;
 using SecureIM.ChatBackend.model;
@@ -60,7 +61,7 @@ namespace SecureIM.ChatGUI.ViewModel.alternativeViews
         /// </summary>
         /// <param name="user">The user.</param>
         [Log("MyProf")]
-        public void AddTabCommandAction(User user)
+        private void AddTabCommandAction([NotNull] User user)
         {
             TabChatWindow newTab = CreateTabChatWindow(user);
 
@@ -86,13 +87,15 @@ namespace SecureIM.ChatGUI.ViewModel.alternativeViews
         /// <param name="messageComposite">The message composite.</param>
         /// <param name="chatTab">The chat tab.</param>
         [Log("MyProf")]
-        private static void AddMessageToChat(MessageComposite messageComposite, TabChatWindow chatTab)
+        private static void AddMessageToChat([NotNull] MessageComposite messageComposite, [NotNull] TabChatWindow chatTab)
         {
             string username = messageComposite.Sender.Name ?? "";
             string message = messageComposite.Message.Text ?? "";
 
             string newChatLog = $"{chatTab?.ChatHistory}{username}: {message}{Environment.NewLine}";
             chatTab.ChatHistory = newChatLog;
+            chatTab.NewMessages = chatTab.NewMessages + 1;
+            chatTab.TabName = $"{chatTab.TargetUser.Name} [{chatTab.NewMessages}]";
         }
 
         /// <summary>
@@ -101,7 +104,7 @@ namespace SecureIM.ChatGUI.ViewModel.alternativeViews
         /// <param name="messageComposite">The message composite.</param>
         /// <param name="chatMain">The chat main.</param>
         [Log("MyProf")]
-        private static void AddMessageToChat(MessageComposite messageComposite, TabChatMain chatMain)
+        private static void AddMessageToChat([NotNull] MessageComposite messageComposite, [NotNull] TabChatMain chatMain)
         {
             string username = messageComposite.Sender.Name ?? "";
             string message = messageComposite.Message.Text ?? "";
@@ -117,7 +120,7 @@ namespace SecureIM.ChatGUI.ViewModel.alternativeViews
         /// <param name="tab">The tab.</param>
         /// <returns></returns>
         [Log("MyProf")]
-        private static bool MatchTabToTargetUser(User targetUser, TabBase tab)
+        private static bool MatchTabToTargetUser([NotNull] User targetUser, [NotNull] TabBase tab)
         {
             if (tab.IsPinned)
             {
@@ -133,7 +136,7 @@ namespace SecureIM.ChatGUI.ViewModel.alternativeViews
         /// </summary>
         /// <param name="tab">The tab.</param>
         [Log("MyProf")]
-        private void PinTabCommandAction(TabBase tab)
+        private void PinTabCommandAction([NotNull] TabBase tab)
         {
             tab.IsPinned = !tab.IsPinned;
             ICollectionView view = CollectionViewSource.GetDefaultView(ItemCollection);
@@ -147,7 +150,7 @@ namespace SecureIM.ChatGUI.ViewModel.alternativeViews
         /// <param name="dmd">The DMD.</param>
         /// <param name="targetUserForDisplay"></param>
         [Log("MyProf")]
-        private void ProcessMessage(MessageComposite messageComposite, DisplayMessageDelegate dmd, User targetUserForDisplay)
+        private void ProcessMessage([NotNull] MessageComposite messageComposite, [NotNull] DisplayMessageDelegate dmd, [NotNull] User targetUserForDisplay)
         {
             //TODO: do stuff
 

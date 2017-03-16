@@ -37,10 +37,11 @@ namespace SecureIM.ChatGUI.UserControls
             Backend = ChatBackend.ChatBackend.Instance;
             Backend.DisplayMessageDelegate = DisplayMessage;
 
-            ToggleBaseControls(false);
-            ToggleRestrictedControls(false);
+//            ToggleBaseControls(false);
+//            ToggleRestrictedControls(false);
 
             if (!Backend.ServiceStarted)
+            {
                 Dispatcher.InvokeAsync(() =>
                 {
                     Backend.StartService();
@@ -48,6 +49,12 @@ namespace SecureIM.ChatGUI.UserControls
                     LblCurrentName.Content = Backend.CurrentUser.Name;
                     ToggleBaseControls(true);
                 });
+            }
+            else
+            {
+                ToggleBaseControls(true);
+                ToggleRestrictedControls(Backend.IsRegistered);
+            }
         }
 
         #endregion Public Constructors

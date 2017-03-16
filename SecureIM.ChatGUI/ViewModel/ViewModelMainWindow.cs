@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows.Data;
 using GalaSoft.MvvmLight.Command;
+using JetBrains.Annotations;
 using SecureIM.ChatBackend.model;
 using SecureIM.ChatGUI.ViewModel.interfaces;
 using SecureIM.ChatGUI.ViewModel.TabClasses;
@@ -60,7 +61,7 @@ namespace SecureIM.ChatGUI.ViewModel
             PinTabCommand = new RelayCommand<TabBase>(PinTabCommandAction);
         }
 
-        private void PinTabCommandAction(TabBase tab)
+        private void PinTabCommandAction([NotNull] TabBase tab)
         {
             tab.IsPinned = !tab.IsPinned;
             var view = CollectionViewSource.GetDefaultView(ItemCollection) as ICollectionView;

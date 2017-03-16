@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using JetBrains.Annotations;
 
 namespace SecureIM.ChatBackend.model
 {
@@ -19,16 +20,16 @@ namespace SecureIM.ChatBackend.model
 
         #region Public Constructors
 
-        public IMException(string message) : base(message) { }
+        public IMException([NotNull] string message) : base(message) { }
 
-        public IMException(string message, Exception innerException) : base(message, innerException) { }
+        public IMException([NotNull] string message, [NotNull] Exception innerException) : base(message, innerException) { }
 
         #endregion Public Constructors
 
 
         #region Protected Constructors
 
-        protected IMException(SerializationInfo info, StreamingContext context) : base(info, context) { }
+        protected IMException([NotNull] SerializationInfo info, StreamingContext context) : base(info, context) { }
 
         #endregion Protected Constructors
     }

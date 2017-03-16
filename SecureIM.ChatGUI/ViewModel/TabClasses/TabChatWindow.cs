@@ -47,6 +47,8 @@ namespace SecureIM.ChatGUI.ViewModel.TabClasses
         /// The target user.
         /// </value>
         public User TargetUser { get; set; }
+        public int NewMessages { get; set; }
+
 
         #endregion Public Properties
     }

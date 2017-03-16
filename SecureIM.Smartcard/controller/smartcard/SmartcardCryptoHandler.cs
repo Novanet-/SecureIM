@@ -15,6 +15,8 @@ namespace SecureIM.Smartcard.controller.smartcard
     /// <seealso cref="SecureIM.Smartcard.model.abstractions.ICryptoHandler" />
     public class SmartcardCryptoHandler : ICryptoHandler
     {
+        private byte[] _successSw = {0x90, 0x00};
+
         #region Public Properties
 
         /// <summary>
@@ -55,8 +57,8 @@ namespace SecureIM.Smartcard.controller.smartcard
             byte le = 8;
             try
             {
-
-                InitializeCipherOperation(keyBytes, dataBytes, out byte[] setGuestResponse, out byte[] setGenSecretResponse, out byte[] setGen3DESResponse,
+                InitializeCipherOperation(keyBytes, dataBytes, out byte[] setGuestResponse, out byte[] setGenSecretResponse,
+                    out byte[] setGen3DESResponse,
                     out byte[] setInputResponse);
 
                 var successSw = new byte[] {0x90, 0x00};
@@ -66,9 +68,7 @@ namespace SecureIM.Smartcard.controller.smartcard
                 decryptedBytes = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_DO_DES_CIPHER_DECRYPT, 0x01);
 
                 if (decryptedBytes.Length <= 2)
-                {
                     decryptedBytes = GetResponseData(decryptedBytes, SecureIMCardInstructions.INS_ECC_DO_DES_CIPHER_DECRYPT_GET_RESPONSE, le);
-                }
             }
             catch (OverflowException e)
             {
@@ -114,13 +114,28 @@ namespace SecureIM.Smartcard.controller.smartcard
         /// <summary>
         /// Generates the asymmetric key pair.
         /// </summary>
-        public void GenerateAsymmetricKeyPair() => SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GEN_KEYPAIR);
+        /// <exception cref="SmartcardException"></exception>
+        public void GenerateAsymmetricKeyPair()
+        {
+            byte[] genKeyPairResponse = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GEN_KEYPAIR);
+            if (!genKeyPairResponse.SequenceEqual(_successSw))
+                throw new SmartcardException($"Gen Key pair failed with response: {ToHexString(genKeyPairResponse)}");
+        }
 
         /// <summary>
         /// Gets the public key.
         /// </summary>
+        /// <exception cref="SmartcardException"></exception>
         /// <returns></returns>
-        public byte[] GetPublicKey() => TrimSwFromResponse(SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GET_PUB_KEY));
+        public byte[] GetPublicKey()
+        {
+            byte[] getPubKeyResponse = SmartcardController.SendCommand(SecureIMCardInstructions.INS_ECC_GET_PUB_KEY);
+
+            if (!getPubKeyResponse.SequenceEqual(_successSw))
+                throw new SmartcardException($"Gen Key pair failed with response: {ToHexString(getPubKeyResponse)}");
+
+            return TrimSwFromResponse(getPubKeyResponse);
+        }
 
         #endregion Public Methods
 
@@ -161,7 +176,9 @@ namespace SecureIM.Smartcard.controller.smartcard
         [NotNull]
         private static byte[] TrimSwFromResponse(byte[] responseBytes)
         {
-            if (responseBytes[responseBytes.Length - 1] == 0x00) responseBytes = TrimArray(responseBytes, 2);
+            if (responseBytes.Length >= 3)
+                if (responseBytes[responseBytes.Length - 1] == 0x00)
+                    responseBytes = TrimArray(responseBytes, 2);
 
             return responseBytes;
         }

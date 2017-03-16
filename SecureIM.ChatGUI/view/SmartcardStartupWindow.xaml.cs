@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using JetBrains.Annotations;
 using PostSharp.Patterns.Diagnostics;
 using SecureIM.Smartcard.controller.smartcard;
 
@@ -45,7 +46,7 @@ namespace SecureIM.ChatGUI.view
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="SelectionChangedEventArgs"/> instance containing the event data.</param>
         [Log("MyProf")]
-        private void lstChooseReader_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void lstChooseReader_SelectionChanged([NotNull] object sender, [NotNull] SelectionChangedEventArgs e)
         {
             {
                 var readerName = lstChooseReader.SelectedItem as string;
@@ -60,7 +61,7 @@ namespace SecureIM.ChatGUI.view
         /// Raises the <see cref="E:System.Windows.Window.Closing" /> event.
         /// </summary>
         /// <param name="e">A <see cref="T:System.ComponentModel.CancelEventArgs" /> that contains the event data.</param>
-        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        protected override void OnClosing([NotNull] System.ComponentModel.CancelEventArgs e)
         {
             //do my stuff before closing
 

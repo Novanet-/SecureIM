@@ -7,6 +7,8 @@ namespace SecureIM.ChatGUI.ViewModel.TabClasses
     public abstract class TabBase : ViewModelBase
     {
         private int _tabNumber;
+        private bool _isBlinking;
+
 
         /// <summary>
         /// Gets or sets the tab number.

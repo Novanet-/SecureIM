@@ -138,33 +138,28 @@ namespace SecureIM.ChatGUI.ViewModel
         /// <returns></returns>
         [NotNull]
         [Log("MyProf")]
-        protected TabChatWindow CreateTabChatWindow([NotNull] User user)
+        protected TabChatWindow CreateTabChatWindow([NotNull] User user) => new TabChatWindow
         {
-            var tab = new TabChatWindow()
-            {
-                TargetUser = user,
-                TabName = user.Name,
-                ChatHistory = "",
-            };
-            return tab;
-        }
+            TargetUser = user,
+            TabName = user.Name,
+            ChatHistory = "",
+            NewMessages = 0
+        };
+
         /// <summary>
         /// Creates the tab chat main.
         /// </summary>
         /// <returns></returns>
         [NotNull]
         [Log("MyProf")]
-        protected TabChatMain CreateTabChatMain()
+        protected TabChatMain CreateTabChatMain() => new TabChatMain
         {
-            var tab = new TabChatMain()
-            {
-                TabName = "Control Panel",
-                ChatHistory = "",
-                TargetUser = new User("Event", "event"),
-                IsPinned = true
-            };
-            return tab;
-        }
+            TabName = "Control Panel",
+            ChatHistory = "",
+            TargetUser = new User("Event", "event"),
+            IsPinned = true,
+            NewMessages = 0
+        };
 
         [NotNull]
         protected TabClass1 CreateTabLoremIpsum()

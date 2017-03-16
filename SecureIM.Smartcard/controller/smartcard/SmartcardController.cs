@@ -159,6 +159,7 @@ namespace SecureIM.Smartcard.controller.smartcard
         [NotNull]
         private byte[] SendCommandTransmitter(SecureIMCardInstructions command, [CanBeNull] byte[] data, byte le)
         {
+            TransmitAPDU(APDUFactory.SELECT(SECUREIMCARD_AID));
             switch (command)
             {
                 case SecureIMCardInstructions.INS_SELECT_SCIM:
