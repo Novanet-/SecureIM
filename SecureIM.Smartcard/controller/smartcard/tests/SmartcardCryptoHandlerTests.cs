@@ -9,11 +9,10 @@ namespace SecureIM.Smartcard.controller.smartcard.tests
     {
         #region Private Fields
 
-        private MockRepository _mockRepository;
-        private SmartcardCryptoHandler _smartcardCryptoHandler;
-        private byte[] _pubKey;
+        private static SmartcardController _smartcardController;
+        private static SmartcardCryptoHandler _smartcardCryptoHandler;
         private byte[] _guestPubKey;
-        private SmartcardController _smartcardController;
+        private MockRepository _mockRepository;
 
         #endregion Private Fields
 
@@ -26,76 +25,74 @@ namespace SecureIM.Smartcard.controller.smartcard.tests
         public void TestInitialize()
         {
             _mockRepository = new MockRepository(MockBehavior.Strict);
-            _smartcardCryptoHandler = new SmartcardCryptoHandler();
-            _smartcardController = _smartcardCryptoHandler.SmartcardController;
-            _smartcardController.ConnectToSCardReader(_smartcardController.GetSCardReaders()[0]);
 
             CheckSCHForNull();
-
-            _smartcardCryptoHandler.GenerateAsymmetricKeyPair();
         }
 
-        [Test, Order(1)]
-        public void TestSCHConstructor() => CheckSCHForNull();
+        [Test]
+        [Order(3)]
+        public void TestSCHEncrypt()
+        {
+            string ciphertext = _smartcardCryptoHandler.Encrypt("hello", _guestPubKey);
+            Assert.NotNull(ciphertext);
+        }
 
-        [Test, Order(2)]
+        [Test]
+        [Order(2)]
+        public void TestSCHGetPubIdempotent()
+        {
+            for (var i = 0; i < 100; i++)
+                Assert.True(_smartcardCryptoHandler.GetPublicKey().SequenceEqual(_guestPubKey));
+        }
+
+        [Test]
+        [Order(1)]
         public void TestSCHKeygen()
         {
-            CheckSCHForNull();
             _smartcardCryptoHandler.GenerateAsymmetricKeyPair();
             _guestPubKey = _smartcardCryptoHandler.GetPublicKey();
 
             Assert.Greater(_guestPubKey.Length, 2);
         }
 
-        [Test, Order(3)]
-        public void TestSCHGetPubIdempotent()
-        {
-            CheckSCHForNull();
-            for (var i = 0; i < 10; i++)
-            {
-                Assert.True(_smartcardCryptoHandler.GetPublicKey().SequenceEqual(_guestPubKey));
-            }
-        }
+        #endregion Public Methods
 
-        [Test, Order(4)]
-        public void TestSCHEncrypt()
-        {
-            CheckSCHForNull();
-            _smartcardCryptoHandler.GenerateAsymmetricKeyPair();
-            string ciphertext = _smartcardCryptoHandler.Encrypt("hello", _guestPubKey);
-            Assert.NotNull(ciphertext);
-        }
+        #region Private Methods
 
-        private void CheckSCHForNull()
+        private static void CheckSCHForNull()
         {
             Assert.IsNotNull(_smartcardCryptoHandler);
             Assert.IsNotNull(_smartcardController);
         }
 
-        #endregion Public Methods
-
-        #region Private Methods
-
         #endregion Private Methods
-    }
-}
 
-namespace SecureIM.Smartcard.controller.smartcard.tests
-{
-    [SetUpFixture]
-    public class MySetUpClass
-    {
-        [SetUp]
-        void RunBeforeAnyTests()
+        #region Public Classes
+
+        [SetUpFixture]
+        public class SCHTestsSetup
         {
-            // ...
+            #region Public Methods
+
+            [OneTimeTearDown]
+            public void RunAfterAnyTests()
+            {
+                // ...
+            }
+
+            [OneTimeSetUp]
+            public void RunBeforeAnyTests()
+            {
+                _smartcardCryptoHandler = new SmartcardCryptoHandler();
+                _smartcardController = _smartcardCryptoHandler.SmartcardController;
+                _smartcardController.ConnectToSCardReader(_smartcardController.GetSCardReaders()[0]);
+
+                _smartcardCryptoHandler.GenerateAsymmetricKeyPair();
+            }
+
+            #endregion Public Methods
         }
 
-        [TearDown]
-        void RunAfterAnyTests()
-        {
-            // ...
-        }
+        #endregion Public Classes
     }
 }
