@@ -7,6 +7,7 @@ using JetBrains.Annotations;
 using PostSharp.Patterns.Diagnostics;
 using SecureIM.ChatBackend.model;
 using SecureIM.ChatGUI.ViewModel.TabClasses;
+using SecureIM.ChatBackend;
 
 namespace SecureIM.ChatGUI.UserControls
 {
@@ -17,7 +18,7 @@ namespace SecureIM.ChatGUI.UserControls
     {
         #region Private Properties
 
-        private ChatBackend.ChatBackend Backend { get; }
+        private IChatBackend Backend { get; }
         private User TargetUser { get; set; }
 
         #endregion Private Properties

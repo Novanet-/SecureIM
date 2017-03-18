@@ -3,9 +3,9 @@ using System.Text.RegularExpressions;
 using Castle.Core.Internal;
 using JetBrains.Annotations;
 using PostSharp.Patterns.Diagnostics;
-using SecureIM.ChatBackend.helpers;
 using SecureIM.ChatBackend.model;
 using SecureIM.Smartcard.helpers;
+using static SecureIM.ChatBackend.helpers.BackendHelper;
 
 namespace SecureIM.ChatBackend
 {
@@ -70,7 +70,11 @@ namespace SecureIM.ChatBackend
             string alias = commandDataSplit[0];
             string cipherText = commandDataSplit[1];
             User targetUser = chatBackend.FriendsList.Find(x => x.Name.Equals(alias));
-            string plainText = chatBackend.DecryptChatMessage(cipherText, BackendHelper.DecodeToByteArrayBase64(targetUser.PublicKey));
+
+            byte[] pubKeyBytes = DecodeToByteArrayBase64(targetUser.PublicKey);
+            if (pubKeyBytes == null) return;
+
+            string plainText = chatBackend.DecryptChatMessage(cipherText, pubKeyBytes);
             plainText = Encoding.Default.EncodeBase64(plainText);
             User messageSender = chatBackend.CurrentUser;
 
@@ -114,7 +118,9 @@ namespace SecureIM.ChatBackend
             User messageSender = chatBackend.CurrentUser;
             User targetUser = chatBackend.FriendsList.Find(x => x.Name.Equals(alias));
 
-            byte[] targetUserPubKeyBytes = BackendHelper.DecodeToByteArrayBase64(targetUser.PublicKey);
+            byte[] targetUserPubKeyBytes = DecodeToByteArrayBase64(targetUser.PublicKey);
+            if (targetUserPubKeyBytes == null) return alias;
+
             string cipherText = chatBackend.EncryptChatMessage(plainText, targetUserPubKeyBytes);
             cipherText = Encoding.Default.EncodeBase64(cipherText);
 
@@ -134,7 +140,7 @@ namespace SecureIM.ChatBackend
 
             chatBackend.CryptoHandler.GenerateAsymmetricKeyPair();
 
-            string pubKeyB64 = BackendHelper.EncodeFromByteArrayBase64(chatBackend.CryptoHandler.GetPublicKey());
+            string pubKeyB64 = EncodeFromByteArrayBase64(chatBackend.CryptoHandler.GetPublicKey());
             if (!string.IsNullOrEmpty(pubKeyB64))
             {
                 string messageText = pubKeyB64;
@@ -158,7 +164,7 @@ namespace SecureIM.ChatBackend
         {
             ChatBackend chatBackend = ChatBackend.Instance;
 
-            string pubKeyB64 = BackendHelper.EncodeFromByteArrayBase64(chatBackend.CryptoHandler.GetPublicKey());
+            string pubKeyB64 = EncodeFromByteArrayBase64(chatBackend.CryptoHandler.GetPublicKey());
             string messageText = pubKeyB64;
 
             if (!string.IsNullOrEmpty(pubKeyB64))
@@ -190,7 +196,7 @@ namespace SecureIM.ChatBackend
             byte[] publicKey = chatBackend.CryptoHandler.GetPublicKey();
             if (!publicKey.IsNullOrEmpty())
             {
-                string pubKeyB64 = BackendHelper.EncodeFromByteArrayBase64(publicKey);
+                string pubKeyB64 = EncodeFromByteArrayBase64(publicKey);
                 chatBackend.CurrentUser.PublicKey = pubKeyB64;
                 chatBackend.FriendsList.Add(chatBackend.CurrentUser);
                 string messageText = $"Registered: {pubKeyB64}";

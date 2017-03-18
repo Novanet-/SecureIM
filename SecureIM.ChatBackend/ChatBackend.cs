@@ -30,7 +30,9 @@ namespace SecureIM.ChatBackend
         [NotNull] public static ChatBackend Instance => Lazy.Value;
         [NotNull] public ICryptoHandler CryptoHandler { get; }
         [NotNull] public User CurrentUser { get; }
+
         [CanBeNull] public DisplayMessageDelegate DisplayMessageDelegate { get; set; }
+
         public User EventUser { get; } = new User("Event", "event");
         public List<User> FriendsList { get; }
         public bool IsRegistered { get; internal set; }
@@ -99,7 +101,7 @@ namespace SecureIM.ChatBackend
 
             string currentPubKeyB64 = BackendHelper.EncodeFromByteArrayBase64(CryptoHandler.GetPublicKey());
 
-            bool isValidRecipient = IsValidRecipient(messageComposite, currentPubKeyB64);
+            bool isValidRecipient = currentPubKeyB64 != null && IsValidRecipient(messageComposite, currentPubKeyB64);
 
             if (messageComposite.Flags.HasFlag(MessageFlags.Local))
                 DisplayMessageDelegate?.Invoke(messageComposite);
@@ -363,20 +365,19 @@ namespace SecureIM.ChatBackend
             byte[] senderPubKeyBytes = BackendHelper.DecodeToByteArrayBase64(messageComposite.Sender.PublicKey);
             byte[] receiverPubKeyBytes = BackendHelper.DecodeToByteArrayBase64(messageComposite.Receiver.PublicKey);
 
-            if (currentPubKey.SequenceEqual(senderPubKeyBytes))
+            if (senderPubKeyBytes != null && currentPubKey.SequenceEqual(senderPubKeyBytes))
             {
                 targetPubKeyBytes = receiverPubKeyBytes;
             }
-            else if (currentPubKey.SequenceEqual(receiverPubKeyBytes))
+            else if (receiverPubKeyBytes != null && currentPubKey.SequenceEqual(receiverPubKeyBytes))
             {
                 targetPubKeyBytes = senderPubKeyBytes;
             }
 
-            if (targetPubKeyBytes != null)
-            {
-                string plainText = CryptoHandler.Decrypt(decodedMessageText, targetPubKeyBytes);
-                messageComposite = new MessageComposite(messageComposite.Sender, messageComposite.Receiver, plainText, messageComposite.Flags);
-            }
+            if (targetPubKeyBytes == null) return messageComposite;
+
+            string plainText = CryptoHandler.Decrypt(decodedMessageText, targetPubKeyBytes);
+            messageComposite = new MessageComposite(messageComposite.Sender, messageComposite.Receiver, plainText, messageComposite.Flags);
             return messageComposite;
         }
 
@@ -393,15 +394,11 @@ namespace SecureIM.ChatBackend
             bool isReceiverCurrentUser = IsReceiverCurrentUser(messageComposite, currentPubKeyB64);
 
             if (messageComposite.Flags.HasFlag(MessageFlags.Local))
-            {
                 isValidRecipient = isSenderEventOrInfoUser && isReceiverCurrentUser;
-            }
             else
-            {
                 isValidRecipient = messageComposite.Flags.HasFlag(MessageFlags.Broadcast)
                     ? isSenderEventOrInfoUser
                     : isSenderCurrentUser || isReceiverCurrentUser;
-            }
 
             return isValidRecipient;
         }

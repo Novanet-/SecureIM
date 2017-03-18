@@ -1,4 +1,5 @@
 ﻿using JetBrains.Annotations;
+using SecureIM.Smartcard.controller.smartcard;
 
 namespace SecureIM.Smartcard.model.abstractions
 {
@@ -40,5 +41,7 @@ namespace SecureIM.Smartcard.model.abstractions
         byte[] GetPublicKey();
 
         #endregion Public Methods
+
+        SmartcardController SmartcardController { get; }
     }
 }

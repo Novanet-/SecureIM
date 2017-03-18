@@ -69,15 +69,10 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChatBackend.cs" />
+    <Compile Include="tests\ChatBackendTests.cs" />
     <Compile Include="ChatCommandHandler.cs" />
     <Compile Include="helpers\BackendHelper.cs" />
     <Compile Include="model\IMException.cs" />

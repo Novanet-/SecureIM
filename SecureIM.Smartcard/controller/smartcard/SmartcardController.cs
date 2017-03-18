@@ -112,7 +112,7 @@ namespace SecureIM.Smartcard.controller.smartcard
         /// <exception cref="System.ArgumentOutOfRangeException">command - null</exception>
         /// <exception cref="OverflowException">The array is multidimensional and contains more than <see cref="F:System.Int32.MaxValue" /> elements.</exception>
         [NotNull]
-        internal byte[] SendCommand(SecureIMCardInstructions command, byte p1 = 0x00, byte p2 = 0x00, [CanBeNull] byte[] data = null, byte le = 0x00)
+        public byte[] SendCommand(SecureIMCardInstructions command, byte p1 = 0x00, byte p2 = 0x00, [CanBeNull] byte[] data = null, byte le = 0x00)
         {
             if (!ReaderConnected) throw new SmartcardException(SmartcardException.NoReadersError);
 
@@ -168,8 +168,8 @@ namespace SecureIM.Smartcard.controller.smartcard
                 case SecureIMCardInstructions.INS_ECC_GEN_KEYPAIR:
                     return TransmitAPDU(APDUFactory.ECC_GEN_KEYPAIR());
 
-                case SecureIMCardInstructions.INS_ECC_GET_PRI_KEY:
-                    return TransmitAPDU(APDUFactory.GET_PRI_KEY());
+//                case SecureIMCardInstructions.INS_ECC_GET_PRI_KEY:
+//                    return TransmitAPDU(APDUFactory.GET_PRI_KEY());
 
                 case SecureIMCardInstructions.INS_ECC_GET_PUB_KEY:
                     return TransmitAPDU(APDUFactory.GET_PUB_KEY());
@@ -213,7 +213,7 @@ namespace SecureIM.Smartcard.controller.smartcard
         /// <param name="apdu">The apdu.</param>
         /// <returns></returns>
         [NotNull]
-        private byte[] TransmitAPDU([NotNull] Apdu apdu)
+        public byte[] TransmitAPDU([NotNull] Apdu apdu)
         {
             var pbRecvBuffer = new byte[256];
 

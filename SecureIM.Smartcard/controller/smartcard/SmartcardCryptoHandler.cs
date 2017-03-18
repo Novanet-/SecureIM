@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using Castle.Core.Internal;
 using JetBrains.Annotations;
 using SecureIM.Smartcard.model.abstractions;
 using SecureIM.Smartcard.model.smartcard;
@@ -15,7 +16,7 @@ namespace SecureIM.Smartcard.controller.smartcard
     /// <seealso cref="SecureIM.Smartcard.model.abstractions.ICryptoHandler" />
     public class SmartcardCryptoHandler : ICryptoHandler
     {
-        private byte[] _successSw = {0x90, 0x00};
+        private readonly byte[] _successSw = {0x90, 0x00};
 
         #region Public Properties
 
@@ -52,9 +53,13 @@ namespace SecureIM.Smartcard.controller.smartcard
         /// <exception cref="SmartcardException">Condition.</exception>
         public string Decrypt([NotNull] string data, [NotNull] byte[] keyBytes)
         {
+            if (string.IsNullOrEmpty(data)) return "";
+
+            if (keyBytes.IsNullOrEmpty()) throw new SmartcardException("Public key cannot be null or empty");
+
             byte[] dataBytes = Encoding.Default.GetBytes(data);
             byte[] decryptedBytes = {};
-            byte le = 8;
+            const byte le = 8;
             try
             {
                 InitializeCipherOperation(keyBytes, dataBytes, out byte[] setGuestResponse, out byte[] setGenSecretResponse,
@@ -88,11 +93,15 @@ namespace SecureIM.Smartcard.controller.smartcard
         /// <exception cref="SmartcardException">Condition.</exception>
         public string Encrypt([NotNull] string data, [NotNull] byte[] keyBytes)
         {
-            byte[] dataBytes = Encoding.Default.GetBytes(data);
+            if (string.IsNullOrEmpty(data)) return "";
 
+            if (keyBytes.IsNullOrEmpty()) throw new SmartcardException("Public key cannot be null or empty");
+
+            byte[] dataBytes = Encoding.Default.GetBytes(data);
             byte le = 8;
 
-            InitializeCipherOperation(keyBytes, dataBytes, out byte[] setGuestResponse, out byte[] setGenSecretResponse, out byte[] setGen3DESResponse,
+            InitializeCipherOperation(keyBytes, dataBytes, out byte[] setGuestResponse, out byte[] setGenSecretResponse,
+                out byte[] setGen3DESResponse,
                 out byte[] setInputResponse);
 
             var successSw = new byte[] {0x90, 0x00};

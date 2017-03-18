@@ -9,6 +9,7 @@ using JetBrains.Annotations;
 using PostSharp.Patterns.Diagnostics;
 using SecureIM.ChatBackend.model;
 using SecureIM.ChatGUI.view.alternativeViews;
+using SecureIM.ChatBackend;
 
 namespace SecureIM.ChatGUI.UserControls
 {
@@ -19,7 +20,7 @@ namespace SecureIM.ChatGUI.UserControls
     {
         #region Public Properties
 
-        private ChatBackend.ChatBackend Backend { get; }
+        private IChatBackend Backend { get; }
 
         #endregion Public Properties
 
@@ -141,12 +142,12 @@ namespace SecureIM.ChatGUI.UserControls
             if (userMatchesList.Count > 1)
             {
                 var messageComposite = new MessageComposite(Backend.EventUser, Backend.CurrentUser, "Duplicate friends with this name found");
-                Backend.DisplayMessageDelegate?.Invoke(messageComposite);
+                Backend.DisplayMessageDelegate(messageComposite);
             }
             else if (!userMatchesList.Any())
             {
                 var messageComposite = new MessageComposite(Backend.EventUser, Backend.CurrentUser, "Friend not found");
-                Backend.DisplayMessageDelegate?.Invoke(messageComposite);
+                Backend.DisplayMessageDelegate(messageComposite);
             }
             else
             {

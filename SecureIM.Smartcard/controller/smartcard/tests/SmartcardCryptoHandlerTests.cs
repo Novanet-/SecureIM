@@ -1,6 +1,8 @@
 using System.Linq;
 using Moq;
 using NUnit.Framework;
+using SecureIM.Smartcard.model.abstractions;
+using SecureIM.Smartcard.model.smartcard;
 
 namespace SecureIM.Smartcard.controller.smartcard.tests
 {
@@ -9,8 +11,7 @@ namespace SecureIM.Smartcard.controller.smartcard.tests
     {
         #region Private Fields
 
-        private static SmartcardController _smartcardController;
-        private static SmartcardCryptoHandler _smartcardCryptoHandler;
+        private static ICryptoHandler _smartcardCryptoHandler;
         private byte[] _guestPubKey;
         private MockRepository _mockRepository;
 
@@ -30,11 +31,47 @@ namespace SecureIM.Smartcard.controller.smartcard.tests
         }
 
         [Test]
+        [Order(4)]
+        public void TestSCHDecrypt()
+        {
+            const string plaintext = "hello";
+            string ciphertext = _smartcardCryptoHandler.Encrypt(plaintext, _guestPubKey);
+            string decryptedText = _smartcardCryptoHandler.Decrypt(ciphertext, _guestPubKey);
+            Assert.NotNull(ciphertext);
+            Assert.NotNull(decryptedText);
+            Assert.AreEqual(decryptedText, plaintext);
+        }
+
+        [Test]
         [Order(3)]
         public void TestSCHEncrypt()
         {
             string ciphertext = _smartcardCryptoHandler.Encrypt("hello", _guestPubKey);
             Assert.NotNull(ciphertext);
+        }
+
+        [Test]
+        [Order(5)]
+        public void TestSCHEncryptAndDecryptEmptyString()
+        {
+            string ciphertext = _smartcardCryptoHandler.Encrypt("", _guestPubKey);
+            Assert.AreEqual(0, ciphertext.Length);
+            string plaintext = _smartcardCryptoHandler.Decrypt(ciphertext, _guestPubKey);
+            Assert.AreEqual(0, plaintext.Length);
+        }
+
+        [Test]
+        [Order(6)]
+        public void TestSCHEncryptAndDecryptEmptyPubKey()
+        {
+            Assert.Throws<SmartcardException>(() =>
+            {
+                _smartcardCryptoHandler.Encrypt("hello", new byte[] {});
+            });
+            Assert.Throws<SmartcardException>(() =>
+            {
+                _smartcardCryptoHandler.Decrypt("hello", new byte[] {});
+            });
         }
 
         [Test]
@@ -62,7 +99,7 @@ namespace SecureIM.Smartcard.controller.smartcard.tests
         private static void CheckSCHForNull()
         {
             Assert.IsNotNull(_smartcardCryptoHandler);
-            Assert.IsNotNull(_smartcardController);
+            Assert.IsNotNull(_smartcardCryptoHandler.SmartcardController);
         }
 
         #endregion Private Methods
@@ -84,8 +121,9 @@ namespace SecureIM.Smartcard.controller.smartcard.tests
             public void RunBeforeAnyTests()
             {
                 _smartcardCryptoHandler = new SmartcardCryptoHandler();
-                _smartcardController = _smartcardCryptoHandler.SmartcardController;
-                _smartcardController.ConnectToSCardReader(_smartcardController.GetSCardReaders()[0]);
+                SmartcardController smartcardController = _smartcardCryptoHandler.SmartcardController;
+
+                smartcardController.ConnectToSCardReader(smartcardController.GetSCardReaders()[0]);
 
                 _smartcardCryptoHandler.GenerateAsymmetricKeyPair();
             }

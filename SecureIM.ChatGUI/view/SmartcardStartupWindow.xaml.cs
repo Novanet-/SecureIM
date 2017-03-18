@@ -3,19 +3,20 @@ using System.Windows.Controls;
 using JetBrains.Annotations;
 using PostSharp.Patterns.Diagnostics;
 using SecureIM.Smartcard.controller.smartcard;
+using SecureIM.Smartcard.model.abstractions;
 
 namespace SecureIM.ChatGUI.view
 {
     /// <summary>
     /// Interaction logic for SmartcardStartupWindow.xaml
     /// </summary>
-    public partial class SmartcardStartupWindow : Window
+    internal partial class SmartcardStartupWindow : Window
     {
-        public SmartcardController SCardController { get; }
+        private SmartcardController SCardController { get; }
 
         #region Public Properties
 
-        public ChatBackend.ChatBackend Backend { get; set; }
+        private ChatBackend.ChatBackend Backend { get; set; }
 
         #endregion Public Properties
 
@@ -29,7 +30,7 @@ namespace SecureIM.ChatGUI.view
         {
             InitializeComponent();
             Backend = ChatBackend.ChatBackend.Instance;
-            var smartcardCryptoHandler = Backend.CryptoHandler as SmartcardCryptoHandler;
+            ICryptoHandler smartcardCryptoHandler = Backend.CryptoHandler as SmartcardCryptoHandler;
 
             SCardController = smartcardCryptoHandler?.SmartcardController;
             string[] readernames = SCardController?.GetSCardReaders();

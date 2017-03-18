@@ -112,27 +112,27 @@ namespace SecureIM.Smartcard.controller.smartcard
             return apdu;
         }
 
-        /// <summary>
-        /// Gets the pri key.
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="System.Exception">Invalid APDU</exception>
-        [NotNull]
-        public static CommandApdu GET_PRI_KEY()
-        {
-            var apdu = new CommandApdu(IsoCase.Case2Short, SCardProtocol)
-            {
-                CLA = 0x80,
-                INS = SCIM_INS_CODES.INS_ECC_GET_S,
-                P1 = 0x0,
-                P2 = 0x0, // We don't know the ID tag size
-                Le = 0x18
-            };
-
-            if (!apdu.IsValid) throw new SmartcardException("Invalid APDU");
-
-            return apdu;
-        }
+//        /// <summary>
+//        /// Gets the pri key.
+//        /// </summary>
+//        /// <returns></returns>
+//        /// <exception cref="System.Exception">Invalid APDU</exception>
+//        [NotNull]
+//        public static CommandApdu GET_PRI_KEY()
+//        {
+//            var apdu = new CommandApdu(IsoCase.Case2Short, SCardProtocol)
+//            {
+//                CLA = 0x80,
+//                INS = SCIM_INS_CODES.INS_ECC_GET_S,
+//                P1 = 0x0,
+//                P2 = 0x0, // We don't know the ID tag size
+//                Le = 0x18
+//            };
+//
+//            if (!apdu.IsValid) throw new SmartcardException("Invalid APDU");
+//
+//            return apdu;
+//        }
 
         /// <summary>
         /// Gets the pub key.
