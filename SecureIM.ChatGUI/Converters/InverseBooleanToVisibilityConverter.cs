@@ -2,12 +2,14 @@
 using System.Globalization;
 using System.Windows.Controls;
 using System.Windows.Data;
+using JetBrains.Annotations;
 
 namespace SecureIM.ChatGUI.Converters
 {
     public class InverseBooleanToVisibilityConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        [NotNull]
+        public object Convert(object value, [NotNull] Type targetType, object parameter, [NotNull] CultureInfo culture)
             =>
                     new BooleanToVisibilityConverter().Convert(!(bool?) value == true, targetType, parameter,
                                                                culture);

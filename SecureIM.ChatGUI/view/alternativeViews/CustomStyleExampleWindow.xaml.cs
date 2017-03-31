@@ -7,6 +7,6 @@ namespace SecureIM.ChatGUI.view.alternativeViews
     /// </summary>
     public partial class CustomStyleExampleWindow : Window
     {
-        public CustomStyleExampleWindow() { InitializeComponent(); }
+        public CustomStyleExampleWindow() { this.Dispatcher.InvokeAsync(InitializeComponent); }
     }
 }

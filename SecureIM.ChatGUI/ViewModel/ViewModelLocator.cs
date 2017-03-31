@@ -4,7 +4,7 @@
       <vm:ViewModelLocator xmlns:vm="clr-namespace:SecureIM.ChatGUI"
                            x:Key="Locator" />
   </Application.Resources>
-  
+
   In the View:
   DataContext="{Binding Source={StaticResource Locator}, Path=ViewModelName}"
 
@@ -17,6 +17,7 @@ using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
 using SecureIM.ChatGUI.SampleData;
 using SecureIM.ChatGUI.SampleData.alternativeViewData;
+using SecureIM.ChatGUI.UserControls;
 using SecureIM.ChatGUI.ViewModel;
 using SecureIM.ChatGUI.ViewModel.alternativeViews;
 using SecureIM.ChatGUI.ViewModel.interfaces;
@@ -49,10 +50,17 @@ namespace SecureIM.ChatGUI.ViewModel
                 SimpleIoc.Default.Register<IViewModelMainWindow, ViewModelMainWindow>();
                 SimpleIoc.Default.Register<IViewModelPinnedTabExampleWindow, ViewModelPinnedTabExampleWindow>();
                 SimpleIoc.Default.Register<IViewModelCustomStyleExampleWindow, ViewModelCustomStyleExampleWindow>();
+
             }
 
         }
 
+        /// <summary>
+        /// Gets the vie w model custom style example window.
+        /// </summary>
+        /// <value>
+        /// The vie w model custom style example window.
+        /// </value>
         public IViewModelCustomStyleExampleWindow VieWModelCustomStyleExampleWindow
         {
              get
@@ -61,6 +69,12 @@ namespace SecureIM.ChatGUI.ViewModel
             }
         }
 
+        /// <summary>
+        /// Gets the view model main window.
+        /// </summary>
+        /// <value>
+        /// The view model main window.
+        /// </value>
         public IViewModelMainWindow ViewModelMainWindow
         {
             get
@@ -69,6 +83,12 @@ namespace SecureIM.ChatGUI.ViewModel
             }
         }
 
+        /// <summary>
+        /// Gets the view model pinned tab example window.
+        /// </summary>
+        /// <value>
+        /// The view model pinned tab example window.
+        /// </value>
         public IViewModelPinnedTabExampleWindow ViewModelPinnedTabExampleWindow
         {
             get

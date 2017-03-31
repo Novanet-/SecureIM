@@ -34,6 +34,9 @@
         <DataTemplate DataType="{x:Type tabClasses:TabChatWindow}">
             <userControls:ChatWindowControl />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type tabClasses:TabChatMain}">
+            <userControls:ChatMainControl />
+        </DataTemplate>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -54,6 +57,7 @@
                              IsAddButtonVisible="{Binding ShowAddButton}"
                              ItemsSource="{Binding ItemCollection}"
                              MaximumTabWidth="200"
+                             PinTabCommand="{Binding PinTabCommand}"
                              ReorderTabsCommand="{Binding ReorderTabsCommand}"
                              SelectedItem="{Binding SelectedTab}"
                              SelectedTabBrush="WhiteSmoke"

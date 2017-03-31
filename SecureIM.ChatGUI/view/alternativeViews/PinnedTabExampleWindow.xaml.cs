@@ -1,5 +1,7 @@
 ﻿using System.Windows;
 using ChromeTabs;
+using JetBrains.Annotations;
+using PostSharp.Patterns.Diagnostics;
 using SecureIM.ChatGUI.ViewModel.TabClasses;
 
 namespace SecureIM.ChatGUI.view.alternativeViews
@@ -9,9 +11,27 @@ namespace SecureIM.ChatGUI.view.alternativeViews
     /// </summary>
     public partial class PinnedTabExampleWindow : Window
     {
-        public PinnedTabExampleWindow() { InitializeComponent(); }
 
-        private void TabControl_ContainerItemPreparedForOverride(object sender, ContainerOverrideEventArgs e)
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PinnedTabExampleWindow"/> class.
+        /// </summary>
+        [Log("MyProf")]
+        public PinnedTabExampleWindow()
+        {
+            this.Dispatcher.InvokeAsync(InitializeComponent);
+            var sCardStartupWindow = new SmartcardStartupWindow();
+            sCardStartupWindow.Show();
+            this.Hide();
+        }
+
+
+        /// <summary>
+        /// Handles the ContainerItemPreparedForOverride event of the TabControl control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="ContainerOverrideEventArgs"/> instance containing the event data.</param>
+        private void TabControl_ContainerItemPreparedForOverride([NotNull] object sender, [NotNull] ContainerOverrideEventArgs e)
         {
             e.Handled = true;
             var viewModel = e.Model as TabBase;

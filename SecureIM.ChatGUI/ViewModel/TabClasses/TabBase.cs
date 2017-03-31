@@ -1,12 +1,21 @@
 ﻿using System.Windows.Media;
 using GalaSoft.MvvmLight;
+using JetBrains.Annotations;
 
 namespace SecureIM.ChatGUI.ViewModel.TabClasses
 {
     public abstract class TabBase : ViewModelBase
     {
         private int _tabNumber;
+        private bool _isBlinking;
 
+
+        /// <summary>
+        /// Gets or sets the tab number.
+        /// </summary>
+        /// <value>
+        /// The tab number.
+        /// </value>
         public int TabNumber
         {
             get { return _tabNumber; }
@@ -18,7 +27,13 @@ namespace SecureIM.ChatGUI.ViewModel.TabClasses
 
         private string _tabName;
 
-        public string TabName
+        /// <summary>
+        /// Gets or sets the name of the tab.
+        /// </summary>
+        /// <value>
+        /// The name of the tab.
+        /// </value>
+        [NotNull] public string TabName
         {
             get { return _tabName; }
             set
@@ -30,6 +45,12 @@ namespace SecureIM.ChatGUI.ViewModel.TabClasses
 
         private bool _isPinned;
 
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is pinned.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is pinned; otherwise, <c>false</c>.
+        /// </value>
         public bool IsPinned
         {
             get { return _isPinned; }
@@ -42,7 +63,13 @@ namespace SecureIM.ChatGUI.ViewModel.TabClasses
 
         private ImageSource _tabIcon;
 
-        public ImageSource TabIcon
+        /// <summary>
+        /// Gets or sets the tab icon.
+        /// </summary>
+        /// <value>
+        /// The tab icon.
+        /// </value>
+        [NotNull] public ImageSource TabIcon
         {
             get { return _tabIcon; }
             set

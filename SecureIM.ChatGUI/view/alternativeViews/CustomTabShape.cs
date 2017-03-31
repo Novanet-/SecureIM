@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using JetBrains.Annotations;
 
 namespace SecureIM.ChatGUI.view.alternativeViews
 {
@@ -19,8 +20,9 @@ namespace SecureIM.ChatGUI.view.alternativeViews
         }
 
         protected override Size ArrangeOverride(Size finalSize) { return base.ArrangeOverride(finalSize); }
-        protected override Geometry DefiningGeometry { get { return GetGeometry(); } }
+        [NotNull] protected override Geometry DefiningGeometry { get { return GetGeometry(); } }
 
+        [NotNull]
         private Geometry GetGeometry()
         {
             double width = ActualWidth - StrokeThickness;

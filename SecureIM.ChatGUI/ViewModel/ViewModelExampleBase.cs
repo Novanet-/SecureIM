@@ -10,6 +10,9 @@ using System.Windows.Media.Imaging;
 using ChromeTabs;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using JetBrains.Annotations;
+using PostSharp.Patterns.Diagnostics;
+using SecureIM.ChatBackend.model;
 using SecureIM.ChatGUI.Properties;
 using SecureIM.ChatGUI.ViewModel.TabClasses;
 
@@ -19,24 +22,33 @@ namespace SecureIM.ChatGUI.ViewModel
     {
         //since we don't know what kind of objects are bound, so the sorting happens outside with the ReorderTabsCommand.
         public RelayCommand<TabReorder> ReorderTabsCommand { get; set; }
-        public RelayCommand AddTabCommand { get; set; }
+        public virtual RelayCommand AddTabCommand { get; set; }
         public RelayCommand<TabBase> CloseTabCommand { get; set; }
         public ObservableCollection<TabBase> ItemCollection { get; set; }
 
         //This is the current selected tab, if you change it, the tab is selected in the tab control.
         private TabBase _selectedTab;
 
-        public TabBase SelectedTab
+        /// <summary>
+        /// Gets or sets the selected tab.
+        /// </summary>
+        /// <value>
+        /// The selected tab.
+        /// </value>
+        [NotNull] public TabBase SelectedTab
         {
             get { return _selectedTab; }
-            set
-            {
-                if (_selectedTab != value) Set(() => SelectedTab, ref _selectedTab, value);
-            }
+            set { if (_selectedTab != value) Set(() => SelectedTab, ref _selectedTab, value); }
         }
 
         private bool _canAddTabs;
 
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance can add tabs.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this instance can add tabs; otherwise, <c>false</c>.
+        /// </value>
         public bool CanAddTabs
         {
             get { return _canAddTabs; }
@@ -50,7 +62,9 @@ namespace SecureIM.ChatGUI.ViewModel
             }
         }
 
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ViewModelExampleBase"/> class.
+        /// </summary>
         public ViewModelExampleBase()
         {
             ItemCollection = new ObservableCollection<TabBase>();
@@ -61,9 +75,10 @@ namespace SecureIM.ChatGUI.ViewModel
             CanAddTabs = true;
         }
 
+        [NotNull]
         protected TabClass1 CreateTab1()
         {
-            var i = 0;
+            const int i = 0;
             var tab = new TabClass1()
             {
                 TabName = "Tab class 1",
@@ -76,6 +91,7 @@ namespace SecureIM.ChatGUI.ViewModel
             return tab;
         }
 
+        [NotNull]
         protected TabClass2 CreateTab2()
         {
             var tab = new TabClass2
@@ -89,6 +105,7 @@ namespace SecureIM.ChatGUI.ViewModel
             return tab;
         }
 
+        [NotNull]
         protected TabClass3 CreateTab3()
         {
             var tab = new TabClass3
@@ -102,6 +119,7 @@ namespace SecureIM.ChatGUI.ViewModel
             return tab;
         }
 
+        [NotNull]
         protected TabClass4 CreateTab4()
         {
             var tab = new TabClass4
@@ -112,16 +130,38 @@ namespace SecureIM.ChatGUI.ViewModel
             };
             return tab;
         }
-        protected TabChatWindow CreateTabChatWindow()
-        {
-            var tab = new TabChatWindow()
-            {
-                TabName = "TAB CHAT WINDOW",
-                MyStringContent = "TAB CHAT WINDOW YAY",
-            };
-            return tab;
-        }
 
+        /// <summary>
+        /// Creates the tab chat window.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <returns></returns>
+        [NotNull]
+        [Log("MyProf")]
+        protected TabChatWindow CreateTabChatWindow([NotNull] User user) => new TabChatWindow
+        {
+            TargetUser = user,
+            TabName = user.Name,
+            ChatHistory = "",
+            NewMessages = 0
+        };
+
+        /// <summary>
+        /// Creates the tab chat main.
+        /// </summary>
+        /// <returns></returns>
+        [NotNull]
+        [Log("MyProf")]
+        protected TabChatMain CreateTabChatMain() => new TabChatMain
+        {
+            TabName = "Control Panel",
+            ChatHistory = "",
+            TargetUser = new User("Event", "event"),
+            IsPinned = true,
+            NewMessages = 0
+        };
+
+        [NotNull]
         protected TabClass1 CreateTabLoremIpsum()
         {
             var tab = new TabClass1()
@@ -134,10 +174,10 @@ namespace SecureIM.ChatGUI.ViewModel
         }
 
         /// <summary>
-        ///     Reorder the tabs and refresh collection sorting.
+        /// Reorder the tabs and refresh collection sorting.
         /// </summary>
-        /// <param name="reorder"></param>
-        protected virtual void ReorderTabsCommandAction(TabReorder reorder)
+        /// <param name="reorder">The reorder.</param>
+        protected virtual void ReorderTabsCommandAction([NotNull] TabReorder reorder)
         {
             var view = CollectionViewSource.GetDefaultView(ItemCollection) as ICollectionView;
             int from = reorder.FromIndex;
@@ -147,19 +187,28 @@ namespace SecureIM.ChatGUI.ViewModel
             tabCollection[from].TabNumber = tabCollection[to].TabNumber; //Set the new index of our dragged tab
 
             if (to > from)
+            {
                 for (int i = @from + 1; i <= to; i++)
                     tabCollection[i].TabNumber--;
-                            //When we increment the tab index, we need to decrement all other tabs.
+            }
+            //When we increment the tab index, we need to decrement all other tabs.
             else if (from > to) //when we decrement the tab index
+            {
                 for (int i = to; i < @from; i++)
                     tabCollection[i].TabNumber++;
-                            //When we decrement the tab index, we need to increment all other tabs.
+            }
+            //When we decrement the tab index, we need to increment all other tabs.
 
             view.Refresh(); //Refresh the view to force the sort description to do its work.
         }
 
         //We need to set the TabNumber property on the viewmodels when the item source changes to keep it in sync.
-        private void ItemCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        /// <summary>
+        /// Handles the CollectionChanged event of the ItemCollection control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="NotifyCollectionChangedEventArgs"/> instance containing the event data.</param>
+        private void ItemCollection_CollectionChanged([NotNull] object sender, [NotNull] NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
@@ -175,10 +224,17 @@ namespace SecureIM.ChatGUI.ViewModel
         }
 
         //To close a tab, we simply remove the viewmodel from the source collection.
-        private void CloseTabCommandAction(TabBase vm) => ItemCollection.Remove(vm);
+        /// <summary>
+        /// Closes the tab command action.
+        /// </summary>
+        /// <param name="vm">The vm.</param>
+        private void CloseTabCommandAction([NotNull] TabBase vm) => ItemCollection.Remove(vm);
 
         //Adds a random tab
-        private void AddTabCommandAction()
+        /// <summary>
+        /// Adds the tab command action.
+        /// </summary>
+        public virtual void AddTabCommandAction()
         {
             var r = new Random();
             int num = r.Next(1, 100);

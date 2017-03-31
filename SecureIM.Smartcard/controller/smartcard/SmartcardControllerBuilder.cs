@@ -1,46 +1,49 @@
-using System.Collections.Generic;
 using System.Diagnostics;
 using JetBrains.Annotations;
 using PCSC;
-using SecureIM.Smartcard.model.smartcard.enums;
+using SecureIM.Smartcard.model.smartcard;
 
 namespace SecureIM.Smartcard.controller.smartcard
 {
-    public class SmartcardControllerBuilder
+    /// <summary>
+    /// SmartcardControllerBuilder
+    /// </summary>
+    internal static class SmartcardControllerBuilder
     {
+        #region Internal Methods
+
         /// <summary>
-        /// Chooses the card.
+        /// Gets the smartcard readers.
         /// </summary>
         /// <param name="context">The context.</param>
         /// <returns></returns>
         /// <exception cref="SmartcardException"></exception>
         [NotNull]
-        private static string ChooseCard([NotNull] ISCardContext context)
+        internal static string[] GetSmartcardReaders([NotNull] ISCardContext context)
         {
             context.Establish(SCardScope.System);
             string[] readerNames = context.GetReaders();
             if (readerNames.Length < 1) throw new SmartcardException(SmartcardException.NoReadersError);
 
-            return ChooseReader(readerNames);
+            return readerNames;
         }
 
         /// <summary>
-        /// Chooses the reader.
+        /// Connects to reader.
         /// </summary>
-        /// <param name="readerNames">The reader names.</param>
+        /// <param name="context">The context.</param>
+        /// <param name="readerName">Name of the reader.</param>
         /// <returns></returns>
-        /// <exception cref="SmartcardException">Reader not selected</exception>
         [NotNull]
-        private static string ChooseReader([NotNull] IReadOnlyList<string> readerNames)
+        internal static SCardReader ConnectToReader([NotNull] ISCardContext context, [NotNull] string readerName)
         {
-            //             Show available readers.
-            Debug.WriteLine("Available readers: ");
-            for (var i = 0; i < readerNames.Count; i++) { Debug.WriteLine("[" + i + "] " + readerNames[i]); }
-
-            if (readerNames[0] == null) throw new SmartcardException("Reader not selected");
-
-            return readerNames[0];
+            SCardReader reader = ConnectToCard(context, readerName);
+            return reader;
         }
+
+        #endregion Internal Methods
+
+        #region Private Methods
 
         /// <summary>
         /// Connects to card.
@@ -55,12 +58,12 @@ namespace SecureIM.Smartcard.controller.smartcard
             var reader = new SCardReader(context);
             try
             {
-                SCardError sc = reader.Connect(readerName, SCardShareMode.Exclusive, SCardProtocol.T0);
+                SCardError sc = reader.Connect(readerName, SCardShareMode.Exclusive, SCardProtocol.Any);
                 if (sc != SCardError.Success)
                 {
                     string formatErrorMessage =
-                            SmartcardException.FormatErrorMessage("Could not connect to reader {0}:\n{1}",
-                                                                  readerName, SCardHelper.StringifyError(sc));
+                        SmartcardException.FormatErrorMessage("Could not connect to reader {0}:\n{1}",
+                            readerName, SCardHelper.StringifyError(sc));
 
                     throw new SmartcardException(formatErrorMessage);
                 }
@@ -73,17 +76,6 @@ namespace SecureIM.Smartcard.controller.smartcard
             return reader;
         }
 
-        /// <summary>
-        /// Establishes the card connection.
-        /// </summary>
-        /// <param name="context">The context.</param>
-        /// <returns></returns>
-        [NotNull]
-        internal SCardReader EstablishCardConnection([NotNull] ISCardContext context)
-        {
-            string readerName = ChooseCard(context);
-            SCardReader reader = ConnectToCard(context, readerName);
-            return reader;
-        }
+        #endregion Private Methods
     }
 }
