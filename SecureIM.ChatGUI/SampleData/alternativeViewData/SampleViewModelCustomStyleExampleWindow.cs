@@ -18,12 +18,6 @@ namespace SecureIM.ChatGUI.SampleData.alternativeViewData
             {
                 if (_itemCollection == null)
                 {
-                    _itemCollection = new ObservableCollection<TabBase>();
-
-                    _itemCollection.Add(CreateTab1());
-                    _itemCollection.Add(CreateTab2());
-                    _itemCollection.Add(CreateTab3());
-                    _itemCollection.Add(CreateTabLoremIpsum());
                 }
                 return _itemCollection;
             }

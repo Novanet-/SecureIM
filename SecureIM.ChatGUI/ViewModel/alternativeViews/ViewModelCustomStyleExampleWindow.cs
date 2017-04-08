@@ -9,12 +9,6 @@ namespace SecureIM.ChatGUI.ViewModel.alternativeViews
     {
         public ViewModelCustomStyleExampleWindow()
         {
-            ItemCollection.Add(CreateTab1());
-            ItemCollection.Add(CreateTab2());
-            ItemCollection.Add(CreateTab3());
-            ItemCollection.Add(CreateTab4());
-
-
             SelectedTab = ItemCollection.FirstOrDefault();
             var view = CollectionViewSource.GetDefaultView(ItemCollection) as ICollectionView;
             //This sort description is what keeps the source collection sorted, based on tab number. 

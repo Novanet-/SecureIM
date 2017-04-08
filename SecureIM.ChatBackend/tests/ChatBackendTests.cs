@@ -62,8 +62,8 @@ namespace SecureIM.ChatBackend.tests
             [OneTimeSetUp]
             public void RunBeforeAnyTests()
             {
-                Backend.DisplayMessageDelegate = DisplayMessage;
                 Backend.StartService();
+                Backend.DisplayMessageDelegate = DisplayMessage;
             }
 
             #endregion Public Methods

@@ -12,7 +12,7 @@ namespace SecureIM.ChatGUI.Converters
     public class TabToTabSnapConverter : IValueConverter
     {
         public object Convert(object value, [NotNull] Type targetType, object parameter, [NotNull] CultureInfo culture)
-            => !(value is TabClass3);
+            => !(value is false);
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {

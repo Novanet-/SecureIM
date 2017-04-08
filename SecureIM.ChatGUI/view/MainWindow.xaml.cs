@@ -119,8 +119,6 @@ namespace SecureIM.ChatGUI.view
 
         private void BnOpenCustomStyleExample_Click([NotNull] object sender, [NotNull] RoutedEventArgs e)
         {
-            var newWindow = new CustomStyleExampleWindow();
-            newWindow.Show();
         }
 
         private void BnOpenPinnedTabExample_Click([NotNull] object sender, [NotNull] RoutedEventArgs e)
@@ -138,7 +136,6 @@ namespace SecureIM.ChatGUI.view
         private void ChromeTabControl_TabDraggedOutsideBonds([NotNull] object sender, [NotNull] TabDragEventArgs e)
         {
             var draggedTab = e.Tab as TabBase;
-            if (draggedTab is TabClass3) return; //As an example, we don't want out TabClass3 to form new windows, so we stop it here.
 
             DockingWindow win = OpenWindows.FirstOrDefault(x => x.DataContext == draggedTab);
             //check if it's already open

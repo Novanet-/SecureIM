@@ -20,10 +20,6 @@ namespace SecureIM.ChatGUI.SampleData
             {
                 return _itemCollection ?? (_itemCollection = new ObservableCollection<TabBase>
                 {
-                    CreateTab1(),
-                    CreateTab2(),
-                    CreateTab3(),
-                    CreateTabLoremIpsum()
                 });
             }
             set { _itemCollection = value; }

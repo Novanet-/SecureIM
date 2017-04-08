@@ -75,61 +75,7 @@ namespace SecureIM.ChatGUI.ViewModel
             CanAddTabs = true;
         }
 
-        [NotNull]
-        protected TabClass1 CreateTab1()
-        {
-            const int i = 0;
-            var tab = new TabClass1()
-            {
-                TabName = "Tab class 1",
-                MyStringContent = "Try drag the tab from left to right",
-                TestButton = new Label(),
-                TabIcon = new BitmapImage(new Uri("/Resources/1.png", UriKind.Relative))
-            };
-            tab.TestButton.Content = i.ToString();
-            tab.TestButton.Name = "Button" + i;
-            return tab;
-        }
-
-        [NotNull]
-        protected TabClass2 CreateTab2()
-        {
-            var tab = new TabClass2
-            {
-                TabName = "Tab class 2, with a long name",
-                MyStringContent = "Try drag the tab outside the bonds of the tab control",
-                MyNumberCollection = new int[] {1, 2, 3, 4,},
-                MySelectedNumber = 1,
-                TabIcon = new BitmapImage(new Uri("/Resources/2.png", UriKind.Relative))
-            };
-            return tab;
-        }
-
-        [NotNull]
-        protected TabClass3 CreateTab3()
-        {
-            var tab = new TabClass3
-            {
-                TabName = "Tab class 3",
-                MyStringContent =
-                        "Try right clicking on the tab header. This tab can not be dragged out to a new window, to SecureIM.ChatGUInstrate that you can dynamically choose what tabs can, based on the viewmodel.",
-                MyImageUrl = new Uri("/Resources/Kitten.jpg", UriKind.Relative),
-                TabIcon = new BitmapImage(new Uri("/Resources/3.png", UriKind.Relative))
-            };
-            return tab;
-        }
-
-        [NotNull]
-        protected TabClass4 CreateTab4()
-        {
-            var tab = new TabClass4
-            {
-                TabName = "Tab class 4",
-                MyStringContent = "This tab SecureIM.ChatGUInstrates a custom tab header implementation",
-                IsBlinking = true
-            };
-            return tab;
-        }
+      
 
         /// <summary>
         /// Creates the tab chat window.
@@ -137,7 +83,6 @@ namespace SecureIM.ChatGUI.ViewModel
         /// <param name="user">The user.</param>
         /// <returns></returns>
         [NotNull]
-        [Log("MyProf")]
         protected TabChatWindow CreateTabChatWindow([NotNull] User user) => new TabChatWindow
         {
             TargetUser = user,
@@ -151,7 +96,6 @@ namespace SecureIM.ChatGUI.ViewModel
         /// </summary>
         /// <returns></returns>
         [NotNull]
-        [Log("MyProf")]
         protected TabChatMain CreateTabChatMain() => new TabChatMain
         {
             TabName = "Control Panel",
@@ -160,18 +104,6 @@ namespace SecureIM.ChatGUI.ViewModel
             IsPinned = true,
             NewMessages = 0
         };
-
-        [NotNull]
-        protected TabClass1 CreateTabLoremIpsum()
-        {
-            var tab = new TabClass1()
-            {
-                TabName = "Tab class 1",
-                MyStringContent = Resources.LoremImpsum,
-                TabIcon = new BitmapImage(new Uri("/Resources/1.png", UriKind.Relative))
-            };
-            return tab;
-        }
 
         /// <summary>
         /// Reorder the tabs and refresh collection sorting.
@@ -238,9 +170,6 @@ namespace SecureIM.ChatGUI.ViewModel
         {
             var r = new Random();
             int num = r.Next(1, 100);
-            if (num < 33) ItemCollection.Add(CreateTab1());
-            else if (num < 66) ItemCollection.Add(CreateTab2());
-            else ItemCollection.Add(CreateTab3());
         }
     }
 }

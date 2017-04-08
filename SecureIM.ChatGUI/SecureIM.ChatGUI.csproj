@@ -148,9 +148,6 @@
       <DependentUpon>ChatMainControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\TabClasses\TabChatMain.cs" />
-    <Compile Include="view\alternativeViews\CustomStyleExampleWindow.xaml.cs">
-      <DependentUpon>CustomStyleExampleWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="view\alternativeViews\CustomTabShape.cs" />
     <Compile Include="view\DockingWindow.xaml.cs">
       <DependentUpon>DockingWindow.xaml</DependentUpon>
@@ -164,29 +161,13 @@
     <Compile Include="UserControls\ChatWindowControl.xaml.cs">
       <DependentUpon>ChatWindowControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\UserControl1.xaml.cs">
-      <DependentUpon>UserControl1.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\UserControl4.xaml.cs">
-      <DependentUpon>UserControl4.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ViewModel\interfaces\IViewModelCustomStyleExampleWindow.cs" />
     <Compile Include="ViewModel\interfaces\IViewModelMainWindow.cs" />
     <Compile Include="ViewModel\interfaces\IViewModelPinnedTabExampleWindow.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\TabClasses\TabBase.cs" />
     <Compile Include="ViewModel\TabClasses\TabChatWindow.cs" />
-    <Compile Include="ViewModel\TabClasses\TabClass1.cs" />
-    <Compile Include="ViewModel\TabClasses\TabClass2.cs" />
-    <Compile Include="ViewModel\TabClasses\TabClass3.cs" />
-    <Compile Include="UserControls\UserControl2.xaml.cs">
-      <DependentUpon>UserControl2.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\UserControl3.xaml.cs">
-      <DependentUpon>UserControl3.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Utilities\Win32.cs" />
-    <Compile Include="ViewModel\TabClasses\TabClass4.cs" />
     <Compile Include="ViewModel\alternativeViews\ViewModelCustomStyleExampleWindow.cs" />
     <Compile Include="ViewModel\ViewModelExampleBase.cs" />
     <Compile Include="ViewModel\ViewModelMainWindow.cs" />
@@ -198,10 +179,6 @@
     <Page Include="UserControls\ChatMainControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="view\alternativeViews\CustomStyleExampleWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="view\DockingWindow.xaml">
       <SubType>Designer</SubType>
@@ -226,22 +203,6 @@
     <Page Include="UserControls\ChatWindowControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UserControls\UserControl1.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UserControls\UserControl2.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\UserControl3.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\UserControl4.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="view\SmartcardStartupWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

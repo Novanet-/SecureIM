@@ -23,15 +23,6 @@
     <Window.Resources>
         <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
         <converters:BooleanToPinTabTextConverter x:Key="BooleanToPinTabTextConverter" />
-        <DataTemplate DataType="{x:Type tabClasses:TabClass1}">
-            <userControls:UserControl1 />
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type tabClasses:TabClass2}">
-            <userControls:UserControl2 />
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type tabClasses:TabClass3}">
-            <userControls:UserControl3 />
-        </DataTemplate>
         <DataTemplate DataType="{x:Type tabClasses:TabChatWindow}">
             <userControls:ChatWindowControl />
         </DataTemplate>

@@ -9,7 +9,7 @@ namespace SecureIM.Smartcard.model.smartcard
     /// </summary>
     /// <seealso cref="System.Exception" />
     [Serializable]
-    internal class SmartcardException : Exception
+    public class SmartcardException : Exception
     {
         #region Public Properties
 
